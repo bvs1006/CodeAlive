@@ -1,0 +1,39 @@
+name: Bug report
+description: Report a loading, playback, recording or export problem.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: "Please remove secrets and proprietary code. This report is public."
+  - type: input
+    id: version
+    attributes:
+      label: CodeAlive and VS Code versions
+      placeholder: "CodeAlive 0.2.0; VS Code 1.xx"
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Operating system
+      placeholder: macOS, Windows or Linux and version
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the command or button you used and a sanitized small example if needed.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Exact error message or screenshot
+      description: For playback, say whether Stop appears and the animation moves. For loading, include the Loaded status.

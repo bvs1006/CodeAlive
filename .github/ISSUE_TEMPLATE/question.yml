@@ -1,0 +1,14 @@
+name: Question or contact
+description: Ask for help or discuss a collaboration.
+title: "[Question]: "
+body:
+  - type: markdown
+    attributes:
+      value: "This is a public conversation with the maintainer. Do not include private contact details or source code."
+  - type: textarea
+    id: question
+    attributes:
+      label: How can we help?
+      description: Describe your question, use case or collaboration idea.
+    validations:
+      required: true

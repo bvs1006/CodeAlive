@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Installation and troubleshooting
+    url: https://github.com/bvs1006/CodeAlive/blob/main/SUPPORT.md
+    about: Check common loading, playback and export problems first.

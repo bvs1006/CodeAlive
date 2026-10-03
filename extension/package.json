@@ -1,0 +1,65 @@
+{
+  "name": "codealive",
+  "displayName": "CodeAlive",
+  "description": "Turn the active file or selected code into music, motion, and a vertical video.",
+  "version": "0.2.0",
+  "publisher": "codealive-local",
+  "license": "UNLICENSED",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "music",
+    "sonification",
+    "visualization",
+    "creative coding"
+  ],
+  "main": "./extension.js",
+  "extensionKind": [
+    "ui"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    },
+    "virtualWorkspaces": {
+      "supported": true
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "codealive.open",
+        "title": "CodeAlive: Open Studio"
+      },
+      {
+        "command": "codealive.selection",
+        "title": "CodeAlive: Load Selection"
+      },
+      {
+        "command": "codealive.file",
+        "title": "CodeAlive: Load Active File"
+      },
+      {
+        "command": "codealive.follow",
+        "title": "CodeAlive: Toggle Follow Editor"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "codealive.selection",
+          "when": "editorHasSelection",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "test": "node test-extension.cjs",
+    "package": "python3 package.py"
+  }
+}
