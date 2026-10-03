@@ -27,6 +27,7 @@ function htmlFor(template, webview, extensionUri) {
   html = html.replace('<main>', '<main><div class="extensionbar"><span id="editorStatus">Editor follow is off</span><button id="loadEditor">Load editor file</button><button id="toggleFollow">Follow editor</button><span>Click Play after loading code</span></div>');
   html = html.replace(/(<script nonce="[^"]+" src="[^"]+engine.js"><\/script>)/, `<script nonce="${nonce}" src="${resource('bootstrap.js')}"></script>$1`);
   html = html.replace(/(<script nonce="[^"]+" src="[^"]+app.js"><\/script>)/, `<script nonce="${nonce}" src="${resource('studio.js')}"></script>$1`);
+  html = html.replace('</body>', `<script nonce="${nonce}" src="${resource('sort-engine.js')}"></script><script nonce="${nonce}" src="${resource('sorting.js')}"></script></body>`);
   html = html.replace('</body>', `<script nonce="${nonce}" src="${resource('bridge.js')}"></script></body>`);
   return html;
 }

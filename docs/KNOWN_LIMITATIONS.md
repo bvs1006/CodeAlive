@@ -1,6 +1,6 @@
 # Alpha limitations
 
-- Text-pattern mapping, not full AST parsing or runtime execution.
+- Code soundtrack mode uses text-pattern mapping, not full AST parsing or execution. Live sorting mode runs only the two built-in algorithms on user-entered numbers.
 - 50,000-character input limit; select sections of larger files.
 - No automatic test/build/terminal/Git telemetry.
 - Desktop VS Code only; no browser-extension entrypoint or Marketplace listing.
@@ -13,3 +13,5 @@
 - The standalone web alpha does not yet include the extension's newer templates/presets.
 
 User testing confirmed sample playback and selection loading in a real installation. Other OS/browser combinations and full recording workflows still need testing.
+
+Sorting input accepts 3–18 integers from 1–99. Preview speed controls operation playback; recording fits the whole trace to the selected duration. Pause and Step are preview-only. Sorting inputs and playback controls are not part of saved branding presets.

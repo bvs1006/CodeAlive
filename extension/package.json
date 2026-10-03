@@ -2,7 +2,7 @@
   "name": "codealive",
   "displayName": "CodeAlive",
   "description": "Turn the active file or selected code into music, motion, and a vertical video.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "codealive-local",
   "license": "UNLICENSED",
   "engines": {

@@ -12,7 +12,7 @@
 
 On macOS, Cmd+Shift+P opens the Command Palette. Windows/Linux use Ctrl+Shift+P.
 
-Algorithm Performance maps text structure to a performance; it does not run the selected algorithm. Do not present recordings as runtime telemetry.
+In code soundtrack mode, Algorithm Performance is structure-inspired. For actual execution, choose Performance → Live sorting algorithm and run Bubble Sort or Quick Sort on your list. No editor source is executed.
 
 Suggested hooks: “What does Python sound like?”, “My code composed this soundtrack”, or “A sorting algorithm, reimagined as music.”
 

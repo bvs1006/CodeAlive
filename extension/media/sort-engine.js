@@ -1,0 +1,8 @@
+(function(root){
+function parse(text){const parts=text.trim().split(/[\s,]+/);if(parts.length<3||parts.length>18||parts.some(x=>!/^\d+$/.test(x)))throw Error('Enter 3–18 whole numbers, separated by commas (1–99).');const values=parts.map(Number);if(values.some(x=>x<1||x>99))throw Error('Numbers must be between 1 and 99.');return values;}
+function trace(values,kind){if(!['bubble','quick'].includes(kind))throw Error('Unknown algorithm');if(!Array.isArray(values)||values.length<3||values.length>18||values.some(x=>!Number.isInteger(x)||x<1||x>99))throw Error('Invalid sorting input');const a=values.slice(),events=[];let comparisons=0,swaps=0;
+function emit(type,i=-1,j=-1,pivot=-1){events.push({type,values:a.slice(),i,j,pivot,comparisons,swaps})}function compare(i,j,pivot=-1){comparisons++;emit('compare',i,j,pivot)}function swap(i,j,pivot=-1){if(i===j)return;[a[i],a[j]]=[a[j],a[i]];swaps++;emit('swap',i,j,pivot)}emit('start');
+if(kind==='bubble'){for(let end=a.length-1;end>0;end--){let changed=false;for(let i=0;i<end;i++){compare(i,i+1);if(a[i]>a[i+1]){swap(i,i+1);changed=true}}if(!changed)break;}}
+else{function quick(lo,hi){if(lo>=hi)return;const pivot=a[hi];emit('pivot',hi,-1,hi);let k=lo;for(let j=lo;j<hi;j++){compare(j,hi,hi);if(a[j]<=pivot){swap(k,j,hi);k++}}swap(k,hi);emit('partition',k,-1,k);quick(lo,k-1);quick(k+1,hi)}quick(0,a.length-1)}emit('done');return {kind,input:values.slice(),result:a.slice(),events,comparisons,swaps};}
+root.CodeAliveSort={parse,trace};if(typeof module!=='undefined')module.exports=root.CodeAliveSort;
+})(typeof window!=='undefined'?window:globalThis);

@@ -15,7 +15,7 @@ for ext,mime in [('vsixmanifest','text/xml'),('json','application/json'),('js','
 output=root.parent/f"codealive-{p['version']}.vsix"
 with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED) as z:
  z.writestr('extension.vsixmanifest',ET.tostring(m,encoding='utf-8',xml_declaration=True));z.writestr('[Content_Types].xml',ET.tostring(ct,encoding='utf-8',xml_declaration=True))
- for f in [root/'package.json',root/'extension.js',root/'export-utils.js',root/'README.md',root/'package.py',root/'test-extension.cjs',root/'test-app.cjs',*sorted((root/'media').glob('*'))]:z.write(f,'extension/'+f.relative_to(root).as_posix())
+ for f in [root/'package.json',root/'extension.js',root/'export-utils.js',root/'README.md',root/'package.py',root/'test-extension.cjs',root/'test-app.cjs',root/'test-sorting.cjs',root/'test-sorting-app.cjs',*sorted((root/'media').glob('*'))]:z.write(f,'extension/'+f.relative_to(root).as_posix())
 with zipfile.ZipFile(output) as z:
  assert z.testzip() is None;ET.fromstring(z.read('extension.vsixmanifest'));ET.fromstring(z.read('[Content_Types].xml'));assert json.loads(z.read('extension/package.json'))['main']=='./extension.js';assert 'extension/extension.js' in z.namelist()
 print(output)

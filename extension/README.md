@@ -61,3 +61,7 @@ Save as MP4 uses native MP4 when supported; for WebM it invokes `ffmpeg` from yo
 Install 0.2.0, close studio tabs, run Developer: Reload Window, then Open Studio and Load editor file or Load Selection. Test a 15-second recording first.
 
 Validation for 0.2.0: mocked app and editor checks passed; caption and section checks passed; a real sample WebM was converted locally and ffprobe confirmed H.264 video, yuv420p pixels and AAC audio. This does not replace VS Code recording QA on your device.
+
+## Sorting Studio 0.3.0
+
+Performance → Live sorting algorithm runs built-in Bubble Sort or Quick Sort on 3–18 integers (1–99). Pause/Step/Resume inspect preview operations; Record fits the whole trace to the chosen duration. Editor code is never executed. Run `node test-sorting.cjs` and `node test-sorting-app.cjs`. 212 traces and mocked playback/recording controls passed; real VS Code recording still needs device testing.
