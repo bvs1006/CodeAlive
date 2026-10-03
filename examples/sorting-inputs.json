@@ -1,0 +1,41 @@
+[
+  {
+    "name": "mixed",
+    "values": [
+      8,
+      3,
+      6,
+      1,
+      9,
+      2,
+      5,
+      4
+    ],
+    "bubbleOperations": 41,
+    "quickOperations": 23
+  },
+  {
+    "name": "sorted",
+    "values": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "bubbleOperations": 4,
+    "quickOperations": 10
+  },
+  {
+    "name": "reversed",
+    "values": [
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "bubbleOperations": 20,
+    "quickOperations": 12
+  }
+]
