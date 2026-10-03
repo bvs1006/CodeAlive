@@ -1,14 +1,29 @@
-# CodeAlive — Code Sonification & Algorithm Visualization
+# CodeAlive — PR Companion & Code Visualization
 
-**A VS Code extension for code-generated music, live sorting visualizations, and short developer videos.**
+**Inspect GitHub PR changes and CI evidence in VS Code—or turn code and algorithms into audiovisual performances.**
 
 CodeAlive is a creative coding studio for making short performances from your code. Paste a sample in the browser or load a file/selection in VS Code, choose a sound, and record a vertical video with audio.
 
-**Current version: VS Code Video Studio 0.4.0 alpha.** Code soundtrack mode maps text structure to music. Live sorting mode runs built-in Bubble Sort and Quick Sort on a list of numbers. Your editor code is never executed.
+**Current version: VS Code Video Studio 0.5.0 alpha.** Code soundtrack mode maps text structure to music. Live sorting mode runs built-in Bubble Sort and Quick Sort on a list of numbers. Your editor code is never executed.
 
-[Download the installer](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-comparison-studio-0.4.0.zip) · [Installation & usage](docs/GETTING_STARTED.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml) · [Report a bug](https://github.com/bvs1006/CodeAlive/issues/new?template=bug_report.yml)
+[Download the installer](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-pr-companion-0.5.0.zip) · [Installation & usage](docs/GETTING_STARTED.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml) · [Report a bug](https://github.com/bvs1006/CodeAlive/issues/new?template=bug_report.yml)
 
-## See it in motion
+## Review a GitHub pull request
+
+After installation, run **CodeAlive: Review GitHub PR** and paste `https://github.com/owner/repo/pull/123` for a real PR.
+
+- Public PRs can use anonymous access; private PRs need VS Code GitHub sign-in.
+- See changed files grouped into source, tests, dependencies, documentation and configuration.
+- Inspect checks for the PR head and, when available, GitHub’s test-merge commit.
+- See the first reported failure, its available summary, and file/line annotations.
+- Use evidence links to open the PR or check details on GitHub.
+- Review filename-based prompts separately from verified check results.
+
+**This is read-only evidence inspection, not a new validator.** It never checks out or executes PR code, modifies files, posts comments, reruns CI or approves merges. Required-check coverage is not verified; all displayed checks passing is not proof a PR is merge-ready. Missing, skipped, inaccessible, truncated or changing evidence is shown explicitly. It does not generate AI explanations or patches.
+
+[PR companion guide](docs/PR_COMPANION.md)
+
+## See the creative studio in motion
 
 ![Silent animated preview of Bubble Sort and Quick Sort on the same list](docs/media/comparison-preview.gif)
 
@@ -20,6 +35,7 @@ CodeAlive is a creative coding studio for making short performances from your co
 
 | You want to… | Choose | What happens |
 |---|---|---|
+| Inspect a GitHub PR | Command: Review GitHub PR | Read change summaries and existing CI evidence without running code. |
 | Hear your own code | Code soundtrack | Text structure becomes melody, rhythm and animation; your code is not executed. |
 | Learn sorting step by step | Live sorting algorithm | A bundled Bubble Sort or Quick Sort runs on your numbers with comparisons, swaps and pivots. |
 | Compare two algorithms | Bubble vs Quick comparison | Both sort the same numbers at equal comparison/swap ticks, with separate counters. |
@@ -30,7 +46,7 @@ CodeAlive is a creative coding studio for making short performances from your co
 ## Install in VS Code
 
 1. Download and extract the ZIP above.
-2. In VS Code, choose **Extensions → … → Install from VSIX…** and select `codealive-0.4.0.vsix`.
+2. In VS Code, choose **Extensions → … → Install from VSIX…** and select `codealive-0.5.0.vsix`.
 3. When upgrading, close existing studio tabs and run **Developer: Reload Window**.
 4. Open a code file and run **CodeAlive: Open Studio** from the Command Palette.
 5. Click **Load editor file**, or select a smaller section and run **CodeAlive: Load Selection**. Confirm **Loaded: your filename** appears.
@@ -111,6 +127,8 @@ Please share a small, sanitized example rather than proprietary code, credential
 
 ```sh
 cd extension
+node test-pr.cjs
+node test-pr-panel.cjs
 node test-extension.cjs
 node test-app.cjs
 node test-sorting.cjs
@@ -120,7 +138,7 @@ node test-comparison-app.cjs
 python3 package.py
 ```
 
-Node.js and Python 3 are required for local development; no npm installation is needed. Packaging creates `codealive-0.4.0.vsix` in the repository root. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Node.js and Python 3 are required for local development; no npm installation is needed. Packaging creates `codealive-0.5.0.vsix` in the repository root. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Mocked editor/browser tests and a real sample WebM-to-MP4 conversion passed. These do not replace audio/video testing in real VS Code on Windows, macOS and Linux. See [known limitations](docs/KNOWN_LIMITATIONS.md).
 

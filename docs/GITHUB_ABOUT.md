@@ -4,11 +4,11 @@ The repository’s About description and topics require repository settings acce
 
 Description:
 
-CodeAlive: turn code into music and developer videos. VS Code extension with live sorting visualization, Bubble Sort vs Quick Sort comparisons, and vertical video export.
+CodeAlive: a read-only GitHub PR and CI companion for VS Code, plus code sonification, sorting visualization and developer video export.
 
 Topics:
 
-`code-sonification`, `algorithm-visualization`, `vscode-extension`, `sorting-algorithms`, `bubble-sort`, `quicksort`, `creative-coding`, `web-audio`, `developer-tools`, `educational-software`, `video-generation`, `javascript`, `python`
+`pull-requests`, `code-review`, `continuous-integration`, `code-sonification`, `algorithm-visualization`, `vscode-extension`, `sorting-algorithms`, `bubble-sort`, `quicksort`, `creative-coding`, `web-audio`, `developer-tools`, `educational-software`, `video-generation`, `javascript`, `python`
 
 Website: leave blank until a public, working demo is available. The hosted browser demo is currently private.
 

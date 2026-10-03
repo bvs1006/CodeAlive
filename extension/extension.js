@@ -32,6 +32,7 @@ function htmlFor(template, webview, extensionUri) {
   return html;
 }
 function activate(context) {
+  require("./pr-panel").activatePR(context);
   let panel, ready=false, pending=null, follow=false, timer=null, lastEditor=vscode.window.activeTextEditor;
   const disposables=[];
   let revision=0, deliveryTimer, readinessTimer;

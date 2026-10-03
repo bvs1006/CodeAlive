@@ -19,7 +19,7 @@ Commands: Open Studio, Load Active File, Load Selection, Toggle Follow Editor.
 
 ## Privacy and limits
 
-Source stays local and is never executed. Maximum 50,000 characters and 50 MB per recording. Videos contain source unless hidden. Only user-selected video paths are written; workspace source is never modified. No telemetry or network requests are made. Copied sample links omit your source.
+Source stays local and is never executed. Maximum 50,000 characters and 50 MB per recording. Videos contain source unless hidden. Only user-selected video paths are written; workspace source is never modified. No telemetry is collected. Studio mode makes no network requests; the optional PR companion makes GitHub API GET requests. Copied sample links omit your source.
 
 This alpha uses text-pattern mapping, not a full parser, tests/build telemetry or runtime events. Python and Terraform/HCL have their own mapping; YAML uses Kubernetes, and other languages use the JavaScript mapping. Live editor following updates source, not an automatic background soundtrack.
 
@@ -69,3 +69,7 @@ Performance → Live sorting algorithm runs built-in Bubble Sort or Quick Sort o
 ## Comparison Studio 0.4.0
 
 Choose Performance → Bubble vs Quick comparison. Shared input and equal comparison/swap ticks drive two panels, counters and distinguishable sounds. The quicker-to-finish trace holds its result. This is not a CPU benchmark; pivot and partition annotation events are excluded from the operation timeline. Quick Sort uses a last-element pivot, so sorted input may favor Bubble Sort's early-exit implementation. Run `node test-comparison.cjs` and `node test-comparison-app.cjs`.
+
+## PR Companion 0.5.0
+
+Run CodeAlive: Review GitHub PR and enter a GitHub PR URL. Public mode is anonymous; private access uses VS Code GitHub sign-in with OAuth repo scope. CodeAlive only reads PR metadata, filenames, existing checks/statuses and selected failure annotations. It does not execute PR code, generate fixes or verify required-check coverage. Passing reported checks is not approval to merge. See the repository PR companion guide. Tests: `node test-pr.cjs` and `node test-pr-panel.cjs`.
