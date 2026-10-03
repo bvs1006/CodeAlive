@@ -15,3 +15,5 @@
 User testing confirmed sample playback and selection loading in a real installation. Other OS/browser combinations and full recording workflows still need testing.
 
 Sorting input accepts 3–18 integers from 1–99. Preview speed controls operation playback; recording fits the whole trace to the selected duration. Pause and Step are preview-only. Sorting inputs and playback controls are not part of saved branding presets.
+
+Comparison mode treats each comparison and swap as one equal-cost operation. It excludes pivot/partition markers from the shared timeline; results are not wall-clock timing. Only the two bundled implementations are compared.

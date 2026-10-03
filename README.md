@@ -4,14 +4,14 @@
 
 CodeAlive is a creative coding studio for making short performances from your code. Paste a sample in the browser or load a file/selection in VS Code, choose a sound, and record a vertical video with audio.
 
-**Current version: VS Code Video Studio 0.3.0 alpha.** Code soundtrack mode maps text structure to music. Live sorting mode runs built-in Bubble Sort and Quick Sort on a list of numbers. Your editor code is never executed.
+**Current version: VS Code Video Studio 0.4.0 alpha.** Code soundtrack mode maps text structure to music. Live sorting mode runs built-in Bubble Sort and Quick Sort on a list of numbers. Your editor code is never executed.
 
-[Download the installer](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-sorting-studio-0.3.0.zip) · [Installation & usage](docs/GETTING_STARTED.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml) · [Report a bug](https://github.com/bvs1006/CodeAlive/issues/new?template=bug_report.yml)
+[Download the installer](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-comparison-studio-0.4.0.zip) · [Installation & usage](docs/GETTING_STARTED.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml) · [Report a bug](https://github.com/bvs1006/CodeAlive/issues/new?template=bug_report.yml)
 
 ## Install in VS Code
 
 1. Download and extract the ZIP above.
-2. In VS Code, choose **Extensions → … → Install from VSIX…** and select `codealive-0.3.0.vsix`.
+2. In VS Code, choose **Extensions → … → Install from VSIX…** and select `codealive-0.4.0.vsix`.
 3. When upgrading, close existing studio tabs and run **Developer: Reload Window**.
 4. Open a code file and run **CodeAlive: Open Studio** from the Command Palette.
 5. Click **Load editor file**, or select a smaller section and run **CodeAlive: Load Selection**. Confirm **Loaded: your filename** appears.
@@ -50,6 +50,14 @@ In the studio choose **Performance → Live sorting algorithm**. Select Bubble S
 
 These are actual executions of the two bundled algorithms. They do not run arbitrary selected source code. The older Algorithm Performance video template in code soundtrack mode remains structure-inspired.
 
+## Bubble Sort vs Quick Sort videos
+
+Choose **Performance → Bubble vs Quick comparison**. Enter a list, then play or record. The two panels share the exact same input and advance at the same comparison/swap rate. Each has its own counters; the first to finish holds its sorted result while the other continues. Distinct pitches and stereo positioning distinguish the algorithms when supported.
+
+The result says which used fewer operations **on this input**. This is an operation-count illustration, not a machine-time benchmark. Comparisons and swaps each count as one operation; pivot/partition annotations do not consume extra ticks. Both implementations and their counters are visible in the source. Quick Sort uses a last-element pivot; Bubble Sort exits early when a pass makes no swaps. Try sorted input as well as reversed input to see why input and implementation matter.
+
+Use Pause/Step/Resume for previews. Record fits the whole shared timeline into 15–30 seconds. Titles, creator name and opening/closing captions are included.
+
 ## Browser version
 
 The `web/` folder contains the earlier standalone browser alpha. To test locally:
@@ -74,10 +82,12 @@ node test-extension.cjs
 node test-app.cjs
 node test-sorting.cjs
 node test-sorting-app.cjs
+node test-comparison.cjs
+node test-comparison-app.cjs
 python3 package.py
 ```
 
-Node.js and Python 3 are required for local development; no npm installation is needed. Packaging creates `codealive-0.3.0.vsix` in the repository root. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Node.js and Python 3 are required for local development; no npm installation is needed. Packaging creates `codealive-0.4.0.vsix` in the repository root. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Mocked editor/browser tests and a real sample WebM-to-MP4 conversion passed. These do not replace audio/video testing in real VS Code on Windows, macOS and Linux. See [known limitations](docs/KNOWN_LIMITATIONS.md).
 

@@ -65,3 +65,7 @@ Validation for 0.2.0: mocked app and editor checks passed; caption and section c
 ## Sorting Studio 0.3.0
 
 Performance → Live sorting algorithm runs built-in Bubble Sort or Quick Sort on 3–18 integers (1–99). Pause/Step/Resume inspect preview operations; Record fits the whole trace to the chosen duration. Editor code is never executed. Run `node test-sorting.cjs` and `node test-sorting-app.cjs`. 212 traces and mocked playback/recording controls passed; real VS Code recording still needs device testing.
+
+## Comparison Studio 0.4.0
+
+Choose Performance → Bubble vs Quick comparison. Shared input and equal comparison/swap ticks drive two panels, counters and distinguishable sounds. The quicker-to-finish trace holds its result. This is not a CPU benchmark; pivot and partition annotation events are excluded from the operation timeline. Quick Sort uses a last-element pivot, so sorted input may favor Bubble Sort's early-exit implementation. Run `node test-comparison.cjs` and `node test-comparison-app.cjs`.
