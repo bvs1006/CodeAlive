@@ -13,7 +13,7 @@ Broad adoption means approachable onboarding, accessible interaction and dependa
 | Area | Evidence today | Remaining work |
 |---|---|---|
 | Music and video studio | Available in the 0.5 alpha on `main`; music from shared text patterns, local recording, captions and presets | Wider device/media verification; explanation and music do not share a synchronized timeline |
-| Algorithm demonstrations | Bundled Bubble Sort and Quick Sort with stepping, comparison and real operation traces | General selected-code execution is absent; more algorithms are optional extensions |
+| Algorithm demonstrations | Bundled Bubble Sort and Quick Sort with stepping, comparison and real operation traces | 0.7 preview offers a restricted interpreter; general application execution remains unsupported |
 | GitHub PR companion | Read-only changed-file groups and existing head/test-merge CI evidence | No semantic diff explanation, test generation, required-check verification or automated fixes |
 | Explain selected code | JavaScript/TypeScript implementation in [PR #1](https://github.com/bvs1006/CodeAlive/pull/1); local parser, ten examples, two explanation styles, exact source links and static flow diagrams | Broader language/runtime semantics remain outside this milestone; Windows/macOS desktop and physical media-device checks remain |
 | Build and checks | Preview has shared explainer assets, packaged VSIX/offline browser, multi-OS unit/extension tests and real Chromium integration | CI includes a real Linux VS Code install/upgrade check and real Chromium recording; physical device coverage remains limited |
@@ -22,7 +22,7 @@ The [CI workflow](https://github.com/bvs1006/CodeAlive/actions/workflows/ci.yml)
 
 ## First: finish the 0.6 release
 
-The first feature milestone is implemented. Alpha releases are published from `main` only after the automated checks pass.
+The first feature milestone is implemented and all five CI jobs passed on PR #1. Merge and public release await approval. The 0.7 replay preview is developed on the stacked `codex/execution-replay` branch; each milestone must pass its checks before the next begins. Alpha releases publish only from `main` after all checks pass.
 
 - [x] Local JavaScript/TypeScript parsing without executing or uploading source.
 - [x] Scope selection, declared inputs, return expressions, visible calls/property writes, and plain-language/developer steps.
@@ -34,7 +34,8 @@ The first feature milestone is implemented. Alpha releases are published from `m
 - [x] Verify the real studio webview bridge and a Chromium recording with audio/video tracks and source hiding enabled. Linux VS Code 1.140.0 passed; CI records the tested version.
 - [ ] Complete physical audio-device and Windows/macOS desktop checks, plus a signed-in PR panel smoke test.
 - [x] Add CI-gated versioned alpha release packaging. Review/merge evidence is in PR #1.
-- [x] Prepare the README for main-based development and versioned release downloads.
+- [x] Document feature-branch setup and usable preview packages.
+- [ ] Obtain approval to merge the tested PRs and publish their versioned alpha releases.
 
 Completion means a user can install the package, explain a complete supported function, inspect exact source links, and understand the feature's limits without assistance. Do not equate passing mocked tests with this installation check.
 
@@ -42,13 +43,13 @@ Completion means a user can install the package, explain a complete supported fu
 
 | Order | Outcome | Proposed scope | Completion evidence |
 |---|---|---|---|
-| 2 — Execution replay | Help someone follow what actually happens for an input | Start with constrained, instrumented examples or imported execution traces; show step order, variable values, branch choices and return/error results; pause, step, replay and compare inputs | Displayed values and paths match captured execution; early returns, loops and errors have trace tests; supported/unsupported constructs are explicit |
+| 2 — Execution replay | **Implemented in 0.7 preview; CI verification required before advancing** | Explicit JSON inputs; restricted synchronous interpreter; immutable variable snapshots, branches, writes, return/errors; step/play/slider and pinned input comparison | Differential tests against trusted JavaScript fixtures, early returns/loops/errors, isolation and resource-limit tests; browser playback checks; [supported execution model](EXECUTION_REPLAY.md) |
 | 3 — Before/after explanations | Help reviewers understand what changed | Source-linked structural diffs, changed functions/conditions/returns, and links to related test/CI evidence; distinguish observations from inferred impact | Every explanation points to a diff range or evidence source; head changes and incomplete evidence are handled; no unsupported correctness/merge claims |
 | 4 — Explain-to-video | Help educators share a coherent explanation | Choose steps or a trace, edit a script, add narration and captions, and synchronize optional background music; preview and export a readable clip | Narration/captions/source highlights stay aligned; export works on declared target platforms; source hiding is respected; users can edit wording and review the result before sharing |
 
 For execution replay, define the supported execution model and its resource/access limits before accepting arbitrary user code. Execution must be an explicit action. Static explanation continues to work independently and must never silently run a selection.
 
-The existing sorting traces are a useful starting point for replay controls. The current studio provides recording and music infrastructure for explain-to-video. Neither is equivalent to those complete milestones today.
+The existing sorting traces are a useful starting point for replay controls. The current studio provides recording and music infrastructure for explain-to-video. The restricted interpreter now supplies replay; synchronized narration remains the next video milestone.
 
 ## Requirements for broader adoption
 

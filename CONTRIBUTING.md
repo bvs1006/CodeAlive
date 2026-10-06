@@ -4,7 +4,7 @@ Start with a small, reproducible developer task. Open a question or feature issu
 
 ## Choose the right version
 
-Use `main` for the latest implemented alpha. Follow the [README setup instructions](README.md#developer-quick-start) for the root npm commands below.
+Use the feature branch named in the README for the latest preview; `main` still has the 0.5 runtime while merges await approval. Follow the [README setup instructions](README.md#developer-quick-start) for the root npm commands below.
 
 Use Node.js 22+ and Python 3. Install dependencies with `npm ci --ignore-scripts` from the repository root.
 
@@ -15,7 +15,7 @@ Use Node.js 22+ and Python 3. Install dependencies with `npm ci --ignore-scripts
 - The music studio still has separate browser and extension implementations. Check both when changing shared behavior such as language selection or source loading.
 - Keep GitHub authentication and PR requests in the extension host. The webview must not receive authentication tokens.
 
-Preserve the current privacy boundary: the explainer must not execute, persist or transmit selected source. Keep static explanations, text-pattern music, actual bundled algorithm traces and verified CI observations clearly distinguished. Proposed execution replay is a separate roadmap feature requiring an explicit execution design and user action.
+Static explanation must never execute source or silently start replay. Inputs and traces must not be persisted or transmitted without a separate user action. Keep static observations, interpreter results, bundled sorting traces and CI evidence clearly distinguished. Replay uses an explicit Run action and the documented bounded interpreter; do not introduce eval, host globals, module access or unbounded execution. Add differential tests for newly supported semantics and rejection tests for unsupported constructs.
 
 ## Verify the behavior you changed
 

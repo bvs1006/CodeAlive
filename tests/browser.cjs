@@ -28,6 +28,10 @@ const server=http.createServer((req,res)=>{
     await page.goto(origin+'/web/explain.html');assert.equal(await page.locator('#example-select option').count(),10);
     await page.click('#explain');assert.equal(await page.textContent('#summary-name'),'discountedPrice');await page.locator('#steps button').last().click();assert.match(await page.textContent('#source-view mark'),/price - savings/);
     await page.locator('#flow [role=button]').filter({has:page.locator('title',{hasText:'Return price'})}).focus();await page.keyboard.press('Enter');
+    assert(await page.locator('#replay-results').isHidden());await page.click('#replay-run');assert.match(await page.textContent('#replay-status'),/Returned 80/);
+    await page.locator('#replay-slider').evaluate(el=>{el.value=el.max;el.dispatchEvent(new Event('input',{bubbles:true}));});assert.equal(await page.textContent('#replay-value'),'80');assert.match(await page.textContent('#replay-variables'),/"savings": 20/);
+    await page.click('#replay-pin');await page.fill('#replay-args','[200,50]');await page.click('#replay-run');assert.match(await page.textContent('#replay-status'),/Returned 100/);assert.match(await page.textContent('#replay-baseline'),/"result": 80/);
+    await page.click('#replay-play');await page.waitForFunction(()=>document.getElementById('replay-position').textContent.startsWith('Step 2 '));await page.click('#replay-play');assert.equal(await page.textContent('#replay-play'),'Play');
     const before=await page.inputValue('#source');await page.selectOption('#language','TypeScript');assert.equal(await page.inputValue('#source'),before);assert(await page.locator('#result').isHidden());
     const examples=require('../shared/explain-examples');
     for(const example of examples){await page.selectOption('#example-select',example.id);await page.click('#load-example');await page.click('#explain');assert(await page.locator('#result').isVisible(),example.id);assert(await page.locator('#flow .flow-node').count()>0,example.id);}

@@ -2,7 +2,7 @@
   "name": "codealive",
   "displayName": "CodeAlive",
   "description": "Local JavaScript and TypeScript explanations with source-linked steps and flow diagrams, plus a music studio and read-only PR companion.",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "publisher": "codealive-local",
   "license": "UNLICENSED",
   "engines": {

@@ -2,30 +2,31 @@
 
 CodeAlive is a developer tool for **source-linked code explanations**, **algorithm visualization**, **code-inspired music and video**, and **GitHub PR evidence review**. Use it to learn an unfamiliar function, demonstrate an algorithm, create an educational clip, or inspect existing CI results.
 
-Start with the workflow you need. The explainer describes JavaScript/TypeScript structure locally; the studio turns text patterns into music; the PR companion reads GitHub evidence.
+Start with the workflow you need. The explainer describes JavaScript/TypeScript structure locally and offers explicit replay of a limited synchronous subset; the studio turns text patterns into music; the PR companion reads GitHub evidence.
 
-> **Status — 6 October 2026:** CodeAlive **0.6.0 alpha** includes local code explanations. Release packages are generated after the unit, browser/media and real VS Code checks pass on `main`. Windows/macOS desktop integration and physical audio-device checks remain additional manual validation.
+> **Status — 6 October 2026:** **0.7.0 alpha preview** on `codex/execution-replay` adds constrained execution replay to the 0.6 explainer. `main` still contains the 0.5 runtime. PR #1 has passed all five automated jobs; merging and public releases await approval. Each feature branch is pushed and tested separately. Windows/macOS desktop and physical audio-device checks remain manual work.
 
-[Download 0.6.0](https://github.com/bvs1006/CodeAlive/releases/download/v0.6.0/codealive-explainer-0.6.0.zip) · [Download 0.5 from main](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-pr-companion-0.5.0.zip) · [Roadmap](docs/ROADMAP.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml)
+[Download 0.7 preview](https://github.com/bvs1006/CodeAlive/raw/refs/heads/codex/execution-replay/downloads/codealive-explainer-0.7.0.zip) · [Download 0.5 from main](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-pr-companion-0.5.0.zip) · [Roadmap](docs/ROADMAP.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml)
 
 ## What can I do today?
 
 | Workflow | What you get | Availability |
 |---|---|---|
 | Understand a function | Plain-language/developer explanations, parameters, return expressions, calls/property writes, source-linked steps and a static flow diagram | **0.6:** VS Code and offline browser; JavaScript/TypeScript |
+| Replay a function | Explicit JSON inputs, bounded interpreter, variable snapshots, branch choices, step/play controls and pinned input comparison | **0.7 preview:** documented synchronous JS/TS subset |
 | Hear code structure | Three music styles, code-linked visuals and synthesized audio from text patterns | **0.5+:** VS Code and browser studio |
 | Explore sorting | Built-in Bubble Sort and Quick Sort, pause/step/resume, operation counts and same-input comparison | **0.5+:** VS Code |
 | Create a developer video | Vertical video with audio, captions, branding, source hiding and local presets | **0.5+:** VS Code; browser studio has basic recording |
 | Inspect a GitHub PR | Changed-file groups, existing head/test-merge checks and available failure annotations | **0.5+:** VS Code; read-only |
 
-**Current boundaries:** selected source is never executed. Only the two bundled sorting algorithms run on your numbers. The explainer and music studio are connected by an **Explain code** action; synchronized spoken explanations, music and execution replay are still planned. The PR companion does not validate semantic correctness, generate fixes or decide whether to merge.
+**Current boundaries:** static explanation and music never execute selected source. **Replay** runs only after an explicit action, using a restricted interpreter with no host, file, network or module access. Async code, callbacks and surrounding application state are unsupported. The explainer and music studio connect through **Explain code**; synchronized narrated explanations remain planned. The PR companion does not validate semantic correctness, generate fixes or decide whether to merge.
 
 ## Try the explainer in two minutes
 
 ### VS Code
 
-1. Download and extract the **0.6 ZIP** above.
-2. In desktop VS Code, open **Extensions → … → Install from VSIX…**, then choose `codealive-0.6.0.vsix`.
+1. Download and extract the **0.7 preview ZIP** above.
+2. In desktop VS Code, open **Extensions → … → Install from VSIX…**, then choose `codealive-0.7.0.vsix`.
 3. After upgrading, close existing CodeAlive tabs and run **Developer: Reload Window**.
 4. Open a JavaScript or TypeScript file, select a complete function, and run **CodeAlive: Explain Selected Code** from the Command Palette. An empty selection loads the active file.
 5. Choose the function scope and explanation style. Select a step or diagram node to highlight the code and reveal it in the original editor.
@@ -38,7 +39,7 @@ Requires desktop VS Code **1.90+**, a trusted workspace and input of at most **5
 
 Extract the same ZIP and open **`browser/explain.html`**. The parser, examples and styles are bundled and work offline. Source links highlight code in the browser; navigation into your original file is a VS Code feature.
 
-[Full explainer guide](https://github.com/bvs1006/CodeAlive/blob/main/docs/EXPLAIN_CODE.md)
+[Full explainer guide](docs/EXPLAIN_CODE.md) · [Replay guide and supported subset](docs/EXECUTION_REPLAY.md)
 
 <details>
 <summary>See the actual 0.6 explainer interface</summary>
@@ -61,7 +62,7 @@ function discountedPrice(price, percent) {
 }
 ```
 
-CodeAlive identifies two parameters, a conditional branch, an error path, a declaration and a return expression. Selecting a step reveals its exact source range. It does **not** calculate a price, prove the validation is sufficient, or infer the business intent behind the function name.
+CodeAlive identifies two parameters, a conditional branch, an error path, a declaration and a return expression. Selecting a step reveals its exact source range. Static explanation does **not** calculate a price, prove the validation is sufficient, or infer business intent. To calculate an example explicitly, choose **Run with these inputs** under Replay with `[100,20]`: it returns `80`. Step through the captured values, pin that run, then compare `[200,50]`, which returns `100`. The result applies to the supported interpreter model, not your complete application runtime.
 
 The diagram describes statement-level structure. Try/catch/finally, switch and labeled blocks are collapsed with warnings; expression-level branches and async suspension remain inside statement nodes. Steps follow source order and can include unreachable code. Explanations are bounded to 100 listed functions, 80 steps, 100 diagram nodes, and 12 return expressions / 12 calls or property writes. Oversized diagrams are omitted with a message.
 
@@ -94,10 +95,10 @@ The companion does not check out code, run tests, rerun CI, post comments, modif
 
 ## Developer quick start
 
-Build from `main`. Prerequisites: Git, **Node.js 22+** with npm, and **Python 3**. Use `python` instead of `python3` where that is your platform's Python 3 command.
+For these preview features, build from `codex/execution-replay`. `main` currently has the 0.5 runtime. Prerequisites: Git, **Node.js 22+** with npm, and **Python 3**. Use `python` instead of `python3` where that is your platform's Python 3 command.
 
 ```sh
-git clone https://github.com/bvs1006/CodeAlive.git
+git clone --branch codex/execution-replay https://github.com/bvs1006/CodeAlive.git
 cd CodeAlive
 npm ci --ignore-scripts
 npm run build
@@ -112,7 +113,7 @@ Open [the explainer](http://localhost:8080/explain.html) or [the music studio](h
 | `npm test` | Build assets, run the parser/editor tests and eight existing suites, and check generated-asset equality |
 | `npx playwright install chromium` then `npm run test:browser` | Run real Chromium integration checks and create screenshots in `test-results/` |
 | `npm run test:vscode` | Install/upgrade the built VSIX and exercise real VS Code; on headless Linux run under `xvfb-run -a` |
-| `npm run package` | Build `codealive-0.6.0.vsix` in the repository root; needs `python3` on PATH |
+| `npm run package` | Build `codealive-0.7.0.vsix` in the repository root; needs `python3` on PATH |
 | `python3 scripts/package-release.py` | Build the VSIX plus offline browser ZIP in `downloads/` |
 
 On Linux, Playwright may also need system dependencies: use `npx playwright install --with-deps chromium`. On a system without a `python3` command, use `npm run build` followed by `python extension/package.py` to package with Python 3.
@@ -124,6 +125,7 @@ To test in desktop VS Code, install the built VSIX. There is no committed F5 lau
 | Path | Responsibility |
 |---|---|
 | `shared/explain-engine.js` | Local AST analysis, source ranges, explanations and bounded static flow model |
+| `shared/replay-engine.js`, `shared/replay-ui.js` | Restricted interpreter, immutable trace snapshots, explicit run and playback controls |
 | `shared/explain-ui.js`, `shared/explain.html`, `shared/explain.css` | Shared browser/webview interface, source highlights, keyboard interaction and diagram rendering |
 | `shared/explain-examples.js` | Ten JavaScript/TypeScript examples |
 | `extension/explain-panel.js` | VS Code commands, source snapshots, document-version checks and webview bridge |
@@ -147,8 +149,8 @@ Unit-level editor and GitHub API tests use mocks; the additional installed-VSIX 
 
 | Order | Milestone | Status |
 |---|---|---|
-| 1 | Explain selected code with source links and static diagrams | Available in **0.6**; automated release checks included |
-| 2 | Replay actual execution with inputs, values and step controls | Planned; initially a constrained, explicitly selected execution/trace workflow |
+| 1 | Explain selected code with source links and static diagrams | **0.6:** implemented and all five CI jobs passed; PR #1 awaiting merge approval |
+| 2 | Replay execution with inputs, values and step controls | **0.7 preview:** constrained interpreter implemented; see branch CI for verification |
 | 3 | Explain before/after changes and connect them to test/CI evidence | Planned; current PR review only reads existing evidence |
 | 4 | Export an explanation with narration, captions and synchronized optional music | Planned; current recordings are studio performances |
 
@@ -156,7 +158,7 @@ Broad adoption also needs a license decision, straightforward distribution, acce
 
 ## Privacy, support and licensing
 
-The explainer requires no network access, executes no source and keeps its input in memory. Studio presets exclude code. Recordings can display source unless **Hide source** is enabled. Sharing a soundtrack copies a sample/style link, not your pasted source. The hosted music demo remains private, so recipients may not be able to open that link. The PR companion uses GitHub's API and keeps authentication tokens out of the webview.
+Static explanation requires no network access and executes no source. Explicit replay interprets only the documented subset. Both keep inputs and traces in memory and do not upload source. Studio presets exclude code. Recordings can display source unless **Hide source** is enabled. Sharing a soundtrack copies a sample/style link, not your pasted source. The hosted music demo remains private, so recipients may not be able to open that link. The PR companion uses GitHub's API and keeps authentication tokens out of the webview.
 
 [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml) · [Report a bug](https://github.com/bvs1006/CodeAlive/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/bvs1006/CodeAlive/issues/new?template=feature_request.yml) · [Troubleshooting](SUPPORT.md)
 

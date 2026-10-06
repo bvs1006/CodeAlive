@@ -27,3 +27,7 @@ JavaScript and TypeScript only. Static parsing does not execute or type-check co
 Limits: 50,000 characters, 100 listed functions, 80 steps, 100 diagram nodes, 12 return expressions and 12 calls/property writes. Large diagrams are omitted. Partial selections must parse as valid code. The source-order step list may include unreachable source; simple unreachable statements are removed from the diagram.
 
 Editor source links require the captured document version; after a change, use Load editor again. Editing the playground detaches its editor mapping. Shared generated assets must be built before running or packaging the extension.
+
+## Explicit execution replay
+
+The 0.7 preview interprets a limited synchronous JavaScript/TypeScript subset only after Run. It does not reproduce module state, closures or your full runtime. Unsupported syntax/methods, host APIs, async functions and non-finite numbers stop the run with a reason. Calls, operations, trace size and input structures are bounded; highly shared or cyclic structures are limited in snapshots. See [the execution model](EXECUTION_REPLAY.md).

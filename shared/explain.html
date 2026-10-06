@@ -18,7 +18,7 @@
         <label class="sr-only" for="source">Code to explain</label><textarea id="source" spellcheck="false" maxlength="50000" placeholder="Paste a JavaScript or TypeScript function…"></textarea>
         <div id="source-view" class="source-view" tabindex="0" aria-label="Source code with highlighted explanation" hidden></div>
         <div class="source-footer"><span id="source-stats"></span><span>JS / TS</span></div>
-        <p class="hint" id="source-hint">Your code stays on this device. It is never executed.</p>
+        <p class="hint" id="source-hint">Your code stays on this device. Explanation never executes it. Replay runs only when you choose it.</p>
         <button class="primary" id="explain">Explain this code <span>↗</span></button>
         <p id="status" role="status" aria-live="polite">Load an example or paste a function to begin.</p>
       </section>
@@ -35,11 +35,25 @@
       </section>
     </div>
     <section class="panel flow-panel" id="flow-panel" hidden aria-labelledby="flow-heading"><div class="panel-heading"><h2 id="flow-heading"><span class="section-number">03</span> Follow the flow</h2><span class="tag">STATIC STRUCTURE</span></div><p class="flow-note">Branches show possible paths, not a recorded execution. Select a node to find its source. Scroll horizontally to explore wider diagrams.</p><div class="flow-scroll" tabindex="0" role="region" aria-label="Scrollable flow diagram"><svg id="flow" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Source-linked control flow diagram"></svg></div><p class="flow-legend"><span>◇ Condition</span><span>▭ Statement</span><span>⇢ Loop back</span></p></section>
-    <footer>CODEALIVE <span>Understand the structure. Explore the possibilities.</span><span>ALPHA / 0.6</span></footer>
+    <section class="panel replay-panel" id="replay-panel" hidden aria-labelledby="replay-heading">
+      <div class="panel-heading"><h2 id="replay-heading"><span class="section-number">04</span> Replay an input</h2><span class="tag">RESTRICTED EXECUTION</span></div>
+      <div class="replay-body"><p class="flow-note">Run this function in a limited JS/TS interpreter. No browser, system, network or module access. Async code, callbacks and unsupported syntax are rejected. Results describe this interpreter, not your full application's runtime.</p>
+        <label for="replay-args">Arguments as a JSON array</label><textarea id="replay-args" spellcheck="false" maxlength="10000" rows="3">[100,20]</textarea>
+        <div class="replay-actions"><button id="replay-run">Run with these inputs</button><button id="replay-pin" disabled>Pin result for comparison</button></div>
+        <p id="replay-status" role="status" aria-live="polite"></p>
+        <div id="replay-results" hidden><div class="replay-actions"><button id="replay-prev">Previous</button><button id="replay-play">Play</button><button id="replay-next">Next</button><label for="replay-speed">Speed</label><select id="replay-speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></div>
+          <label id="replay-position" for="replay-slider">Step</label><input id="replay-slider" type="range" min="0" max="0" value="0">
+          <div class="replay-columns"><div><h3>Variables at this step</h3><pre id="replay-variables"></pre></div><div><h3>Step value</h3><pre id="replay-value"></pre></div></div>
+        </div><div id="replay-pinned" hidden><h3>Pinned run · change the arguments and run again</h3><pre id="replay-baseline"></pre></div>
+      </div>
+    </section>
+    <footer>CODEALIVE <span>Understand the structure. Explore the possibilities.</span><span>ALPHA / 0.7</span></footer>
   </main>
   <script src="explainer/parser.js"></script>
   <script src="explainer/explain-engine.js"></script>
   <script src="explainer/explain-examples.js"></script>
+  <script src="explainer/replay-engine.js"></script>
+  <script src="explainer/replay-ui.js"></script>
   <script src="explainer/explain-ui.js"></script>
 </body>
 </html>

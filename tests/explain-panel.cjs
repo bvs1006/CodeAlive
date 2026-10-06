@@ -13,7 +13,7 @@ const sandbox={module:{exports:{}},require:name=>name==='vscode'?api:require(nam
 (async()=>{
   const snapshot=ext.captureSource(editor);assert.equal(snapshot.offset,12);assert.equal(snapshot.payload.baseLine,3);assert.equal(snapshot.payload.language,'TypeScript');
   ext.activateExplain({extensionUri:{path:'/extension'},subscriptions:[]});await commands['codealive.explain']();assert.equal(sent.length,0);await handler({type:'ready'});assert.equal(sent[0].code,selected);
-  const html=panel.webview.html;assert(html.includes("connect-src 'none'"));assert(!html.includes(selected));assert.equal((html.match(/<script nonce=/g)||[]).length,4);assert(!/<script src=/.test(html));
+  const html=panel.webview.html;assert(html.includes("connect-src 'none'"));assert(!html.includes(selected));assert.equal((html.match(/<script nonce=/g)||[]).length,(fs.readFileSync('shared/explain.html','utf8').match(/<script src=/g)||[]).length);assert(!/<script src=/.test(html));
   const payload=sent[0],start=selected.indexOf('return'),end=start+'return x + 1;'.length;
   await handler({type:'revealSource',sourceToken:'invalid',start,end});assert.equal(revealed.length,0);
   await handler({type:'revealSource',sourceToken:payload.sourceToken,start:-1,end});assert.equal(revealed.length,0);
