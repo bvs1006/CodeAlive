@@ -65,7 +65,12 @@
     const paths=svg('g'),labels=svg('g');
     for(const e of edges){const a=positions.get(e.from),b=positions.get(e.to);let d,lx,ly;
       if(e.back){const side=25;d=`M ${a.x-96} ${a.y+31} H ${side} V ${b.y+31} H ${b.x-98}`;lx=side+8;ly=(a.y+b.y)/2+25;}
-      else if(b.y-a.y>116){const side=width-25;d=`M ${a.x+96} ${a.y+31} H ${side} V ${b.y+31} H ${b.x+98}`;lx=side-42;ly=a.y+49;}
+      else if(b.y-a.y>116){
+        // Leave through the gap below this layer before entering an outer lane.
+        // A horizontal line through the layer would cross unrelated branch nodes.
+        const side=a.x<width/2?25:width-25,departure=a.y+80,arrival=b.y-18;
+        d=`M ${a.x} ${a.y+62} V ${departure} H ${side} V ${arrival} H ${b.x} V ${b.y-2}`;lx=side+8;ly=departure-6;
+      }
       else{const mid=(a.y+62+b.y)/2;d=`M ${a.x} ${a.y+62} V ${mid} H ${b.x} V ${b.y-2}`;lx=(a.x+b.x)/2+7;ly=mid-6;}
       paths.append(svg('path',{d,class:'flow-edge'+(e.back?' back':''),'marker-end':'url(#arrow)'}));if(e.label)labels.append(svg('text',{x:lx,y:ly,class:'edge-label'},e.label));
     }
