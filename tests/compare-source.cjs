@@ -1,0 +1,6 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+let change=false;const doc={uri:{scheme:'file',fsPath:'/r/a.ts',path:'/r/a.ts'},languageId:'typescript',version:1,getText:()=> 'function f(){return 2}'};
+const repository={state:{HEAD:{commit:'a'.repeat(40)}},show:async(ref,path)=>{assert.equal(ref,'a'.repeat(40));assert.equal(path,'/r/a.ts');if(change)doc.version++;return 'function f(){return 1}';}};
+const api={extensions:{getExtension:()=>({activate:async()=>({getAPI:()=>({getRepository:()=>repository})})})}};
+const s={module:{exports:{}},require:n=>{assert.equal(n,'vscode');return api;}};vm.runInNewContext(fs.readFileSync('extension/compare-source.js','utf8'),s);
+(async()=>{const r=await s.module.exports.captureWorkingTree({document:doc,viewColumn:1});assert(r.before.includes('return 1'));assert(r.after.includes('return 2'));assert(r.evidence.afterLabel.includes('unsaved'));change=true;await assert.rejects(s.module.exports.captureWorkingTree({document:doc}),/editor changed/);console.log('Working-tree comparison passed: pinned HEAD, editor buffer, source bounds and stale-editor rejection.');})().catch(e=>{console.error(e);process.exitCode=1;});

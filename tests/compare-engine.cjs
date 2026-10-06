@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict'),{compare}=require('../shared/compare-engine');
+let r=compare('function f(x){return x+1}','function f(x,y=2){if(x<0)return 0;return x+y}');assert(r.ok);assert(r.changes.some(c=>c.title.includes('parameters')));assert(r.changes.some(c=>c.title.includes('conditions')));assert(r.changes.some(c=>c.title.includes('returns')));
+for(const side of ['before','after'])for(const c of r.changes)if(c[side])assert(c[side].end>c[side].start);
+assert.equal(compare('function f(){return 1;}','// comment\nfunction f() { return 1; }').changes.length,0);
+r=compare('function oldName(){return 1}','function newName(){return 1}');assert(r.changes.some(c=>c.title==='oldName removed'));assert(r.changes.some(c=>c.title==='newName added'));
+r=compare('const x=1;','const x=2;');assert.equal(r.changes.length,1);assert.equal(r.changes[0].title,'Whole-file structure changed');
+r=compare('function outer(){function same(){return 1}}function other(){function same(){return 1}}','function outer(){function same(){return 2}}function other(){function same(){return 1}}');assert(r.warnings.some(w=>w.includes('Ambiguous')));
+r=compare('const f=(x:number):number=>x','const f=(x:string):string=>x',{language:'TypeScript'});assert(r.changes.some(c=>c.title.includes('parameters')));assert(r.changes.some(c=>c.title.includes('signature')));
+assert.equal(compare('','function f(){}').ok,true);assert.equal(compare('function {','').ok,false);assert.match(compare('','function {').error,/After/);assert.equal(compare(' '.repeat(50001),'').ok,false);
+assert.equal(compare('globalThis.changed=true','globalThis.changed=false').ok,true);assert.equal(globalThis.changed,undefined);
+console.log('Change explanations passed: structural deltas, ranges, format-only changes, types, ambiguity, additions/removals, parse errors and inert source.');

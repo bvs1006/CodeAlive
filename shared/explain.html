@@ -47,13 +47,23 @@
         </div><div id="replay-pinned" hidden><h3>Pinned run · change the arguments and run again</h3><pre id="replay-baseline"></pre></div>
       </div>
     </section>
-    <footer>CODEALIVE <span>Understand the structure. Explore the possibilities.</span><span>ALPHA / 0.7</span></footer>
+    <section class="panel compare-panel" id="compare-panel" aria-labelledby="compare-heading">
+      <div class="panel-heading"><h2 id="compare-heading"><span class="section-number">05</span> Explain a change</h2><span class="tag">BEFORE / AFTER</span></div>
+      <div class="replay-body"><p class="flow-note">Compare JS/TS structure without running either version. Source observations and CI results are separate evidence; neither proves correctness.</p>
+        <div class="replay-actions"><label for="compare-language">Language</label><select id="compare-language"><option>JavaScript</option><option>TypeScript</option></select><button id="compare-current">Use current source as After</button><button id="compare-example">Load change example</button></div>
+        <div class="replay-columns"><div><label for="compare-before">Before</label><textarea id="compare-before" spellcheck="false" maxlength="50000" rows="8"></textarea></div><div><label for="compare-after">After</label><textarea id="compare-after" spellcheck="false" maxlength="50000" rows="8"></textarea></div></div>
+        <button id="compare-run">Explain changes</button><p id="compare-status" role="status" aria-live="polite">Paste two versions or load the change example.</p><div id="compare-evidence"></div><div id="compare-results"></div><div id="compare-source"></div>
+      </div>
+    </section>
+    <footer>CODEALIVE <span>Understand the structure. Explore the possibilities.</span><span>ALPHA / 0.8</span></footer>
   </main>
   <script src="explainer/parser.js"></script>
   <script src="explainer/explain-engine.js"></script>
   <script src="explainer/explain-examples.js"></script>
   <script src="explainer/replay-engine.js"></script>
   <script src="explainer/replay-ui.js"></script>
+  <script src="explainer/compare-engine.js"></script>
+  <script src="explainer/compare-ui.js"></script>
   <script src="explainer/explain-ui.js"></script>
 </body>
 </html>
