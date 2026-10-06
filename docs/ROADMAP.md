@@ -12,7 +12,7 @@ Broad adoption means approachable onboarding, accessible interaction and dependa
 
 | Area | Evidence today | Remaining work |
 |---|---|---|
-| Music and video studio | Available in the 0.5 alpha on `main`; music from shared text patterns, local recording, captions and presets | Wider device/media verification; explanation and music do not share a synchronized timeline |
+| Music and video studio | Available in the 0.5 alpha on `main`; music from shared text patterns, local recording, captions and presets | 0.9 preview adds an explanation timeline with imported narration and optional music; wider device/media verification remains |
 | Algorithm demonstrations | Bundled Bubble Sort and Quick Sort with stepping, comparison and real operation traces | 0.7 preview offers a restricted interpreter; general application execution remains unsupported |
 | GitHub PR companion | Read-only changed-file groups and existing head/test-merge CI evidence | 0.8 preview adds structural change observations and revision-bound evidence; no test generation, required-check verification or automated fixes |
 | Explain selected code | JavaScript/TypeScript implementation in [PR #1](https://github.com/bvs1006/CodeAlive/pull/1); local parser, ten examples, two explanation styles, exact source links and static flow diagrams | Broader language/runtime semantics remain outside this milestone; Windows/macOS desktop and physical media-device checks remain |
@@ -22,7 +22,7 @@ The [CI workflow](https://github.com/bvs1006/CodeAlive/actions/workflows/ci.yml)
 
 ## First: finish the 0.6 release
 
-The first feature milestone is implemented and all five CI jobs passed on PR #1. Merge and public release await approval. PR #2 replay passed all five CI jobs; the next stacked branch is `codex/change-explanations` for 0.8; each milestone must pass its checks before the next begins. Alpha releases publish only from `main` after all checks pass.
+The first feature milestone is implemented and all five CI jobs passed on PR #1. Merge and public release await approval. PR #2 replay and PR #3 change explanations passed all five CI jobs; the final stacked milestone branch is `codex/explanation-video` for 0.9; each milestone must pass its checks before the next begins. Alpha releases publish only from `main` after all checks pass.
 
 - [x] Local JavaScript/TypeScript parsing without executing or uploading source.
 - [x] Scope selection, declared inputs, return expressions, visible calls/property writes, and plain-language/developer steps.
@@ -44,12 +44,12 @@ Completion means a user can install the package, explain a complete supported fu
 | Order | Outcome | Proposed scope | Completion evidence |
 |---|---|---|---|
 | 2 — Execution replay | **Implemented in 0.7; all five CI jobs passed on PR #2** | Explicit JSON inputs; restricted synchronous interpreter; immutable variable snapshots, branches, writes, return/errors; step/play/slider and pinned input comparison | Differential tests against trusted JavaScript fixtures, early returns/loops/errors, isolation and resource-limit tests; browser playback checks; [supported execution model](EXECUTION_REPLAY.md) |
-| 3 — Before/after explanations | **Implemented in 0.8 preview; CI verification required before advancing** | Pasted versions, HEAD/editor buffers and exact PR merge-base/head files; source-linked structural observations, existing checks and test-file links | Structural/range/ambiguity tests; stale source and moving-head guards; mocked fork/rename/blob tests plus browser and installed-VSIX checks; [guide](CHANGE_EXPLANATIONS.md) |
-| 4 — Explain-to-video | Help educators share a coherent explanation | Choose steps or a trace, edit a script, add narration and captions, and synchronize optional background music; preview and export a readable clip | Narration/captions/source highlights stay aligned; export works on declared target platforms; source hiding is respected; users can edit wording and review the result before sharing |
+| 3 — Before/after explanations | **Implemented in 0.8; all five CI jobs passed on PR #3** | Pasted versions, HEAD/editor buffers and exact PR merge-base/head files; source-linked structural observations, existing checks and test-file links | Structural/range/ambiguity tests; stale source and moving-head guards; mocked fork/rename/blob tests plus browser and installed-VSIX checks; [guide](CHANGE_EXPLANATIONS.md) |
+| 4 — Explain-to-video | **Implemented in 0.9 preview; final CI verification required** | Select explanation/replay steps, edit captions and scene durations, import local narration, fit timing, preview and record with optional synthesized music and source hiding | Timeline/range/privacy tests, real Chromium browser/webview exports with encoded voice/music verification, duration/dimensions and Save validation; [guide](EXPLANATION_VIDEO.md) |
 
 For execution replay, define the supported execution model and its resource/access limits before accepting arbitrary user code. Execution must be an explicit action. Static explanation continues to work independently and must never silently run a selection.
 
-The existing sorting traces are a useful starting point for replay controls. The current studio provides recording and music infrastructure for explain-to-video. The restricted interpreter now supplies replay; synchronized narration remains the next video milestone.
+The existing sorting traces are a useful starting point for replay controls. The current studio provides recording and music infrastructure for explain-to-video. The restricted interpreter now supplies replay; the explanation timeline now mixes imported narration with synchronized optional music. Automatic speech generation, advanced editing and wider device support remain later candidates.
 
 ## Requirements for broader adoption
 

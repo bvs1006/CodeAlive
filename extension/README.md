@@ -1,10 +1,10 @@
-# CodeAlive 0.8.0
+# CodeAlive 0.9.0
 
 Local JavaScript and TypeScript explanations with source-linked steps and flow diagrams, plus a code music/video studio and read-only GitHub PR companion.
 
 ## Install and explain
 
-Install `codealive-0.8.0.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
+Install `codealive-0.9.0.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
 
 Select a complete JavaScript/TypeScript function and run **CodeAlive: Explain Selected Code**. With no selection, the active file is loaded. Choose a function scope, switch between Plain language and Developer, and select a step or diagram node to reveal its source. **Load editor** refreshes changed files. **CodeAlive: Open Explainer** opens ten examples.
 
@@ -21,6 +21,12 @@ Replay explicitly interprets a limited synchronous JS/TS subset, without eval, h
 Use **CodeAlive: Explain Working Tree Changes** for committed HEAD versus the active editor buffer. Or paste Before/After in the explainer. Source-linked observations describe changed parameters, conditions, returns, calls and writes without running code.
 
 The PR companion's **Explain changes** button loads a JS/TS file at the exact merge-base/head revisions and attaches existing checks and changed test-file links. Source edits detach evidence; moving PR revisions require refresh. No correctness or coverage verdict is produced.
+
+## Narrated explanation videos
+
+After explaining a function, use **Explain it in a video**. Select explanation or captured replay steps, build a script, edit captions/timing, and import a local narration recording. Fit timing proportionally, preview and adjust boundaries to match the spoken words. Add optional quiet music, then record and save a vertical 1080 × 1920 video. Keep the view visible during recording.
+
+Up to 20 scenes, 120 seconds and a 50 MB output. Narration stays local; automatic speech generation is not included. Source hiding conceals the code panel only: review captions/audio separately. Encoding depends on the embedded browser. No automatic uploads.
 
 ## Music and video
 

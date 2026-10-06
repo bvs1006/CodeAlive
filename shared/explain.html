@@ -55,7 +55,23 @@
         <button id="compare-run">Explain changes</button><p id="compare-status" role="status" aria-live="polite">Paste two versions or load the change example.</p><div id="compare-evidence"></div><div id="compare-results"></div><div id="compare-source"></div>
       </div>
     </section>
-    <footer>CODEALIVE <span>Understand the structure. Explore the possibilities.</span><span>ALPHA / 0.8</span></footer>
+    <section class="panel movie-panel" id="movie-panel" aria-labelledby="movie-heading">
+      <div class="panel-heading"><h2 id="movie-heading"><span class="section-number">06</span> Explain it in a video</h2><span class="tag">SCRIPT / VOICE / SOURCE</span></div>
+      <div class="replay-body"><p class="flow-note">Build a short script from explanation or replay steps. Edit the words and timing, add a local narration recording, preview, then record. Audio stays on this device. Automatic speech generation is not included.</p>
+        <p id="movie-status" role="status" aria-live="polite">Explain a function first, then build a script.</p>
+        <div id="movie-work" hidden>
+          <div id="movie-editor"><div class="replay-actions"><label for="movie-mode">Step source</label><select id="movie-mode"><option value="explanation">Static explanation</option><option value="replay">Captured replay</option></select><button id="movie-refresh-steps">Refresh step range</button></div>
+            <div class="replay-actions"><label for="movie-first">First step</label><input id="movie-first" type="number" min="1" max="300" value="1"><label for="movie-last">Last step</label><input id="movie-last" type="number" min="1" max="300" value="1"><button id="movie-build">Build editable script</button></div><p id="movie-range-note" class="hint"></p>
+            <label for="movie-title">Video title</label><input id="movie-title" type="text" maxlength="80" value="A closer look at the code">
+            <details id="movie-script" open><summary>Scene captions and timing · edit before recording</summary><div id="movie-scenes"></div></details><p id="movie-length" class="hint"></p>
+            <label for="movie-narration">Narration audio · WAV/MP3, up to 120 seconds and 15 MB</label><input id="movie-narration" type="file" accept="audio/*"><p id="movie-audio-status" class="hint">No narration loaded.</p><button id="movie-fit">Fit scene timing to narration</button>
+            <div class="replay-actions"><label><input id="movie-music" type="checkbox"> Quiet background music</label><label><input id="movie-hide" type="checkbox"> Hide source panel in video</label></div><p class="hint">Source hiding affects the code panel only. Review captions and narration for any code or private details you want to remove.</p>
+          </div>
+          <div class="movie-stage"><canvas id="movie-canvas" width="1080" height="1920" aria-label="Explanation video frame"></canvas><div><p>Vertical 1080 × 1920 · up to 20 scenes / 120 seconds. Recording runs in real time; keep this view visible.</p><p id="movie-position" role="status">Ready to preview</p><div class="replay-actions"><button id="movie-play" disabled>Preview timeline</button><button id="movie-record" disabled>Record explanation video</button><button id="movie-stop" disabled>Stop</button></div><div id="movie-download" hidden><video id="movie-preview" controls playsinline aria-label="Recorded explanation preview"></video><button id="movie-save" disabled>Save video</button></div></div></div>
+        </div>
+      </div>
+    </section>
+    <footer>CODEALIVE <span>Understand the structure. Explore the possibilities.</span><span>ALPHA / 0.9</span></footer>
   </main>
   <script src="explainer/parser.js"></script>
   <script src="explainer/explain-engine.js"></script>
@@ -64,6 +80,8 @@
   <script src="explainer/replay-ui.js"></script>
   <script src="explainer/compare-engine.js"></script>
   <script src="explainer/compare-ui.js"></script>
+  <script src="explainer/movie-engine.js"></script>
+  <script src="explainer/movie-ui.js"></script>
   <script src="explainer/explain-ui.js"></script>
 </body>
 </html>

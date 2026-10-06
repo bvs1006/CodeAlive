@@ -9,7 +9,7 @@
 - Videos can show code unless Hide source is enabled.
 - Sharing copies a sample/style link, not a saved performance or editor source. The currently hosted browser demo is private.
 - Follow editor changes source, not automatic music playback.
-- No narration, thumbnails, batch exports or automated YouTube uploads.
+- Narrated explanation videos accept imported audio in the 0.9 preview. No automatic speech generation, thumbnails, batch exports or automated YouTube uploads.
 - The standalone web alpha does not yet include the extension's newer templates/presets.
 
 User testing confirmed sample playback and selection loading in a real installation. Other OS/browser combinations and full recording workflows still need testing.
@@ -37,3 +37,9 @@ The 0.7 preview interprets a limited synchronous JavaScript/TypeScript subset on
 Structural comparisons support JavaScript/TypeScript and at most 50,000 characters and 100 functions per version, with 200 observations. They do not infer behavioral equivalence, execute/type-check code or establish correctness. Unique function names are paired; renames appear as removal/addition, and ambiguous names require inspecting the whole-file source. Formatting/comments are ignored for structural comparison.
 
 Working-tree comparison requires a local tracked file with a readable HEAD version; it includes unsaved editor changes. PR comparison supports open, unmerged PRs and reads regular UTF-8 source blobs at pinned revisions, with up to 20 path components; symlinks, submodules, unavailable forks and incomplete trees are rejected. CI evidence remains a timestamped snapshot; test-file links are a filename heuristic, not coverage. Signed-in private PR behavior still needs a manual account-based smoke test.
+
+## Explanation videos
+
+Import a local narration recording; text-to-speech and microphone recording are not included. Timing fit is proportional, not automatic word alignment: preview and edit scene boundaries. Static steps may include unreachable source; replay scenes describe only the captured interpreter input. Scripts are limited to 20 scenes, 0.5–15 seconds each and 120 seconds total. Narration is mono/stereo, at most 120 seconds and 15 MB. Output stops at 50 MB.
+
+Source hiding affects the rendered source panel only; captions and narration may still contain code. Source windows crop long lines and show up to 13 lines around each highlight. Captions are capped at 240 characters; preview wrapping on the actual frame. Recording uses the local browser's supported MP4/WebM format and runs in real time. Hiding the view discards an active recording; Stop creates a labeled partial clip. Devices, codecs and system performance can affect results. Linux Chromium and the VS Code webview policy are automated targets; physical Windows/macOS devices remain manual checks.

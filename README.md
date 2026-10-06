@@ -4,9 +4,9 @@ CodeAlive is a developer tool for **source-linked code explanations**, **algorit
 
 Start with the workflow you need. The explainer describes JavaScript/TypeScript structure locally and offers explicit replay of a limited synchronous subset; the studio turns text patterns into music; the PR companion reads GitHub evidence.
 
-> **Status — 6 October 2026:** **0.8.0 alpha preview** on `codex/change-explanations` adds before/after change explanations to the tested 0.6 explainer and 0.7 replay. `main` still contains the 0.5 runtime. PRs #1 and #2 have passed all five automated jobs; merging and public releases await approval. Each feature branch is pushed and tested separately. Windows/macOS desktop and physical audio-device checks remain manual work.
+> **Status — 6 October 2026:** **0.9.0 alpha preview** on `codex/explanation-video` adds explanation videos with imported narration to the tested 0.6 explainer, 0.7 replay and 0.8 change explanations. `main` still contains the 0.5 runtime. PRs #1–#3 have passed all five automated jobs; merging and public releases await approval. Each feature branch is pushed and tested separately. Windows/macOS desktop and physical audio-device checks remain manual work.
 
-[Download 0.8 preview](https://github.com/bvs1006/CodeAlive/raw/refs/heads/codex/change-explanations/downloads/codealive-explainer-0.8.0.zip) · [Download 0.5 from main](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-pr-companion-0.5.0.zip) · [Roadmap](docs/ROADMAP.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml)
+[Download 0.9 preview](https://github.com/bvs1006/CodeAlive/raw/refs/heads/codex/explanation-video/downloads/codealive-explainer-0.9.0.zip) · [Download 0.5 from main](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-pr-companion-0.5.0.zip) · [Roadmap](docs/ROADMAP.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml)
 
 ## What can I do today?
 
@@ -17,17 +17,18 @@ Start with the workflow you need. The explainer describes JavaScript/TypeScript 
 | Explain a change | Source-linked before/after observations for pasted versions, HEAD versus editor, or a PR file with revision-bound CI evidence | **0.8 preview:** JavaScript/TypeScript |
 | Hear code structure | Three music styles, code-linked visuals and synthesized audio from text patterns | **0.5+:** VS Code and browser studio |
 | Explore sorting | Built-in Bubble Sort and Quick Sort, pause/step/resume, operation counts and same-input comparison | **0.5+:** VS Code |
+| Narrate an explanation | Editable explanation/replay scenes, local narration import, timing controls, source highlights, optional music and video export | **0.9 preview:** browser and VS Code; no automatic speech generation |
 | Create a developer video | Vertical video with audio, captions, branding, source hiding and local presets | **0.5+:** VS Code; browser studio has basic recording |
 | Inspect a GitHub PR | Changed-file groups, existing head/test-merge checks and available failure annotations | **0.5+:** VS Code; read-only |
 
-**Current boundaries:** static explanation and music never execute selected source. **Replay** runs only after an explicit action, using a restricted interpreter with no host, file, network or module access. Async code, callbacks and surrounding application state are unsupported. The explainer and music studio connect through **Explain code**; synchronized narrated explanations remain planned. The PR companion does not validate semantic correctness, generate fixes or decide whether to merge.
+**Current boundaries:** static explanation and music never execute selected source. **Replay** runs only after an explicit action, using a restricted interpreter with no host, file, network or module access. Async code, callbacks and surrounding application state are unsupported. The explainer and music studio connect through **Explain code**. Explanation videos use an editable scene timeline and optional imported narration; you align spoken words by adjusting scene durations. The PR companion does not validate semantic correctness, generate fixes or decide whether to merge.
 
 ## Try the explainer in two minutes
 
 ### VS Code
 
-1. Download and extract the **0.8 preview ZIP** above.
-2. In desktop VS Code, open **Extensions → … → Install from VSIX…**, then choose `codealive-0.8.0.vsix`.
+1. Download and extract the **0.9 preview ZIP** above.
+2. In desktop VS Code, open **Extensions → … → Install from VSIX…**, then choose `codealive-0.9.0.vsix`.
 3. After upgrading, close existing CodeAlive tabs and run **Developer: Reload Window**.
 4. Open a JavaScript or TypeScript file, select a complete function, and run **CodeAlive: Explain Selected Code** from the Command Palette. An empty selection loads the active file.
 5. Choose the function scope and explanation style. Select a step or diagram node to highlight the code and reveal it in the original editor.
@@ -75,6 +76,16 @@ In VS Code, run **CodeAlive: Explain Working Tree Changes** to compare the activ
 
 For an open, unmerged PR in **Review GitHub PR**, choose **Explain changes** on a JS/TS file. CodeAlive reads exact source blobs at the PR merge base and head, then attaches the report's existing checks and changed test-file links. Moving revisions stop loading and require a refresh. Test-file association is based on filenames, and CI evidence is a timestamped snapshot, not proof of coverage or correctness. Editing either pasted version detaches its evidence and editor links. [Change explanation guide](docs/CHANGE_EXPLANATIONS.md)
 
+## Turn an explanation into a narrated video
+
+1. Explain a function, then open **Explain it in a video**. Choose static explanation steps or run Replay and select its captured steps.
+2. Select a range of up to 20 steps, then **Build editable script**. Include/exclude scenes and edit each caption and duration.
+3. Add your recorded narration as a local audio file. **Fit scene timing to narration** adjusts durations proportionally; preview and refine boundaries to match your speech. Automatic voice generation is not included.
+4. Optionally add quiet background music or hide the source panel. Hiding source does not remove code mentioned in captions or audio.
+5. **Preview timeline**, then **Record explanation video**. Keep the view visible. Preview the encoded result before **Save video**.
+
+Exports are vertical 1080 × 1920, up to 120 seconds, with local audio mixing and no automatic upload. The browser chooses supported MP4/WebM encoding. Editing the script clears the previous export; changing source/scope clears its script and narration. [Video guide and limits](docs/EXPLANATION_VIDEO.md)
+
 ## Music, sorting and video
 
 Run **CodeAlive: Open Studio**, then **Load editor file** or **CodeAlive: Load Selection**. Confirm the loaded filename, choose Ambient Cloud, Night Drive or 8-bit Arcade, and press **Make it alive**. Soundtracks use shared text-pattern rules across the language choices; Python, Terraform and YAML samples are music inputs, not supported explainer languages.
@@ -104,10 +115,10 @@ The companion does not check out code, run tests, rerun CI, post comments, modif
 
 ## Developer quick start
 
-For these preview features, build from `codex/change-explanations`. `main` currently has the 0.5 runtime. Prerequisites: Git, **Node.js 22+** with npm, and **Python 3**. Use `python` instead of `python3` where that is your platform's Python 3 command.
+For these preview features, build from `codex/explanation-video`. `main` currently has the 0.5 runtime. Prerequisites: Git, **Node.js 22+** with npm, and **Python 3**. Use `python` instead of `python3` where that is your platform's Python 3 command.
 
 ```sh
-git clone --branch codex/change-explanations https://github.com/bvs1006/CodeAlive.git
+git clone --branch codex/explanation-video https://github.com/bvs1006/CodeAlive.git
 cd CodeAlive
 npm ci --ignore-scripts
 npm run build
@@ -122,7 +133,7 @@ Open [the explainer](http://localhost:8080/explain.html) or [the music studio](h
 | `npm test` | Build assets, run the parser/editor tests and eight existing suites, and check generated-asset equality |
 | `npx playwright install chromium` then `npm run test:browser` | Run real Chromium integration checks and create screenshots in `test-results/` |
 | `npm run test:vscode` | Install/upgrade the built VSIX and exercise real VS Code; on headless Linux run under `xvfb-run -a` |
-| `npm run package` | Build `codealive-0.8.0.vsix` in the repository root; needs `python3` on PATH |
+| `npm run package` | Build `codealive-0.9.0.vsix` in the repository root; needs `python3` on PATH |
 | `python3 scripts/package-release.py` | Build the VSIX plus offline browser ZIP in `downloads/` |
 
 On Linux, Playwright may also need system dependencies: use `npx playwright install --with-deps chromium`. On a system without a `python3` command, use `npm run build` followed by `python extension/package.py` to package with Python 3.
@@ -134,6 +145,7 @@ To test in desktop VS Code, install the built VSIX. There is no committed F5 lau
 | Path | Responsibility |
 |---|---|
 | `shared/explain-engine.js` | Local AST analysis, source ranges, explanations and bounded static flow model |
+| `shared/movie-engine.js`, `shared/movie-ui.js`, `extension/video-save.js` | Editable scene timing, canvas rendering, narration/music mix, recording and validated Save dialog |
 | `shared/compare-engine.js`, `shared/compare-ui.js` | Bounded structural comparison, before/after source links and evidence display |
 | `extension/compare-source.js`, `extension/pr-changes.js` | Read-only HEAD/editor capture and exact PR revision blob reads |
 | `shared/replay-engine.js`, `shared/replay-ui.js` | Restricted interpreter, immutable trace snapshots, explicit run and playback controls |
@@ -154,7 +166,7 @@ The explainer's analysis stays in the browser/webview. Source snapshots, bounded
 
 The [CI workflow](https://github.com/bvs1006/CodeAlive/actions/workflows/ci.yml) runs unit/extension suites on Linux, Windows and macOS, real Chromium/media checks, and an installed-VSIX check in real VS Code on Linux. Browser checks cover all ten examples, source links, keyboard activation, CSP, inert source text, mobile width and code preservation when changing languages. Desktop and mobile browser screenshots were inspected. The Linux editor smoke test passed on VS Code 1.140.0; the workflow records the version on each run.
 
-Unit-level editor and GitHub API tests use mocks; the additional installed-VSIX suite uses real VS Code. Browser media tests verify a playable recording with audio and video tracks. Physical audio-device behavior and actual Windows/macOS editor installations still need manual checks. [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Roadmap](docs/ROADMAP.md)
+Unit-level editor and GitHub API tests use mocks; the additional installed-VSIX suite uses real VS Code. Browser media tests verify playable recordings with audio/video tracks. Explanation-video checks also inspect encoded narration/music signals, dimensions and duration on browser and webview pages. Physical audio-device behavior and actual Windows/macOS editor installations still need manual checks. [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Roadmap](docs/ROADMAP.md)
 
 ## Roadmap at a glance
 
@@ -162,14 +174,14 @@ Unit-level editor and GitHub API tests use mocks; the additional installed-VSIX 
 |---|---|---|
 | 1 | Explain selected code with source links and static diagrams | **0.6:** implemented and all five CI jobs passed; PR #1 awaiting merge approval |
 | 2 | Replay execution with inputs, values and step controls | **0.7:** implemented and all five CI jobs passed; PR #2 awaiting merge approval |
-| 3 | Explain before/after changes and connect them to test/CI evidence | **0.8 preview:** implemented; see branch CI for verification |
-| 4 | Export an explanation with narration, captions and synchronized optional music | Planned; current recordings are studio performances |
+| 3 | Explain before/after changes and connect them to test/CI evidence | **0.8:** implemented and all five CI jobs passed; PR #3 awaiting merge approval |
+| 4 | Export an explanation with narration, captions and synchronized optional music | **0.9 preview:** implemented with imported narration; see branch CI for verification |
 
 Broad adoption also needs a license decision, straightforward distribution, accessibility testing, more explanation languages and user feedback. These are tracked with acceptance criteria in [the full roadmap](docs/ROADMAP.md); there are no committed delivery dates.
 
 ## Privacy, support and licensing
 
-Static explanation requires no network access and executes no source. Explicit replay interprets only the documented subset. Both keep inputs and traces in memory and do not upload source. Studio presets exclude code. Recordings can display source unless **Hide source** is enabled. Sharing a soundtrack copies a sample/style link, not your pasted source. The hosted music demo remains private, so recipients may not be able to open that link. The PR companion uses GitHub's API and keeps authentication tokens out of the webview.
+Static explanation requires no network access and executes no source. Explicit replay interprets only the documented subset. Both keep inputs and traces in memory and do not upload source. Narration audio stays local; saving a video explicitly writes the rendered captions, selected source visuals and audio you chose to include. Studio presets exclude code. Recordings can display source unless **Hide source** is enabled. Sharing a soundtrack copies a sample/style link, not your pasted source. The hosted music demo remains private, so recipients may not be able to open that link. The PR companion uses GitHub's API and keeps authentication tokens out of the webview.
 
 [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml) · [Report a bug](https://github.com/bvs1006/CodeAlive/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/bvs1006/CodeAlive/issues/new?template=feature_request.yml) · [Troubleshooting](SUPPORT.md)
 

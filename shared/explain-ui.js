@@ -2,12 +2,12 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const host = typeof acquireVsCodeApi === 'function' ? acquireVsCodeApi() : null;
-  let model = null, modelSource = '', currentSource = {baseLine:1,baseColumn:0}, selectedRange = null, replayView, compareView;
+  let model = null, modelSource = '', currentSource = {baseLine:1,baseColumn:0}, selectedRange = null, replayView, compareView, movieView;
   const el = (tag,text,className) => {const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;};
   const svg = (tag,attrs,text) => {const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs||{}))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e;};
   const status = (text,error=false) => {$('status').textContent=text;$('status').classList.toggle('error',error);};
   function stats() {$('source-stats').textContent=`${$('source').value.split('\n').length} lines · ${$('source').value.length.toLocaleString()} characters`;}
-  function invalidate() {replayView?.clear();model=null;selectedRange=null;currentSource={baseLine:1,baseColumn:0};$('result').hidden=true;$('empty-state').hidden=false;$('flow-panel').hidden=true;$('source-name').textContent='Playground';$('source-view').hidden=true;$('source').hidden=false;$('edit-code').hidden=true;stats();}
+  function invalidate() {movieView?.clear();replayView?.clear();model=null;selectedRange=null;currentSource={baseLine:1,baseColumn:0};$('result').hidden=true;$('empty-state').hidden=false;$('flow-panel').hidden=true;$('source-name').textContent='Playground';$('source-view').hidden=true;$('source').hidden=false;$('edit-code').hidden=true;stats();}
   function setSource(source) {
     invalidate();$('source').value=source.code;currentSource={baseLine:1,baseColumn:0,...source};
     if (![...$('language').options].some(o=>o.value===source.language))$('language').append(el('option',source.language));
@@ -86,10 +86,10 @@
   }
   function explain(scopeId) {
     const result=CodeAliveExplain.analyze($('source').value,{language:$('language').value,scopeId});
-    if(!result.ok){model=null;replayView?.clear();$('result').hidden=true;$('flow-panel').hidden=true;$('empty-state').hidden=false;status(result.error,true);return;}
+    if(!result.ok){model=null;movieView?.clear();replayView?.clear();$('result').hidden=true;$('flow-panel').hidden=true;$('empty-state').hidden=false;status(result.error,true);return;}
     model=result;modelSource=$('source').value;selectedRange=null;
     $('scope').replaceChildren(...model.scopes.map(s=>{const option=el('option',s.name);option.value=s.id;return option;}));$('scope').value=model.scopeId;
-    $('result').hidden=false;$('empty-state').hidden=true;renderFacts();renderSteps();renderGraph();sourceView();replayView?.setContext();status(`${model.steps.length} source-linked steps. Select a step or diagram node to inspect its code.`);
+    $('result').hidden=false;$('empty-state').hidden=true;renderFacts();renderSteps();renderGraph();sourceView();replayView?.setContext();movieView?.setContext();status(`${model.steps.length} source-linked steps. Select a step or diagram node to inspect its code.`);
   }
   for(const example of CodeAliveExamples){const option=el('option',example.title);option.value=example.id;$('example-select').append(option);}
   const chosen=()=>CodeAliveExamples.find(e=>e.id===$('example-select').value);
@@ -105,5 +105,6 @@
   window.addEventListener('message',event=>{const message=event.data;if(!host||!message)return;if(message.type==='explainSource'&&typeof message.code==='string'&&message.code.length<=50000&&typeof message.language==='string'){setSource(message);explain();host.postMessage({type:'sourceReceived',sourceToken:message.sourceToken});}else if(message.type==='compareSource'&&typeof message.before==='string'&&typeof message.after==='string'&&Math.max(message.before.length,message.after.length)<=50000){compareView.setPayload(message);host.postMessage({type:'sourceReceived',sourceToken:message.sourceToken});}else if(message.type==='notice')status(String(message.text));});
   replayView=CodeAliveReplayUI.mount({getContext:()=>model&&({code:modelSource,language:model.language,scopeId:model.scopeId,name:model.summary.name}),onRange:activateRange});
   compareView=CodeAliveCompareUI.mount({host,getSource:()=>({code:$('source').value,language:$('language').value})});
+  movieView=CodeAliveMovieUI.mount({host,getContext:()=>model&&({code:modelSource,language:model.language,scopeId:model.scopeId,model}),getTrace:()=>replayView.getTrace(),onRange:activateRange});
   setSource(CodeAliveExamples[0]);$('example-description').textContent=chosen().description;host?.postMessage({type:'ready'});
 })();

@@ -22,7 +22,8 @@ Browser: open browser/explain.html. No npm installation is needed.
 Static explanation never runs or uploads source. Optional Replay explicitly runs a bounded
 interpreter subset, without host, network, file or module access.
 Compare Before/After in the explainer, or run CodeAlive: Explain Working Tree Changes.
-See EXPLAIN_CODE.md, EXECUTION_REPLAY.md and CHANGE_EXPLANATIONS.md for supported constructs and limitations.
+Explain it in a video: edit scenes, import local narration, preview, record and save.
+See EXPLAIN_CODE.md, EXECUTION_REPLAY.md, CHANGE_EXPLANATIONS.md and EXPLANATION_VIDEO.md for supported constructs and limitations.
 
 Music, sorting, recording and the read-only PR companion remain available in VS Code.
 '''
@@ -32,6 +33,7 @@ with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as archive:
     archive.write(root / 'docs/EXPLAIN_CODE.md', 'EXPLAIN_CODE.md')
     archive.write(root / 'docs/EXECUTION_REPLAY.md', 'EXECUTION_REPLAY.md')
     archive.write(root / 'docs/CHANGE_EXPLANATIONS.md', 'CHANGE_EXPLANATIONS.md')
+    archive.write(root / 'docs/EXPLANATION_VIDEO.md', 'EXPLANATION_VIDEO.md')
     for file in sorted((root / 'web').rglob('*')):
         if file.is_file():
             archive.write(file, 'browser/' + file.relative_to(root / 'web').as_posix())
