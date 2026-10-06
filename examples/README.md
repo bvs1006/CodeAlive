@@ -25,4 +25,4 @@ These files are short sonification samples. Some reference placeholder functions
 
 ## Recording
 
-Choose 15 or 20 seconds, set your title and captions, and record. Preview outside VS Code after saving. Hide source if desired. MP4 conversion from WebM requires local FFmpeg. No narration or YouTube uploading is included.
+Choose 15 or 20 seconds, set your title and captions, and record. Preview outside VS Code after saving. Hide source if desired. MP4 conversion from WebM requires local FFmpeg. Studio recordings do not add narration. For imported narration with code explanations, use [the 0.9 explanation-video workflow](../docs/EXPLANATION_VIDEO.md). YouTube uploading is not included.

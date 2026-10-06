@@ -4,7 +4,7 @@ CodeAlive is a developer tool for **source-linked code explanations**, **algorit
 
 Start with the workflow you need. The explainer describes JavaScript/TypeScript structure locally and offers explicit replay of a limited synchronous subset; the studio turns text patterns into music; the PR companion reads GitHub evidence.
 
-> **Status — 6 October 2026:** **0.9.0 alpha preview** on `codex/explanation-video` adds explanation videos with imported narration to the tested 0.6 explainer, 0.7 replay and 0.8 change explanations. `main` still contains the 0.5 runtime. PRs #1–#3 have passed all five automated jobs; merging and public releases await approval. Each feature branch is pushed and tested separately. Windows/macOS desktop and physical audio-device checks remain manual work.
+> **Status — 6 October 2026:** **0.9.0 alpha preview** on `codex/explanation-video` adds explanation videos with imported narration to the tested 0.6 explainer, 0.7 replay and 0.8 change explanations. `main` still contains the 0.5 runtime. PRs #1–#4 have passed all five automated jobs; merging and public releases await approval. Each feature branch is pushed and tested separately. Windows/macOS desktop and physical audio-device checks remain manual work.
 
 [Download 0.9 preview](https://github.com/bvs1006/CodeAlive/raw/refs/heads/codex/explanation-video/downloads/codealive-explainer-0.9.0.zip) · [Download 0.5 from main](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-pr-companion-0.5.0.zip) · [Roadmap](docs/ROADMAP.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml)
 
@@ -175,7 +175,9 @@ Unit-level editor and GitHub API tests use mocks; the additional installed-VSIX 
 | 1 | Explain selected code with source links and static diagrams | **0.6:** implemented and all five CI jobs passed; PR #1 awaiting merge approval |
 | 2 | Replay execution with inputs, values and step controls | **0.7:** implemented and all five CI jobs passed; PR #2 awaiting merge approval |
 | 3 | Explain before/after changes and connect them to test/CI evidence | **0.8:** implemented and all five CI jobs passed; PR #3 awaiting merge approval |
-| 4 | Export an explanation with narration, captions and synchronized optional music | **0.9 preview:** implemented with imported narration; see branch CI for verification |
+| 4 | Export an explanation with narration, captions and synchronized optional music | **0.9:** implemented with imported narration and all five CI jobs passed; PR #4 awaiting merge approval |
+
+Completion evidence: [0.6 / PR #1](https://github.com/bvs1006/CodeAlive/pull/1), [0.7 / PR #2](https://github.com/bvs1006/CodeAlive/pull/2), [0.8 / PR #3](https://github.com/bvs1006/CodeAlive/pull/3), [0.9 / PR #4](https://github.com/bvs1006/CodeAlive/pull/4). [Final runtime checks](https://github.com/bvs1006/CodeAlive/actions/runs/37497253797) passed for commit `4e04cac7eede4c13d22e4092e1d989140c4f7445`.
 
 Broad adoption also needs a license decision, straightforward distribution, accessibility testing, more explanation languages and user feedback. These are tracked with acceptance criteria in [the full roadmap](docs/ROADMAP.md); there are no committed delivery dates.
 

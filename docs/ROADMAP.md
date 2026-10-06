@@ -45,11 +45,24 @@ Completion means a user can install the package, explain a complete supported fu
 |---|---|---|---|
 | 2 — Execution replay | **Implemented in 0.7; all five CI jobs passed on PR #2** | Explicit JSON inputs; restricted synchronous interpreter; immutable variable snapshots, branches, writes, return/errors; step/play/slider and pinned input comparison | Differential tests against trusted JavaScript fixtures, early returns/loops/errors, isolation and resource-limit tests; browser playback checks; [supported execution model](EXECUTION_REPLAY.md) |
 | 3 — Before/after explanations | **Implemented in 0.8; all five CI jobs passed on PR #3** | Pasted versions, HEAD/editor buffers and exact PR merge-base/head files; source-linked structural observations, existing checks and test-file links | Structural/range/ambiguity tests; stale source and moving-head guards; mocked fork/rename/blob tests plus browser and installed-VSIX checks; [guide](CHANGE_EXPLANATIONS.md) |
-| 4 — Explain-to-video | **Implemented in 0.9 preview; final CI verification required** | Select explanation/replay steps, edit captions and scene durations, import local narration, fit timing, preview and record with optional synthesized music and source hiding | Timeline/range/privacy tests, real Chromium browser/webview exports with encoded voice/music verification, duration/dimensions and Save validation; [guide](EXPLANATION_VIDEO.md) |
+| 4 — Explain-to-video | **Implemented in 0.9; all five CI jobs passed on PR #4** | Select explanation/replay steps, edit captions and scene durations, import local narration, fit timing, preview and record with optional synthesized music and source hiding | Timeline/range/privacy tests, real Chromium browser/webview exports with encoded voice/music verification, duration/dimensions and Save validation; [guide](EXPLANATION_VIDEO.md) |
 
 For execution replay, define the supported execution model and its resource/access limits before accepting arbitrary user code. Execution must be an explicit action. Static explanation continues to work independently and must never silently run a selection.
 
 The existing sorting traces are a useful starting point for replay controls. The current studio provides recording and music infrastructure for explain-to-video. The restricted interpreter now supplies replay; the explanation timeline now mixes imported narration with synchronized optional music. Automatic speech generation, advanced editing and wider device support remain later candidates.
+
+## Verified milestone evidence
+
+Each milestone was pushed and passed its checks before the next feature began. All remain on stacked PRs awaiting approval to merge and publish alpha releases.
+
+| Preview | Review | Passing CI |
+|---|---|---|
+| 0.6 explanation | [PR #1](https://github.com/bvs1006/CodeAlive/pull/1) | [Five jobs](https://github.com/bvs1006/CodeAlive/actions/runs/37434015231) |
+| 0.7 replay | [PR #2](https://github.com/bvs1006/CodeAlive/pull/2) | [Five jobs](https://github.com/bvs1006/CodeAlive/actions/runs/37436760193) |
+| 0.8 change explanations | [PR #3](https://github.com/bvs1006/CodeAlive/pull/3) | [Five jobs](https://github.com/bvs1006/CodeAlive/actions/runs/37494347253) |
+| 0.9 explanation video | [PR #4](https://github.com/bvs1006/CodeAlive/pull/4) | [Five jobs](https://github.com/bvs1006/CodeAlive/actions/runs/37497253797) |
+
+The final runtime/package revision is `4e04cac7eede4c13d22e4092e1d989140c4f7445`; later documentation updates record this evidence. The Linux installed-VSIX run used VS Code 1.140.0. Chromium exports contain the imported narration signal and optional music, with the expected dimensions and duration. Encoded frames and browser/editor screenshots were inspected. These checks do not replace the manual adoption requirements below.
 
 ## Requirements for broader adoption
 
