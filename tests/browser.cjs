@@ -63,6 +63,7 @@ const server=http.createServer((req,res)=>{
     fs.mkdirSync(path.join(root,'test-results'),{recursive:true});await page.click('#compare-example');await checkExplanationVideo(page);await page.screenshot({path:path.join(root,'test-results/explainer-desktop.png'),fullPage:true});
     await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:path.join(root,'test-results/explainer-mobile.png'),fullPage:true});
     await page.setViewportSize({width:1440,height:1080});await page.goto(origin+'/extension-preview');await page.waitForFunction(()=>hostMessages.some(m=>m.type==='ready'));
+    assert.equal(await page.textContent('#movie-length'),'');assert.equal(await page.locator('#movie-scenes .movie-scene').count(),0);
     const selection='function total(x: number) {\n  return x + 1;\n}';
     await page.evaluate(code=>window.dispatchEvent(new MessageEvent('message',{data:{type:'explainSource',code,language:'TypeScript',filename:'selected.ts',baseLine:42,baseColumn:0,sourceToken:'snapshot'}})),selection);
     assert.equal(await page.textContent('#summary-name'),'total');assert.match(await page.textContent('#steps'),/L43/);await page.locator('#steps button').first().click();
