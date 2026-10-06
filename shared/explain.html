@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Explain code · CodeAlive</title>
+  <link rel="stylesheet" href="explainer/explain.css">
+</head>
+<body>
+  <header class="masthead"><a class="brand" href="index.html">CODEALIVE <span>/ EXPLAIN</span></a><nav><span class="private"><i></i> Local &amp; private</span><a id="open-studio" href="index.html">Music studio ↗</a></nav></header>
+  <main>
+    <section class="intro"><p class="eyebrow">FROM SOURCE TO UNDERSTANDING</p><h1>Make sense of your code<span>.</span></h1><p class="lede">Follow the logic. Find the source. See how the pieces connect.</p></section>
+    <section class="example-bar" aria-label="Examples"><div><label for="example-select">TRY AN EXAMPLE</label><select id="example-select"></select></div><p id="example-description"></p><button id="load-example">Load example ↗</button></section>
+    <div class="workbench">
+      <section class="panel source-panel" aria-labelledby="source-heading">
+        <div class="panel-heading"><h2 id="source-heading"><span class="section-number">01</span> Your source</h2><span class="tag" id="source-name">Playground</span></div>
+        <div class="toolbar"><label for="language">Language</label><select id="language"><option>JavaScript</option><option>TypeScript</option></select><button id="edit-code" hidden>Edit code</button><button id="load-editor" hidden>Load editor</button></div>
+        <label class="sr-only" for="source">Code to explain</label><textarea id="source" spellcheck="false" maxlength="50000" placeholder="Paste a JavaScript or TypeScript function…"></textarea>
+        <div id="source-view" class="source-view" tabindex="0" aria-label="Source code with highlighted explanation" hidden></div>
+        <div class="source-footer"><span id="source-stats"></span><span>JS / TS</span></div>
+        <p class="hint" id="source-hint">Your code stays on this device. It is never executed.</p>
+        <button class="primary" id="explain">Explain this code <span>↗</span></button>
+        <p id="status" role="status" aria-live="polite">Load an example or paste a function to begin.</p>
+      </section>
+      <section class="panel explanation-panel" aria-labelledby="explanation-heading">
+        <div class="panel-heading"><h2 id="explanation-heading"><span class="section-number">02</span> The explanation</h2><span class="tag">SOURCE LINKED</span></div>
+        <div id="empty-state"><div class="empty-symbol">{ }</div><h3>A clearer view, one step at a time.</h3><p>Get a structural summary, follow each step and select any explanation to see the code behind it.</p><div class="empty-pills"><span>Inputs &amp; outputs</span><span>Logic steps</span><span>Flow diagram</span></div></div>
+        <div id="result" hidden>
+          <div class="result-controls"><div><label for="scope">FUNCTION / SCOPE</label><select id="scope"></select></div><div><label for="audience">EXPLANATION STYLE</label><select id="audience"><option value="beginner">Plain language</option><option value="developer">Developer</option></select></div></div>
+          <div class="summary"><p class="eyebrow">AT A GLANCE</p><h3 id="summary-name"></h3><p id="summary-description"></p></div>
+          <details class="facts" open><summary>Inputs, outputs &amp; possible effects</summary><div id="inputs-outputs"></div><div id="effects"></div></details>
+          <div class="steps-title"><h3>Walk through the logic</h3><span>Select a step to find its source</span></div><ol id="steps"></ol>
+          <details class="limitations"><summary>What this explanation can tell you</summary><ul id="warnings"></ul></details>
+        </div>
+      </section>
+    </div>
+    <section class="panel flow-panel" id="flow-panel" hidden aria-labelledby="flow-heading"><div class="panel-heading"><h2 id="flow-heading"><span class="section-number">03</span> Follow the flow</h2><span class="tag">STATIC STRUCTURE</span></div><p class="flow-note">Branches show possible paths, not a recorded execution. Select a node to find its source.</p><div class="flow-scroll"><svg id="flow" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Source-linked control flow diagram"></svg></div><p class="flow-legend"><span>◇ Condition</span><span>▭ Statement</span><span>⇢ Loop back</span></p></section>
+    <footer>CODEALIVE <span>Understand the structure. Explore the possibilities.</span><span>ALPHA / 0.6</span></footer>
+  </main>
+  <script src="explainer/parser.js"></script>
+  <script src="explainer/explain-engine.js"></script>
+  <script src="explainer/explain-examples.js"></script>
+  <script src="explainer/explain-ui.js"></script>
+</body>
+</html>

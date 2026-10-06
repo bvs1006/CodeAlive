@@ -1,0 +1,16 @@
+{
+  "name": "codealive-workspace",
+  "version": "0.6.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "node scripts/build-shared.cjs",
+    "test": "node scripts/test.cjs",
+    "test:browser": "node tests/browser.cjs",
+    "package": "npm run build && python3 extension/package.py"
+  },
+  "devDependencies": {
+    "@babel/parser": "7.29.9",
+    "playwright": "1.62.1"
+  }
+}

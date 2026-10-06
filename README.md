@@ -1,12 +1,23 @@
-# CodeAlive — PR Companion & Code Visualization
+# CodeAlive — Visual Code Explanations & Studio
 
-**Inspect GitHub PR changes and CI evidence in VS Code—or turn code and algorithms into audiovisual performances.**
+**Understand JavaScript and TypeScript through source-linked explanations and flow diagrams.**
 
-CodeAlive is a creative coding studio for making short performances from your code. Paste a sample in the browser or load a file/selection in VS Code, choose a sound, and record a vertical video with audio.
+CodeAlive explains code locally in VS Code and the browser. Start with a function, inspect its inputs and return expressions, and follow each step back to the source. The creative music/video studio and read-only GitHub PR companion remain available.
 
-**Current version: VS Code Video Studio 0.5.0 alpha.** Code soundtrack mode maps text structure to music. Live sorting mode runs built-in Bubble Sort and Quick Sort on a list of numbers. Your editor code is never executed.
+**Current version: CodeAlive 0.6.0 alpha.** Explanations use a local JavaScript/TypeScript parser. Code soundtrack mode maps text structure to music. Live sorting mode runs built-in Bubble Sort and Quick Sort on a list of numbers. Your editor code is never executed.
 
-[Download the installer](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-pr-companion-0.5.0.zip) · [Installation & usage](docs/GETTING_STARTED.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml) · [Report a bug](https://github.com/bvs1006/CodeAlive/issues/new?template=bug_report.yml)
+[Download the installer](downloads/codealive-explainer-0.6.0.zip?raw=true) · [Installation & usage](docs/GETTING_STARTED.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml) · [Report a bug](https://github.com/bvs1006/CodeAlive/issues/new?template=bug_report.yml)
+
+## Explain a function
+
+- Run **CodeAlive: Explain Selected Code** in VS Code, or open `browser/explain.html` from the download ZIP.
+- Read a plain-language or developer explanation with exact source links.
+- Inspect declared inputs, return expressions, calls and property writes.
+- Follow a keyboard-accessible diagram of branches, loops and early exits.
+- Choose among function scopes and ten JavaScript/TypeScript examples.
+- Work offline without an account, API key or source upload.
+
+These are static structural explanations, not computed results or execution traces. Complex control flow is collapsed and labeled. [Read the explanation guide](docs/EXPLAIN_CODE.md).
 
 ## Review a GitHub pull request
 
@@ -35,22 +46,23 @@ After installation, run **CodeAlive: Review GitHub PR** and paste `https://githu
 
 | You want to… | Choose | What happens |
 |---|---|---|
+| Understand a function | Command: Explain Selected Code | Read source-linked steps and a static flow diagram. |
 | Inspect a GitHub PR | Command: Review GitHub PR | Read change summaries and existing CI evidence without running code. |
 | Hear your own code | Code soundtrack | Text structure becomes melody, rhythm and animation; your code is not executed. |
 | Learn sorting step by step | Live sorting algorithm | A bundled Bubble Sort or Quick Sort runs on your numbers with comparisons, swaps and pivots. |
 | Compare two algorithms | Bubble vs Quick comparison | Both sort the same numbers at equal comparison/swap ticks, with separate counters. |
 | Make a developer short | Record video | Save a vertical clip with audio, captions and branding; upload it yourself. |
 
-**Try this first:** install → Open Studio → **Performance: Bubble vs Quick comparison** → enter `8, 3, 6, 1, 9, 2, 5, 4` → **Make it alive**. No code file is needed for this demo.
+**Try this first:** install → **CodeAlive: Open Explainer** → **A simple discount** → **Explain this code** → select a step to highlight its source.
 
 ## Install in VS Code
 
 1. Download and extract the ZIP above.
-2. In VS Code, choose **Extensions → … → Install from VSIX…** and select `codealive-0.5.0.vsix`.
+2. In VS Code, choose **Extensions → … → Install from VSIX…** and select `codealive-0.6.0.vsix`.
 3. When upgrading, close existing studio tabs and run **Developer: Reload Window**.
-4. Open a code file and run **CodeAlive: Open Studio** from the Command Palette.
-5. Click **Load editor file**, or select a smaller section and run **CodeAlive: Load Selection**. Confirm **Loaded: your filename** appears.
-6. Choose a style and click **Make it alive**.
+4. Select a JavaScript or TypeScript function and run **CodeAlive: Explain Selected Code**.
+5. Select explanation steps or diagram nodes to reveal their source.
+6. For music and recording, run **CodeAlive: Open Studio** and load your editor file.
 
 Requires desktop VS Code 1.90+, a trusted workspace, and code input of at most 50,000 characters. No Marketplace account or CodeAlive account is required for this local alpha.
 
@@ -87,7 +99,7 @@ Output is vertical 1080 × 1920 at 30 fps with synthesized audio. Native MP4 dep
 - Timed captions, branding and source hiding.
 - Local video presets that exclude your source code.
 
-Python and Terraform/HCL receive their own mapping; YAML uses Kubernetes mapping. JavaScript/TypeScript and other languages use the JavaScript text mapping. Algorithm Performance is inspired by code structure, not actual algorithm execution.
+Soundtracks use shared text-pattern rules across the language choices; they do not use the explainer’s AST parser. Algorithm Performance is inspired by code structure, not actual algorithm execution.
 
 ## Live sorting performance
 
@@ -109,13 +121,15 @@ Use Pause/Step/Resume for previews. Record fits the whole shared timeline into 1
 
 ## Browser version
 
-The `web/` folder contains the earlier standalone browser alpha. To test locally:
+The download ZIP includes a ready-to-open `browser/explain.html`. To develop from the repository:
 
 ```sh
+npm ci --ignore-scripts
+npm run build
 python3 -m http.server 8080 --directory web
 ```
 
-Open http://localhost:8080. The browser alpha has music, visuals and recording; the newer video templates and presets are currently in the VS Code extension. The hosted browser demo is currently private and is not advertised as a public launch link.
+Open http://localhost:8080/explain.html for explanations, or http://localhost:8080 for music. The browser studio has music, visuals and recording; the newer video templates and presets are currently in the VS Code extension. The hosted browser demo is currently private and is not advertised as a public launch link.
 
 ## Reach out
 
@@ -126,21 +140,17 @@ Please share a small, sanitized example rather than proprietary code, credential
 ## Development and validation
 
 ```sh
-cd extension
-node test-pr.cjs
-node test-pr-panel.cjs
-node test-extension.cjs
-node test-app.cjs
-node test-sorting.cjs
-node test-sorting-app.cjs
-node test-comparison.cjs
-node test-comparison-app.cjs
-python3 package.py
+npm ci --ignore-scripts
+npm test
+npx playwright install chromium
+npm run test:browser
+npm run package
+python3 scripts/package-release.py
 ```
 
-Node.js and Python 3 are required for local development; no npm installation is needed. Packaging creates `codealive-0.5.0.vsix` in the repository root. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Node.js 22+ and Python 3 are required for development. Packaging creates `codealive-0.6.0.vsix`; the release script adds an offline browser bundle in `downloads/`. Shared explainer assets are generated from `shared/`. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Mocked editor/browser tests and a real sample WebM-to-MP4 conversion passed. These do not replace audio/video testing in real VS Code on Windows, macOS and Linux. See [known limitations](docs/KNOWN_LIMITATIONS.md).
+GitHub Actions runs the unit/extension suites on Linux, Windows and macOS, plus Chromium integration checks and installer packaging on Linux. Actual desktop VS Code installation, audio/video support and performance still need manual checks on target devices. See [known limitations](docs/KNOWN_LIMITATIONS.md).
 
 ## Discoverability
 
@@ -148,6 +158,6 @@ CodeAlive combines **code sonification**, **algorithm visualization**, **sorting
 
 ## Roadmap and licensing
 
-Next areas: better language parsing, additional instrumented algorithms, test/build integrations and batch video creation. These are planned possibilities, not shipped functionality.
+Recommended next milestones: instrumented execution replay, before/after change explanations, and narrated exports. Broader language support, accessible onboarding and reliable cross-platform releases should grow alongside those features. These are planned possibilities, not shipped functionality.
 
 No open-source license has been selected. Source is available for inspection; do not assume unrestricted reuse or redistribution rights. Contact the maintainer before commercial reuse or redistribution. VS Code Marketplace and Open VSX listings have not been published.

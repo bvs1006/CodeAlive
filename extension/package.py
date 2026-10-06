@@ -1,6 +1,8 @@
 from pathlib import Path
 import json,zipfile,xml.etree.ElementTree as ET
 root=Path(__file__).resolve().parent
+if not (root/'media/explainer/parser.js').is_file():
+ raise SystemExit('Run npm ci and npm run build from the repository root before packaging.')
 p=json.loads((root/'package.json').read_text()); ns='http://schemas.microsoft.com/developer/vsx-schema/2011';ET.register_namespace('',ns)
 def add(parent,tag,attrs=None,text=None):
  e=ET.SubElement(parent,'{'+ns+'}'+tag,attrs or {});e.text=text;return e
@@ -11,11 +13,11 @@ for name,value in [('Engine',p['engines']['vscode']),('ExtensionDependencies',''
 add(add(m,'Installation'),'InstallationTarget',{'Id':'Microsoft.VisualStudio.Code','Version':'[1.90.0,)'});add(m,'Dependencies');assets=add(m,'Assets')
 add(assets,'Asset',{'Type':'Microsoft.VisualStudio.Code.Manifest','Path':'extension/package.json','Addressable':'true'});add(assets,'Asset',{'Type':'Microsoft.VisualStudio.Services.Content.Details','Path':'extension/README.md','Addressable':'true'})
 ct=ET.Element('Types',{'xmlns':'http://schemas.openxmlformats.org/package/2006/content-types'})
-for ext,mime in [('vsixmanifest','text/xml'),('json','application/json'),('js','application/javascript'),('cjs','application/javascript'),('html','text/html'),('css','text/css'),('md','text/plain'),('py','text/plain')]:ET.SubElement(ct,'Default',{'Extension':ext,'ContentType':mime})
+for ext,mime in [('vsixmanifest','text/xml'),('json','application/json'),('js','application/javascript'),('cjs','application/javascript'),('html','text/html'),('css','text/css'),('md','text/plain'),('py','text/plain'),('txt','text/plain')]:ET.SubElement(ct,'Default',{'Extension':ext,'ContentType':mime})
 output=root.parent/f"codealive-{p['version']}.vsix"
 with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED) as z:
  z.writestr('extension.vsixmanifest',ET.tostring(m,encoding='utf-8',xml_declaration=True));z.writestr('[Content_Types].xml',ET.tostring(ct,encoding='utf-8',xml_declaration=True))
- for f in [root/'package.json',root/'extension.js',root/'pr-core.js',root/'pr-api.js',root/'pr-panel.js',root/'test-pr.cjs',root/'test-pr-panel.cjs',root/'export-utils.js',root/'README.md',root/'package.py',root/'test-extension.cjs',root/'test-app.cjs',root/'test-sorting.cjs',root/'test-sorting-app.cjs',root/'test-comparison.cjs',root/'test-comparison-app.cjs',*sorted((root/'media').glob('*'))]:z.write(f,'extension/'+f.relative_to(root).as_posix())
+ for f in [root/'package.json',root/'extension.js',root/'explain-panel.js',root/'pr-core.js',root/'pr-api.js',root/'pr-panel.js',root/'test-pr.cjs',root/'test-pr-panel.cjs',root/'export-utils.js',root/'README.md',root/'package.py',root/'test-extension.cjs',root/'test-app.cjs',root/'test-sorting.cjs',root/'test-sorting-app.cjs',root/'test-comparison.cjs',root/'test-comparison-app.cjs',*sorted(f for f in (root/'media').rglob('*') if f.is_file())]:z.write(f,'extension/'+f.relative_to(root).as_posix())
 with zipfile.ZipFile(output) as z:
  assert z.testzip() is None;ET.fromstring(z.read('extension.vsixmanifest'));ET.fromstring(z.read('[Content_Types].xml'));assert json.loads(z.read('extension/package.json'))['main']=='./extension.js';assert 'extension/extension.js' in z.namelist()
 print(output)

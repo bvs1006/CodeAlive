@@ -6,3 +6,8 @@ __pycache__/
 .DS_Store
 .env
 .env.*
+/web/explain.html
+/web/explainer/
+/extension/media/explain.html
+/extension/media/explainer/
+/test-results/
