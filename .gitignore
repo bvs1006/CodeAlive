@@ -11,3 +11,4 @@ __pycache__/
 /extension/media/explain.html
 /extension/media/explainer/
 /test-results/
+/.vscode-test/

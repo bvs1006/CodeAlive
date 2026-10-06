@@ -21,6 +21,15 @@ function explainHtml(template,webview,extensionUri) {
     .replace(/<script src="(explainer\/[^"]+)"><\/script>/g,(_,file)=>`<script nonce="${nonce}" src="${resource(file)}"></script>`)
     .replace(/href="index.html"/g,'href="#"');
 }
+async function revealSource(snapshot,message,notice=()=>{}) {
+  if(!snapshot?.document || message.sourceToken!==snapshot.payload.sourceToken)return false;
+  if(!Number.isInteger(message.start)||!Number.isInteger(message.end)||message.start<0||message.end<=message.start||message.end>snapshot.payload.code.length)return false;
+  if(snapshot.document.isClosed||snapshot.document.version!==snapshot.version){notice('The editor file changed. Load editor again to refresh source links.');return false;}
+  const selection=new vscode.Selection(snapshot.document.positionAt(snapshot.offset+message.start),snapshot.document.positionAt(snapshot.offset+message.end));
+  const editor=await vscode.window.showTextDocument(snapshot.document,{viewColumn:snapshot.viewColumn||vscode.ViewColumn.One,preserveFocus:true,selection});
+  editor.revealRange(selection,vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+  return true;
+}
 function activateExplain(context) {
   let panel,ready=false,loaded=null,queued=null,lastEditor=vscode.window.activeTextEditor;
   const disposables=[];
@@ -39,13 +48,7 @@ function activateExplain(context) {
         else if(message.type==='loadEditor'){const source=captureSource(currentEditor());if(source)send(source);else created.webview.postMessage({type:'notice',text:'Open a JavaScript or TypeScript file, then load it here.'});}
         else if(message.type==='openStudio')await vscode.commands.executeCommand('codealive.open');
         else if(message.type==='revealSource'){
-          const snapshot=loaded;
-          if(!snapshot?.document || message.sourceToken!==snapshot.payload.sourceToken)return;
-          if(!Number.isInteger(message.start)||!Number.isInteger(message.end)||message.start<0||message.end<=message.start||message.end>snapshot.payload.code.length)return;
-          if(snapshot.document.isClosed||snapshot.document.version!==snapshot.version){created.webview.postMessage({type:'notice',text:'The editor file changed. Load editor again to refresh source links.'});return;}
-          const selection=new vscode.Selection(snapshot.document.positionAt(snapshot.offset+message.start),snapshot.document.positionAt(snapshot.offset+message.end));
-          const editor=await vscode.window.showTextDocument(snapshot.document,{viewColumn:snapshot.viewColumn||vscode.ViewColumn.One,preserveFocus:true,selection});
-          editor.revealRange(selection,vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+          await revealSource(loaded,message,text=>created.webview.postMessage({type:'notice',text}));
         }
       } catch(error){vscode.window.showErrorMessage('CodeAlive: '+error.message);}
     }));
@@ -61,5 +64,6 @@ function activateExplain(context) {
   });
   disposables.push(vscode.window.onDidChangeActiveTextEditor(editor=>{if(editor)lastEditor=editor;}));
   context.subscriptions.push(...disposables,{dispose(){panel?.dispose();for(const d of disposables)d.dispose();}});
+  return {getDiagnostics:()=>({open:!!panel,ready,sourceAcknowledged:!!loaded&&!queued,language:loaded?.payload.language,sourceLength:loaded?.payload.code.length})};
 }
-module.exports={activateExplain,captureSource,explainHtml};
+module.exports={activateExplain,captureSource,explainHtml,revealSource};

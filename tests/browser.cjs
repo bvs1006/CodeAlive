@@ -44,6 +44,13 @@ const server=http.createServer((req,res)=>{
     const message=await page.evaluate(()=>hostMessages.find(m=>m.type==='revealSource'));assert.equal(message.sourceToken,'snapshot');assert.equal(selection.slice(message.start,message.end),'x + 1');assert.deepEqual(await page.evaluate(()=>cspViolations),[]);
     for(const route of ['/web/index.html','/studio-preview']){await page.goto(origin+route);await page.fill('#code','const preserveMe = 42;');await page.selectOption('#language','Python');assert.equal(await page.inputValue('#code'),'const preserveMe = 42;');}
     await page.click('#openExplainer');const transfer=await page.evaluate(()=>hostMessages.find(m=>m.type==='explainCode'));assert.equal(transfer.code,'const preserveMe = 42;');assert.equal(transfer.language,'Python');
-    assert.deepEqual(errors,[]);console.log('Browser integration passed: all examples, source links, keyboard, CSP, injection, mobile layout and language preservation.');
+    await page.selectOption('#language','JavaScript');await page.check('#hideSource');await page.selectOption('#duration','15');
+    await page.click('#record');await page.waitForFunction(()=>recorder?.state==='recording'&&dest.stream.getAudioTracks().length===1);
+    await page.waitForTimeout(3200);await page.click('#play');await page.waitForFunction(()=>videoBlob?.size>1000&&document.getElementById('preview').videoWidth===1080);
+    const recording=await page.evaluate(async()=>({type:videoBlob.type,bytes:Array.from(new Uint8Array(await videoBlob.arrayBuffer())),width:document.getElementById('preview').videoWidth,height:document.getElementById('preview').videoHeight}));
+    assert.equal(recording.height,1920);const recordedFile=path.join(root,'test-results/studio-smoke.'+(recording.type.includes('mp4')?'mp4':'webm'));fs.writeFileSync(recordedFile,Buffer.from(recording.bytes));
+    const probe=require('node:child_process').spawnSync('ffprobe',['-v','error','-show_streams','-of','json',recordedFile],{encoding:'utf8'});assert.equal(probe.status,0,probe.stderr||'ffprobe must be installed');const streams=JSON.parse(probe.stdout).streams;
+    assert(streams.some(s=>s.codec_type==='video'));assert(streams.some(s=>s.codec_type==='audio'));assert(await page.isChecked('#hideSource'));
+    assert.deepEqual(errors,[]);console.log('Browser integration passed: all examples, source links, keyboard, CSP, injection, mobile layout, language preservation and real audio/video recording.');
   }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(error=>{console.error(error);process.exitCode=1;});

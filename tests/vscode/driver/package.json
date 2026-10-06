@@ -1,0 +1,1 @@
+{"name":"codealive-smoke-driver","version":"0.0.1","publisher":"codealive-tests","engines":{"vscode":"^1.90.0"},"main":"index.cjs","activationEvents":["*"],"extensionKind":["ui"]}

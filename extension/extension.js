@@ -34,7 +34,7 @@ function htmlFor(template, webview, extensionUri) {
 }
 function activate(context) {
   require("./pr-panel").activatePR(context);
-  require("./explain-panel").activateExplain(context);
+  const explainer=require("./explain-panel").activateExplain(context);
   let panel, ready=false, pending=null, follow=false, timer=null, lastEditor=vscode.window.activeTextEditor;
   const disposables=[];
   let revision=0, deliveryTimer, readinessTimer;
@@ -87,6 +87,7 @@ function activate(context) {
   disposables.push(vscode.window.onDidChangeActiveTextEditor(editor=>{if(editor){lastEditor=editor;if(follow)queue(editor)}}));
   disposables.push(vscode.workspace.onDidChangeTextDocument(event=>{if(follow&&lastEditor&&event.document===lastEditor.document)queue(lastEditor)}));
   context.subscriptions.push(...disposables,{dispose(){clearTimeout(timer);clearTimeout(deliveryTimer);clearTimeout(readinessTimer);panel?.dispose()}});
+  return {getDiagnostics:()=>({explainer:explainer?.getDiagnostics(),studio:{open:!!panel,ready,sourceAcknowledged:revision>0&&!pending}})};
 }
 function validatePreset(p){if(!p||typeof p!=='object')throw Error('Invalid preset');const out={};for(const key of ['template','hook','caption','ending','videoTitle','creator','style']){if(typeof p[key]!=='string'||p[key].length>80)throw Error('Invalid preset field');out[key]=p[key];}if(!['soundtrack','algorithm','project'].includes(out.template)||!['ambient','synth','bit'].includes(out.style))throw Error('Invalid template or style');if(!Number.isFinite(p.tempo)||p.tempo<60||p.tempo>160||![15,20,30].includes(p.duration)||typeof p.hideSource!=='boolean')throw Error('Invalid preset settings');return {...out,tempo:p.tempo,duration:p.duration,hideSource:p.hideSource};}
 module.exports={activate, snapshot, languageFor, htmlFor,validatePreset};
