@@ -4,7 +4,7 @@ Start with a small, reproducible developer task. Open a question or feature issu
 
 ## Choose the right version
 
-As of 6 October 2026, `main` has the 0.5 alpha and the 0.6 explainer is in `codex/explain-selected-code` / PR #1. Follow the [README's preview checkout and setup instructions](README.md#developer-quick-start--06-preview) for the root npm commands below. Check the PR for current merge status.
+Use `main` for the latest implemented alpha. Follow the [README setup instructions](README.md#developer-quick-start) for the root npm commands below.
 
 Use Node.js 22+ and Python 3. Install dependencies with `npm ci --ignore-scripts` from the repository root.
 
@@ -24,13 +24,14 @@ npm test
 npx playwright install chromium
 npm run test:browser
 npm run package
+npm run test:vscode
 ```
 
 On Linux, Playwright may require `npx playwright install --with-deps chromium`. Packaging expects `python3` on PATH; where Python 3 is named `python`, run `npm run build` then `python extension/package.py`.
 
 `npm test` builds assets, exercises the parser and mocked editor/GitHub/browser paths, runs the existing studio suites and checks shared-asset equality. `npm run test:browser` exercises real rendered pages and captures screenshots in `test-results/`. Use the relevant checks for the change; documentation-only work needs correct paths, links and accurate claims rather than new implementation tests.
 
-Install the built VSIX to check real editor commands, selection/file loading, source navigation and media workflows. Record your OS and VS Code version. Mocked tests do not validate actual desktop integration, audio or encoded videos. A VSIX can be inspected as a ZIP archive.
+The VS Code test runner installs the legacy 0.5 package, upgrades to the built VSIX and exercises real editor commands, selection/file loading, source navigation and both webview bridges in an isolated profile. Headless Linux needs `xvfb-run -a npm run test:vscode`. Also install the VSIX on your target desktop to check device-specific behavior. Record your OS and VS Code version. Mocked tests do not validate actual desktop integration, audio or encoded videos. A VSIX can be inspected as a ZIP archive.
 
 `python3 scripts/package-release.py` builds the VSIX and offline browser release ZIP. Publish a refreshed package only when runtime or packaged content needs it. Update version/status/download guidance when a preview becomes the main release.
 
