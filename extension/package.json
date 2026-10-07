@@ -1,8 +1,8 @@
 {
   "name": "codealive",
   "displayName": "CodeAlive",
-  "description": "Read-only GitHub PR and CI companion, plus code sonification and algorithm video studio.",
-  "version": "0.5.0",
+  "description": "Local JavaScript and TypeScript explanations with source-linked steps and flow diagrams, plus a music studio and read-only PR companion.",
+  "version": "0.6.0",
   "publisher": "codealive-local",
   "license": "UNLICENSED",
   "engines": {
@@ -12,11 +12,11 @@
     "Other"
   ],
   "keywords": [
+    "code explanation",
+    "typescript",
+    "flow diagram",
     "pull requests",
-    "ci",
-    "code review",
-    "sonification",
-    "algorithm visualization"
+    "sonification"
   ],
   "main": "./extension.js",
   "extensionKind": [
@@ -32,6 +32,14 @@
   },
   "contributes": {
     "commands": [
+      {
+        "command": "codealive.explain",
+        "title": "CodeAlive: Explain Selected Code"
+      },
+      {
+        "command": "codealive.openExplainer",
+        "title": "CodeAlive: Open Explainer"
+      },
       {
         "command": "codealive.open",
         "title": "CodeAlive: Open Studio"
@@ -56,6 +64,11 @@
     "menus": {
       "editor/context": [
         {
+          "command": "codealive.explain",
+          "when": "editorHasSelection",
+          "group": "navigation"
+        },
+        {
           "command": "codealive.selection",
           "when": "editorHasSelection",
           "group": "navigation"
@@ -64,8 +77,9 @@
     }
   },
   "scripts": {
-    "test": "node test-extension.cjs",
-    "package": "python3 package.py"
+    "test": "node ../scripts/test.cjs",
+    "package": "python3 package.py",
+    "build": "node ../scripts/build-shared.cjs"
   },
   "repository": {
     "type": "git",

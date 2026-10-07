@@ -1,3 +1,13 @@
+# First code explanation
+
+1. Extract the 0.6.0 ZIP and install `codealive-0.6.0.vsix` through VS Code's Extensions menu.
+2. Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
+3. Select a JavaScript or TypeScript function and run **CodeAlive: Explain Selected Code**.
+4. Choose Plain language or Developer. Select a step or flow node to reveal its source.
+5. Use **Load editor** after editing the original file to refresh the explanation.
+
+Without VS Code, open `browser/explain.html` from the ZIP. It works locally without an account or API key. Start with the discount example. See the [explanation guide](EXPLAIN_CODE.md) for scope selection, keyboard navigation and limits.
+
 # First CodeAlive video
 
 1. Install the ZIP's VSIX through VS Code's Extensions menu.

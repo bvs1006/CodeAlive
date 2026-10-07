@@ -4,15 +4,15 @@ CodeAlive is a developer tool for **source-linked code explanations**, **algorit
 
 Start with the workflow you need. The explainer describes JavaScript/TypeScript structure locally; the studio turns text patterns into music; the PR companion reads GitHub evidence.
 
-> **Status — 6 October 2026:** `main` contains the **0.5.0 alpha**. The **0.6.0 explainer preview** is implemented and passes automated checks in [draft PR #1](https://github.com/bvs1006/CodeAlive/pull/1), but is not merged. Desktop VS Code installation and media checks remain pending. Both versions are early alphas.
+> **Status — 6 October 2026:** CodeAlive **0.6.0 alpha** includes local code explanations. Release packages are generated after the unit, browser/media and real VS Code checks pass on `main`. Windows/macOS desktop integration and physical audio-device checks remain additional manual validation.
 
-[Try the 0.6 preview](https://github.com/bvs1006/CodeAlive/raw/refs/heads/codex/explain-selected-code/downloads/codealive-explainer-0.6.0.zip) · [Download 0.5 from main](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-pr-companion-0.5.0.zip) · [Roadmap](docs/ROADMAP.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml)
+[Download 0.6.0](https://github.com/bvs1006/CodeAlive/releases/download/v0.6.0/codealive-explainer-0.6.0.zip) · [Download 0.5 from main](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-pr-companion-0.5.0.zip) · [Roadmap](docs/ROADMAP.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml)
 
 ## What can I do today?
 
 | Workflow | What you get | Availability |
 |---|---|---|
-| Understand a function | Plain-language/developer explanations, parameters, return expressions, calls/property writes, source-linked steps and a static flow diagram | **0.6 preview:** VS Code and offline browser; JavaScript/TypeScript |
+| Understand a function | Plain-language/developer explanations, parameters, return expressions, calls/property writes, source-linked steps and a static flow diagram | **0.6:** VS Code and offline browser; JavaScript/TypeScript |
 | Hear code structure | Three music styles, code-linked visuals and synthesized audio from text patterns | **0.5+:** VS Code and browser studio |
 | Explore sorting | Built-in Bubble Sort and Quick Sort, pause/step/resume, operation counts and same-input comparison | **0.5+:** VS Code |
 | Create a developer video | Vertical video with audio, captions, branding, source hiding and local presets | **0.5+:** VS Code; browser studio has basic recording |
@@ -24,7 +24,7 @@ Start with the workflow you need. The explainer describes JavaScript/TypeScript 
 
 ### VS Code
 
-1. Download and extract the **0.6 preview ZIP** above.
+1. Download and extract the **0.6 ZIP** above.
 2. In desktop VS Code, open **Extensions → … → Install from VSIX…**, then choose `codealive-0.6.0.vsix`.
 3. After upgrading, close existing CodeAlive tabs and run **Developer: Reload Window**.
 4. Open a JavaScript or TypeScript file, select a complete function, and run **CodeAlive: Explain Selected Code** from the Command Palette. An empty selection loads the active file.
@@ -38,7 +38,7 @@ Requires desktop VS Code **1.90+**, a trusted workspace and input of at most **5
 
 Extract the same ZIP and open **`browser/explain.html`**. The parser, examples and styles are bundled and work offline. Source links highlight code in the browser; navigation into your original file is a VS Code feature.
 
-[Full explainer guide](https://github.com/bvs1006/CodeAlive/blob/codex/explain-selected-code/docs/EXPLAIN_CODE.md)
+[Full explainer guide](https://github.com/bvs1006/CodeAlive/blob/main/docs/EXPLAIN_CODE.md)
 
 <details>
 <summary>See the actual 0.6 explainer interface</summary>
@@ -92,12 +92,12 @@ The panel groups changed files and shows existing checks for the PR head and, wh
 
 The companion does not check out code, run tests, rerun CI, post comments, modify files or approve a merge. [PR companion details](docs/PR_COMPANION.md)
 
-## Developer quick start — 0.6 preview
+## Developer quick start
 
-The following commands target the preview branch because the root npm workspace and explainer are **not yet on `main`**. Prerequisites: Git, **Node.js 22+** with npm, and **Python 3**. Use `python` instead of `python3` where that is your platform's Python 3 command.
+Build from `main`. Prerequisites: Git, **Node.js 22+** with npm, and **Python 3**. Use `python` instead of `python3` where that is your platform's Python 3 command.
 
 ```sh
-git clone --branch codex/explain-selected-code https://github.com/bvs1006/CodeAlive.git
+git clone https://github.com/bvs1006/CodeAlive.git
 cd CodeAlive
 npm ci --ignore-scripts
 npm run build
@@ -111,6 +111,7 @@ Open [the explainer](http://localhost:8080/explain.html) or [the music studio](h
 | `npm run build` | Generate matching browser/extension explainer assets and bundle the pinned Babel parser plus its license |
 | `npm test` | Build assets, run the parser/editor tests and eight existing suites, and check generated-asset equality |
 | `npx playwright install chromium` then `npm run test:browser` | Run real Chromium integration checks and create screenshots in `test-results/` |
+| `npm run test:vscode` | Install/upgrade the built VSIX and exercise real VS Code; on headless Linux run under `xvfb-run -a` |
 | `npm run package` | Build `codealive-0.6.0.vsix` in the repository root; needs `python3` on PATH |
 | `python3 scripts/package-release.py` | Build the VSIX plus offline browser ZIP in `downloads/` |
 
@@ -118,7 +119,7 @@ On Linux, Playwright may also need system dependencies: use `npx playwright inst
 
 To test in desktop VS Code, install the built VSIX. There is no committed F5 launch configuration. Rebuild and reinstall after changing shared or extension code. [Contribution guide](CONTRIBUTING.md)
 
-### Where the code lives in the preview
+### Where the code lives
 
 | Path | Responsibility |
 |---|---|
@@ -138,15 +139,15 @@ The explainer's analysis stays in the browser/webview. Only source snapshots and
 
 ## Verification and known gaps
 
-The [0.6 implementation check run](https://github.com/bvs1006/CodeAlive/actions/runs/37403677204) passed on Linux, Windows and macOS, plus Chromium. Browser checks cover all ten examples, source links, keyboard activation, CSP, inert source text, mobile width and code preservation when changing languages. Desktop and mobile browser screenshots were inspected.
+The [CI workflow](https://github.com/bvs1006/CodeAlive/actions/workflows/ci.yml) runs unit/extension suites on Linux, Windows and macOS, real Chromium/media checks, and an installed-VSIX check in real VS Code on Linux. Browser checks cover all ten examples, source links, keyboard activation, CSP, inert source text, mobile width and code preservation when changing languages. Desktop and mobile browser screenshots were inspected. The Linux editor smoke test passed on VS Code 1.140.0; the workflow records the version on each run.
 
-Extension-host and GitHub API tests use mocks. They do not establish that every desktop VS Code installation, audio device or video encoder works. Clean installation/upgrade and real editor/media smoke tests remain the immediate release gate. [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Roadmap and release checklist](docs/ROADMAP.md)
+Unit-level editor and GitHub API tests use mocks; the additional installed-VSIX suite uses real VS Code. Browser media tests verify a playable recording with audio and video tracks. Physical audio-device behavior and actual Windows/macOS editor installations still need manual checks. [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Roadmap](docs/ROADMAP.md)
 
 ## Roadmap at a glance
 
 | Order | Milestone | Status |
 |---|---|---|
-| 1 | Explain selected code with source links and static diagrams | Implemented in the **0.6 preview**; release checks and merge pending |
+| 1 | Explain selected code with source links and static diagrams | Available in **0.6**; automated release checks included |
 | 2 | Replay actual execution with inputs, values and step controls | Planned; initially a constrained, explicitly selected execution/trace workflow |
 | 3 | Explain before/after changes and connect them to test/CI evidence | Planned; current PR review only reads existing evidence |
 | 4 | Export an explanation with narration, captions and synchronized optional music | Planned; current recordings are studio performances |

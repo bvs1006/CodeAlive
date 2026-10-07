@@ -4,6 +4,7 @@ const {convertToMp4}=require('./export-utils');
 const SITE = 'https://codealive-studio.bvs1006352681.chatgpt.site/';
 const MAX_CODE = 50000, MAX_VIDEO = 50 * 1024 * 1024;
 function languageFor(doc) {
+  if (['typescript', 'typescriptreact'].includes(doc.languageId)) return 'TypeScript';
   if (doc.languageId === 'python') return 'Python';
   if (['terraform', 'hcl'].includes(doc.languageId)) return 'Terraform';
   if (['yaml', 'yml'].includes(doc.languageId)) return 'Kubernetes';
@@ -33,6 +34,7 @@ function htmlFor(template, webview, extensionUri) {
 }
 function activate(context) {
   require("./pr-panel").activatePR(context);
+  const explainer=require("./explain-panel").activateExplain(context);
   let panel, ready=false, pending=null, follow=false, timer=null, lastEditor=vscode.window.activeTextEditor;
   const disposables=[];
   let revision=0, deliveryTimer, readinessTimer;
@@ -54,6 +56,7 @@ function activate(context) {
         else if(message.type==='bridgeError'){vscode.window.showErrorMessage('CodeAlive studio error: '+String(message.message).slice(0,400));}
         else if(message.type==='savePreset'){const preset=validatePreset(message.preset);await context.globalState.update('codealive.videoPreset',preset);created.webview.postMessage({type:'notice',text:'Video preset saved. Source code is not stored.'});}
         else if(message.type==='loadPreset'){created.webview.postMessage({type:'preset',preset:context.globalState.get('codealive.videoPreset')||null});}
+        else if(message.type==='explainCode'){await vscode.commands.executeCommand('codealive.explainText',{code:message.code,language:message.language});}
         else if(message.type==='loadEditor'){send(snapshot(currentEditor()));}
         else if(message.type==='toggleFollow'){follow=!follow;status();if(follow)send(snapshot(currentEditor()));}
         else if(message.type==='copyShare') {
@@ -84,6 +87,7 @@ function activate(context) {
   disposables.push(vscode.window.onDidChangeActiveTextEditor(editor=>{if(editor){lastEditor=editor;if(follow)queue(editor)}}));
   disposables.push(vscode.workspace.onDidChangeTextDocument(event=>{if(follow&&lastEditor&&event.document===lastEditor.document)queue(lastEditor)}));
   context.subscriptions.push(...disposables,{dispose(){clearTimeout(timer);clearTimeout(deliveryTimer);clearTimeout(readinessTimer);panel?.dispose()}});
+  return {getDiagnostics:()=>({explainer:explainer?.getDiagnostics(),studio:{open:!!panel,ready,sourceAcknowledged:revision>0&&!pending}})};
 }
 function validatePreset(p){if(!p||typeof p!=='object')throw Error('Invalid preset');const out={};for(const key of ['template','hook','caption','ending','videoTitle','creator','style']){if(typeof p[key]!=='string'||p[key].length>80)throw Error('Invalid preset field');out[key]=p[key];}if(!['soundtrack','algorithm','project'].includes(out.template)||!['ambient','synth','bit'].includes(out.style))throw Error('Invalid template or style');if(!Number.isFinite(p.tempo)||p.tempo<60||p.tempo>160||![15,20,30].includes(p.duration)||typeof p.hideSource!=='boolean')throw Error('Invalid preset settings');return {...out,tempo:p.tempo,duration:p.duration,hideSource:p.hideSource};}
 module.exports={activate, snapshot, languageFor, htmlFor,validatePreset};

@@ -15,14 +15,14 @@ Broad adoption means approachable onboarding, accessible interaction and dependa
 | Music and video studio | Available in the 0.5 alpha on `main`; music from shared text patterns, local recording, captions and presets | Wider device/media verification; explanation and music do not share a synchronized timeline |
 | Algorithm demonstrations | Bundled Bubble Sort and Quick Sort with stepping, comparison and real operation traces | General selected-code execution is absent; more algorithms are optional extensions |
 | GitHub PR companion | Read-only changed-file groups and existing head/test-merge CI evidence | No semantic diff explanation, test generation, required-check verification or automated fixes |
-| Explain selected code | JavaScript/TypeScript implementation in [draft PR #1](https://github.com/bvs1006/CodeAlive/pull/1); local parser, ten examples, two explanation styles, exact source links and static flow diagrams | Desktop VS Code smoke test, review and merge; broader language/runtime semantics remain outside this milestone |
-| Build and checks | Preview has shared explainer assets, packaged VSIX/offline browser, multi-OS unit/extension tests and real Chromium integration | CI is on the preview branch until merged; mocked host tests do not replace actual desktop installation and media tests |
+| Explain selected code | JavaScript/TypeScript implementation in [PR #1](https://github.com/bvs1006/CodeAlive/pull/1); local parser, ten examples, two explanation styles, exact source links and static flow diagrams | Broader language/runtime semantics remain outside this milestone; Windows/macOS desktop and physical media-device checks remain |
+| Build and checks | Preview has shared explainer assets, packaged VSIX/offline browser, multi-OS unit/extension tests and real Chromium integration | CI includes a real Linux VS Code install/upgrade check and real Chromium recording; physical device coverage remains limited |
 
-The [implementation check run](https://github.com/bvs1006/CodeAlive/actions/runs/37403677204) passed all four jobs for `ee3a41159ce2407a21d7408e3c0dfdff2c7a7b68`. It covers Linux/Windows/macOS unit/extension tests and Chromium integration. This is evidence for the tested scope, not proof of a production-ready release.
+The [CI workflow](https://github.com/bvs1006/CodeAlive/actions/workflows/ci.yml) covers Linux/Windows/macOS unit/extension tests, Chromium/media integration and real Linux VS Code installation. This is evidence for the tested scope, not proof of a production-ready release.
 
 ## First: finish the 0.6 release
 
-The first feature milestone is implemented. It is not yet a merged release.
+The first feature milestone is implemented. Alpha releases are published from `main` only after the automated checks pass.
 
 - [x] Local JavaScript/TypeScript parsing without executing or uploading source.
 - [x] Scope selection, declared inputs, return expressions, visible calls/property writes, and plain-language/developer steps.
@@ -30,10 +30,11 @@ The first feature milestone is implemented. It is not yet a merged release.
 - [x] Ten examples, keyboard-operable diagram nodes and responsive browser layout.
 - [x] Version-checked editor source navigation and code preservation on language changes.
 - [x] Shared assets, installer/offline browser packaging, automated cross-platform and browser checks.
-- [ ] Install and upgrade the VSIX in real desktop VS Code; verify commands, selection/file transfer, source navigation and stale-document handling.
-- [ ] Smoke-test the existing studio and PR panel in that installation, including sample playback, recording, source hiding and editor loading. Record the OS/VS Code version and observed results.
-- [ ] Resolve any smoke-test defects, review and merge PR #1, then tag/publish the chosen 0.6 release package.
-- [ ] Update the README's main/preview status, download links and developer checkout instructions after merging.
+- [x] Automated Linux VS Code install/upgrade check: commands, selection/file transfer, source navigation and stale-document handling.
+- [x] Verify the real studio webview bridge and a Chromium recording with audio/video tracks and source hiding enabled. Linux VS Code 1.140.0 passed; CI records the tested version.
+- [ ] Complete physical audio-device and Windows/macOS desktop checks, plus a signed-in PR panel smoke test.
+- [x] Add CI-gated versioned alpha release packaging. Review/merge evidence is in PR #1.
+- [x] Prepare the README for main-based development and versioned release downloads.
 
 Completion means a user can install the package, explain a complete supported function, inspect exact source links, and understand the feature's limits without assistance. Do not equate passing mocked tests with this installation check.
 

@@ -3,7 +3,7 @@
 - Code soundtrack mode uses text-pattern mapping, not full AST parsing or execution. Live sorting mode runs only the two built-in algorithms on user-entered numbers.
 - 50,000-character input limit; select sections of larger files.
 - No local test/build/terminal telemetry. The PR companion can read existing GitHub CI evidence, but does not run or validate it.
-- Desktop VS Code only; no browser-extension entrypoint or Marketplace listing.
+- The extension needs desktop VS Code; there is no browser-extension entrypoint or Marketplace listing. The standalone browser explainer is included in the download.
 - Recording depends on embedded browser support and performance. Format may be WebM.
 - WebM-to-MP4 conversion needs local FFmpeg with libx264/AAC. Conversion is local and time-limited.
 - Videos can show code unless Hide source is enabled.
@@ -19,3 +19,11 @@ Sorting input accepts 3–18 integers from 1–99. Preview speed controls operat
 Comparison mode treats each comparison and swap as one equal-cost operation. It excludes pivot/partition markers from the shared timeline; results are not wall-clock timing. Only the two bundled implementations are compared.
 
 PR companion: required-check coverage and semantic correctness are not verified. Anonymous API limits, private repository permissions, data truncation and head changes can limit the evidence. See PR_COMPANION.md.
+
+## Code explanations
+
+JavaScript and TypeScript only. Static parsing does not execute or type-check code, infer business intent, resolve calls/imports or prove correctness. Expression-level paths remain inside statements; try/catch/finally, switch and labeled blocks are collapsed with warnings. The diagram is not a complete runtime control-flow graph.
+
+Limits: 50,000 characters, 100 listed functions, 80 steps, 100 diagram nodes, 12 return expressions and 12 calls/property writes. Large diagrams are omitted. Partial selections must parse as valid code. The source-order step list may include unreachable source; simple unreachable statements are removed from the diagram.
+
+Editor source links require the captured document version; after a change, use Load editor again. Editing the playground detaches its editor mapping. Shared generated assets must be built before running or packaging the extension.
