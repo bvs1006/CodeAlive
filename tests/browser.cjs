@@ -3,6 +3,26 @@ const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain'};
 let origin;
+async function checkWorkflowNavigation(page,host=false){
+  const source=await page.inputValue('#source');
+  assert.equal(await page.locator('#workflow-review-pr').isVisible(),host);
+  await page.locator('#workflow-replay').press('Enter');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'replay-args');
+  assert(await page.locator('#result').isVisible());assert(await page.locator('#replay-results').isHidden());
+  await page.locator('#workflow-compare').press('Enter');assert.equal(await page.evaluate(()=>document.activeElement.id),'compare-before');
+  await page.fill('#compare-before','function f(){return 1}');await page.fill('#compare-after','function f(){return 2}');
+  await page.locator('#workflow-video').press('Space');assert.equal(await page.evaluate(()=>document.activeElement.id),'movie-build');
+  assert.equal(await page.locator('#movie-scenes textarea').count(),0);assert(await page.locator('#movie-record').isDisabled());
+  await page.locator('#workflow-explain').press('Space');assert.equal(await page.evaluate(()=>document.activeElement.id),'explain');
+  assert.equal(await page.inputValue('#source'),source);assert.equal(await page.inputValue('#compare-before'),'function f(){return 1}');assert.equal(await page.inputValue('#compare-after'),'function f(){return 2}');
+  await page.click('.brand');assert.equal(await page.evaluate(()=>document.activeElement.id),'explain');
+  if(host){await page.locator('#workflow-review-pr').press('Enter');assert(await page.evaluate(()=>hostMessages.some(m=>m.type==='reviewPR')));assert(!await page.evaluate(()=>hostMessages.some(m=>m.type==='openStudio')));}
+  await page.click('#edit-code');await page.fill('#source','function {');await page.click('#workflow-replay');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'source');assert.match(await page.textContent('#status'),/Could not parse/);assert(await page.locator('#replay-panel').isHidden());
+  await page.click('#workflow-video');assert(await page.locator('#movie-work').isHidden());
+  await page.fill('#source',source);await page.click('#workflow-video');assert.equal(await page.evaluate(()=>document.activeElement.id),'movie-build');assert(await page.locator('#movie-record').isDisabled());
+  await page.click('#load-example');
+}
 function narrationWav(){const samples=96000,buffer=Buffer.alloc(44+samples*2);buffer.write('RIFF');buffer.writeUInt32LE(buffer.length-8,4);buffer.write('WAVEfmt ',8);buffer.writeUInt32LE(16,16);buffer.writeUInt16LE(1,20);buffer.writeUInt16LE(1,22);buffer.writeUInt32LE(48000,24);buffer.writeUInt32LE(96000,28);buffer.writeUInt16LE(2,32);buffer.writeUInt16LE(16,34);buffer.write('data',36);buffer.writeUInt32LE(samples*2,40);for(let i=0;i<samples;i++)buffer.writeInt16LE(Math.round(Math.sin(2*Math.PI*500*i/48000)*10000),44+i*2);return buffer;}
 async function checkExplanationVideo(page,host=false){
   await page.fill('#movie-last','2');await page.click('#movie-build');assert.equal(await page.locator('#movie-scenes .movie-scene').count(),2);
@@ -45,6 +65,7 @@ const server=http.createServer((req,res)=>{
     page.on('pageerror',error=>errors.push(error.message));
     await page.addInitScript(()=>{window.hostMessages=[];window.cspViolations=[];window.acquireVsCodeApi=location.pathname.endsWith('-preview')?()=>({postMessage:message=>window.hostMessages.push(message)}):undefined;window.addEventListener('securitypolicyviolation',e=>window.cspViolations.push(e.violatedDirective));});
     await page.goto(origin+'/web/explain.html');assert.equal(await page.locator('#example-select option').count(),10);
+    await checkWorkflowNavigation(page);fs.mkdirSync(path.join(root,'test-results'),{recursive:true});await page.screenshot({path:path.join(root,'test-results/workflow-navigation.png')});
     await page.click('#explain');assert.equal(await page.textContent('#summary-name'),'discountedPrice');await page.locator('#steps button').last().click();assert.match(await page.textContent('#source-view mark'),/price - savings/);
     await page.locator('#flow [role=button]').filter({has:page.locator('title',{hasText:'Return price'})}).focus();await page.keyboard.press('Enter');
     assert(await page.locator('#replay-results').isHidden());await page.click('#replay-run');assert.match(await page.textContent('#replay-status'),/Returned 80/);
@@ -61,8 +82,9 @@ const server=http.createServer((req,res)=>{
     await page.fill('#source','function text(){return "<img src=x onerror=globalThis.injected=true>";}');await page.click('#explain');assert.equal(await page.locator('#result img').count(),0);assert.equal(await page.evaluate(()=>globalThis.injected),undefined);
     await page.selectOption('#example-select','discount');await page.click('#load-example');await page.click('#explain');await page.selectOption('#audience','beginner');
     fs.mkdirSync(path.join(root,'test-results'),{recursive:true});await page.click('#compare-example');await checkExplanationVideo(page);await page.screenshot({path:path.join(root,'test-results/explainer-desktop.png'),fullPage:true});
-    await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:path.join(root,'test-results/explainer-mobile.png'),fullPage:true});
+    await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.locator('#workflow-explain').press('Enter');assert.equal(await page.evaluate(()=>document.activeElement.id),'explain');assert(await page.evaluate(()=>{const r=document.querySelector('.workflow-nav').getBoundingClientRect();return r.left>=0&&r.right<=innerWidth;}));await page.screenshot({path:path.join(root,'test-results/workflow-mobile.png')});await page.screenshot({path:path.join(root,'test-results/explainer-mobile.png'),fullPage:true});
     await page.setViewportSize({width:1440,height:1080});await page.goto(origin+'/extension-preview');await page.waitForFunction(()=>hostMessages.some(m=>m.type==='ready'));
+    await checkWorkflowNavigation(page,true);
     assert.equal(await page.textContent('#movie-length'),'');assert.equal(await page.locator('#movie-scenes .movie-scene').count(),0);
     const selection='function total(x: number) {\n  return x + 1;\n}';
     await page.evaluate(code=>window.dispatchEvent(new MessageEvent('message',{data:{type:'explainSource',code,language:'TypeScript',filename:'selected.ts',baseLine:42,baseColumn:0,sourceToken:'snapshot'}})),selection);

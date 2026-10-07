@@ -3,13 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Explain code · CodeAlive</title>
+  <title>CodeAlive · Explain, replay and compare code</title>
   <link rel="stylesheet" href="explainer/explain.css">
 </head>
 <body>
-  <header class="masthead"><a class="brand" href="index.html">CODEALIVE <span>/ EXPLAIN</span></a><nav><span class="private"><i></i> Local &amp; private</span><a id="open-studio" href="index.html">Music studio ↗</a></nav></header>
+  <header class="masthead"><a class="brand" href="#source-heading">CODEALIVE</a><nav aria-label="Studio"><span class="private"><i></i> Local &amp; private</span><a id="open-studio" href="index.html">Music studio ↗</a></nav></header>
   <main>
     <section class="intro"><p class="eyebrow">FROM SOURCE TO UNDERSTANDING</p><h1>Make sense of your code<span>.</span></h1><p class="lede">Follow the logic. Find the source. See how the pieces connect.</p></section>
+    <nav class="workflow-nav" aria-label="CodeAlive workflows">
+      <button id="workflow-explain" type="button">Explain</button>
+      <button id="workflow-replay" type="button">Replay</button>
+      <button id="workflow-compare" type="button">Compare</button>
+      <button id="workflow-review-pr" type="button" hidden>Review PR</button>
+      <button id="workflow-video" type="button">Create video</button>
+    </nav>
+    <p id="workflow-browser-note" class="workflow-note">GitHub PR review is available in the VS Code extension.</p>
     <section class="example-bar" aria-label="Examples"><div><label for="example-select">TRY AN EXAMPLE</label><select id="example-select"></select></div><p id="example-description"></p><button id="load-example">Load example ↗</button></section>
     <div class="workbench">
       <section class="panel source-panel" aria-labelledby="source-heading">
@@ -71,7 +79,7 @@
         </div>
       </div>
     </section>
-    <footer>CODEALIVE <span>Understand the structure. Explore the possibilities.</span><span>ALPHA / 0.9</span></footer>
+    <footer>CODEALIVE <span>Understand the structure. Explore the possibilities.</span><span>BETA CANDIDATE / 1.0</span></footer>
   </main>
   <script src="explainer/parser.js"></script>
   <script src="explainer/explain-engine.js"></script>

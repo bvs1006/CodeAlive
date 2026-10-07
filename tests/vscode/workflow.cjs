@@ -9,11 +9,13 @@ exports.run=async(document,browser)=>{
   try{
     const frame=await findFrame(browser,'#replay-run'),page=frame.page();
     assert.equal(await frame.textContent('#summary-name'),'total');
+    assert(await frame.locator('#workflow-review-pr').isVisible());
+    await frame.locator('#workflow-replay').press('Enter');assert.equal(await frame.evaluate(()=>document.activeElement.id),'replay-args');assert(await frame.locator('#replay-results').isHidden());
     await frame.fill('#replay-args','[2]');await frame.click('#replay-run');assert.match(await frame.textContent('#replay-status'),/Returned 3/);
     await frame.click('#replay-pin');await frame.fill('#replay-args','[5]');await frame.click('#replay-run');assert.match(await frame.textContent('#replay-status'),/Returned 6/);assert.match(await frame.textContent('#replay-baseline'),/"result": 3/);
     await frame.locator('#replay-slider').evaluate(el=>{el.value=el.max;el.dispatchEvent(new Event('input',{bubbles:true}));});assert.equal(await frame.textContent('#replay-value'),'6');
     await frame.click('#replay-play');await until(async()=>/Step 2 /.test(await frame.textContent('#replay-position')),'replay advances');await frame.click('#replay-play');assert.equal(await frame.textContent('#replay-play'),'Play');
-    await frame.fill('#movie-first','1');await frame.fill('#movie-last','1');await frame.click('#movie-build');
+    await frame.click('#workflow-video');assert.equal(await frame.evaluate(()=>document.activeElement.id),'movie-build');await frame.fill('#movie-first','1');await frame.fill('#movie-last','1');await frame.click('#movie-build');
     await frame.locator('#movie-scenes textarea').fill('Return the input plus one.');
     await frame.locator('#movie-narration').setInputFiles({name:'acceptance-narration.wav',mimeType:'audio/wav',buffer:narrationWav()});
     await until(async()=>/acceptance-narration.wav/.test(await frame.textContent('#movie-audio-status')),'local narration imported');
@@ -33,14 +35,15 @@ exports.run=async(document,browser)=>{
     assert(amplitude(500)>0.08,'Saved video includes imported narration');assert(amplitude(130.81)>0.015,'Saved video includes optional music');
     await frame.click('#movie-save');await input.waitFor({state:'visible'});await input.press('Escape');await until(async()=>/Save cancelled/.test(await frame.textContent('#status')),'Save cancellation');
     await frame.locator('#movie-scenes textarea').fill('Updated caption invalidates the prior recording.');assert(await frame.locator('#movie-download').isHidden());
+    await frame.click('#workflow-compare');assert.equal(await frame.evaluate(()=>document.activeElement.id),'compare-before');
     await vscode.window.showTextDocument(document,vscode.ViewColumn.One);await vscode.commands.executeCommand('codealive.explainChanges');
     await until(async()=>/returns changed/.test(await frame.textContent('#compare-results')),'HEAD versus current source');
     await frame.locator('#compare-results article').filter({hasText:'returns changed'}).getByRole('button',{name:/^After · L\d+$/}).click();assert.match(await frame.textContent('#compare-source mark'),/x \+ 1/);
     assert.match(await frame.textContent('#compare-evidence'),/No CI evidence/);
     const pr=process.env.CODEALIVE_ACCEPTANCE_PR;
     if(pr){
-      const opening=vscode.commands.executeCommand('codealive.reviewPR');
-      const url=page.getByPlaceholder('https://github.com/owner/repo/pull/123');await url.fill(pr);await url.press('Enter');await page.getByText('Public PR without sign-in',{exact:true}).click();await opening;
+      await frame.click('#workflow-review-pr');
+      const url=page.getByPlaceholder('https://github.com/owner/repo/pull/123');await url.fill(pr);await url.press('Enter');await page.getByText('Public PR without sign-in',{exact:true}).click();
       const report=await findFrame(browser,'#refresh');await until(async()=>{const status=await report.textContent('#status');if(/rate limit|HTTP|unavailable|timed out/.test(status))throw Error(status);return status.startsWith('Evidence loaded.');},'live public PR evidence');
       assert.match(await report.textContent('#status'),/Required-check coverage is not verified/);assert.match(await report.textContent('#report'),/Not verified\. Passing displayed checks is not approval to merge\./);assert.match(await report.textContent('#report'),/Fetched/);
       await report.getByRole('button',{name:'Explain changes',exact:true}).first().click();

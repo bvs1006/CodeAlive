@@ -35,6 +35,8 @@ Start with the workflow you need. The explainer describes JavaScript/TypeScript 
 
 For a demo without your own file, run **CodeAlive: Open Explainer**, load **A simple discount**, and select **Explain this code**. Ten examples cover guards, loops, callbacks, recursion, async code and TypeScript.
 
+For one starting point, run **CodeAlive: Open CodeAlive**. The navigation bar leads to **Explain**, **Replay**, **Compare**, **Review PR** and **Create video**. It keeps your source and entered values when moving between sections. Replay and video navigation prepare a static explanation when needed; execution and recording still require their explicit buttons. The offline browser shows the four local workflows; PR review is available in VS Code.
+
 Requires desktop VS Code **1.90+**, a trusted workspace and input of at most **50,000 characters**. No CodeAlive account or API key is needed. The Command Palette is `Cmd+Shift+P` on macOS and `Ctrl+Shift+P` on Windows/Linux.
 
 ### Browser, without installation
@@ -177,7 +179,8 @@ Unit-level editor and GitHub API tests use mocks; the additional installed-VSIX 
 | Editable explanation videos | PR #4 code implemented; updated archive publication and main integration pending |
 | One 1.0 beta candidate | Prepared on `codex/release-1.0-beta`; new candidate CI and acceptance are required before release |
 | Fresh installation and full workflow acceptance | Repeatable [checklist](docs/RELEASE_CHECKLIST.md); manual rows remain pending until performed |
-| Unified navigation, metadata, license and distribution | Next consolidation tasks |
+| Shared workflow navigation | Implemented in the 1.0 candidate: Open CodeAlive, keyboard actions and direct VS Code PR review |
+| Metadata, license and distribution | Next consolidation tasks |
 | Developer review intelligence | Later: connect observed changes, captured behavior and tests/CI while distinguishing evidence from inference |
 
 [Full roadmap and integration evidence](docs/ROADMAP.md). No Marketplace/Open VSX listing or public 1.0 release is claimed. New languages, telemetry and major new features wait for validation of the current workflow.

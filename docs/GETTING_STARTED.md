@@ -8,6 +8,8 @@
 
 Without VS Code, open `browser/explain.html` from the ZIP. It works locally without an account or API key. Start with the discount example. See the [explanation guide](EXPLAIN_CODE.md) for scope selection, keyboard navigation and limits.
 
+Run **CodeAlive: Open CodeAlive** for a common starting point. Use the navigation bar to reach Explain, Replay, Compare, Review PR or Create video. Each action moves keyboard focus to its controls without clearing your entered values. Replay and video prepare the explanation if needed, then wait for you to run or record. PR review appears in VS Code; the offline browser offers the four local workflows.
+
 # First CodeAlive video
 
 1. Install the ZIP's VSIX through VS Code's Extensions menu.

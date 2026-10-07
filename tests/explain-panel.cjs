@@ -5,15 +5,16 @@ const positionAt=offset=>{const lines=code.slice(0,offset).split('\n');return {l
 const offsetAt=pos=>code.split('\n').slice(0,pos.line).reduce((n,line)=>n+line.length+1,0)+pos.character;
 const document={languageId:'typescript',version:1,uri:{path:'/project/example.ts'},getText:selection=>selection?selected:code,positionAt,offsetAt};
 const editor={document,viewColumn:1,selection:{isEmpty:false,start:{line:2,character:0}}};
-const commands={},sent=[],revealed=[],errors=[];let handler;
+const commands={},sent=[],revealed=[],errors=[],executed=[];let handler;
 const disposable={dispose(){}};
 const panel={reveal(){},dispose(){},onDidDispose(){return disposable;},webview:{cspSource:'vscode-webview:',asWebviewUri:uri=>({toString:()=>`vscode-webview:${uri.path}`}),postMessage:message=>sent.push(message),onDidReceiveMessage:fn=>(handler=fn,disposable)}};
-const api={Uri:{joinPath:(uri,...parts)=>({path:uri.path+'/'+parts.join('/')})},Selection:class{constructor(start,end){this.start=start;this.end=end;}},ViewColumn:{Beside:2,One:1},TextEditorRevealType:{InCenterIfOutsideViewport:1},window:{activeTextEditor:editor,visibleTextEditors:[editor],createWebviewPanel:()=>panel,onDidChangeActiveTextEditor:()=>disposable,showErrorMessage:message=>errors.push(message),showTextDocument:async(doc,options)=>{revealed.push({doc,options});return {revealRange(){}};}},workspace:{fs:{readFile:async()=>Buffer.from(fs.readFileSync('shared/explain.html','utf8'))}},commands:{registerCommand:(id,fn)=>(commands[id]=fn,disposable),executeCommand:async()=>{}}};
+const api={Uri:{joinPath:(uri,...parts)=>({path:uri.path+'/'+parts.join('/')})},Selection:class{constructor(start,end){this.start=start;this.end=end;}},ViewColumn:{Beside:2,One:1},TextEditorRevealType:{InCenterIfOutsideViewport:1},window:{activeTextEditor:editor,visibleTextEditors:[editor],createWebviewPanel:()=>panel,onDidChangeActiveTextEditor:()=>disposable,showErrorMessage:message=>errors.push(message),showTextDocument:async(doc,options)=>{revealed.push({doc,options});return {revealRange(){}};}},workspace:{fs:{readFile:async()=>Buffer.from(fs.readFileSync('shared/explain.html','utf8'))}},commands:{registerCommand:(id,fn)=>(commands[id]=fn,disposable),executeCommand:async id=>executed.push(id)}};
 const sandbox={module:{exports:{}},require:name=>name==='vscode'?api:require(name),Buffer};vm.runInNewContext(fs.readFileSync('extension/explain-panel.js','utf8'),sandbox);const ext=sandbox.module.exports;
 (async()=>{
   const snapshot=ext.captureSource(editor);assert.equal(snapshot.offset,12);assert.equal(snapshot.payload.baseLine,3);assert.equal(snapshot.payload.language,'TypeScript');
-  ext.activateExplain({extensionUri:{path:'/extension'},subscriptions:[]});await commands['codealive.explain']();assert.equal(sent.length,0);await handler({type:'ready'});assert.equal(sent[0].code,selected);
+  ext.activateExplain({extensionUri:{path:'/extension'},subscriptions:[]});await commands['codealive.start']();assert.equal(sent.length,0);await commands['codealive.explain']();assert.equal(sent.length,0);await handler({type:'ready'});assert.equal(sent[0].code,selected);
   const html=panel.webview.html;assert(html.includes("connect-src 'none'"));assert(!html.includes(selected));assert.equal((html.match(/<script nonce=/g)||[]).length,(fs.readFileSync('shared/explain.html','utf8').match(/<script src=/g)||[]).length);assert(!/<script src=/.test(html));
+  await handler({type:'reviewPR',command:'untrusted.command'});assert.deepEqual(executed,['codealive.reviewPR']);
   const payload=sent[0],start=selected.indexOf('return'),end=start+'return x + 1;'.length;
   await handler({type:'revealSource',sourceToken:'invalid',start,end});assert.equal(revealed.length,0);
   await handler({type:'revealSource',sourceToken:payload.sourceToken,start:-1,end});assert.equal(revealed.length,0);

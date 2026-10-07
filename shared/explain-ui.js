@@ -91,6 +91,21 @@
     $('scope').replaceChildren(...model.scopes.map(s=>{const option=el('option',s.name);option.value=s.id;return option;}));$('scope').value=model.scopeId;
     $('result').hidden=false;$('empty-state').hidden=true;renderFacts();renderSteps();renderGraph();sourceView();replayView?.setContext();movieView?.setContext();status(`${model.steps.length} source-linked steps. Select a step or diagram node to inspect its code.`);
   }
+  function visitWorkflow(heading,control,needsExplanation=false) {
+    if(needsExplanation&&!model)explain();
+    if(needsExplanation&&!model){heading='source-heading';control=$('source').hidden?'explain':'source';}
+    $(heading).scrollIntoView({block:'start'});
+    const overlap=document.querySelector('.workflow-nav').getBoundingClientRect().bottom+12-$(heading).getBoundingClientRect().top;
+    if(overlap>0)window.scrollBy(0,-overlap);
+    $(control).focus({preventScroll:true});
+  }
+  $('workflow-explain').addEventListener('click',()=>visitWorkflow('source-heading','explain'));
+  $('workflow-replay').addEventListener('click',()=>visitWorkflow('replay-heading','replay-args',true));
+  $('workflow-compare').addEventListener('click',()=>visitWorkflow('compare-heading','compare-before'));
+  $('workflow-video').addEventListener('click',()=>visitWorkflow('movie-heading','movie-build',true));
+  document.querySelector('.brand').addEventListener('click',event=>{event.preventDefault();visitWorkflow('source-heading','explain');});
+  $('workflow-review-pr').hidden=!host;$('workflow-browser-note').hidden=!!host;
+  $('workflow-review-pr').addEventListener('click',()=>host?.postMessage({type:'reviewPR'}));
   for(const example of CodeAliveExamples){const option=el('option',example.title);option.value=example.id;$('example-select').append(option);}
   const chosen=()=>CodeAliveExamples.find(e=>e.id===$('example-select').value);
   $('example-select').addEventListener('change',()=>{$('example-description').textContent=chosen().description;});
@@ -101,7 +116,7 @@
   $('edit-code').addEventListener('click',()=>{$('source-view').hidden=true;$('source').hidden=false;$('edit-code').hidden=true;$('source').focus();});
   document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();explain();}});
   $('load-editor').hidden=!host;$('load-editor').addEventListener('click',()=>host?.postMessage({type:'loadEditor'}));
-  if(host){for(const link of [document.querySelector('.brand'),$('open-studio')])link.addEventListener('click',e=>{e.preventDefault();host.postMessage({type:'openStudio'});});}
+  if(host)$('open-studio').addEventListener('click',e=>{e.preventDefault();host.postMessage({type:'openStudio'});});
   window.addEventListener('message',event=>{const message=event.data;if(!host||!message)return;if(message.type==='explainSource'&&typeof message.code==='string'&&message.code.length<=50000&&typeof message.language==='string'){setSource(message);explain();host.postMessage({type:'sourceReceived',sourceToken:message.sourceToken});}else if(message.type==='compareSource'&&typeof message.before==='string'&&typeof message.after==='string'&&Math.max(message.before.length,message.after.length)<=50000){compareView.setPayload(message);host.postMessage({type:'sourceReceived',sourceToken:message.sourceToken});}else if(message.type==='notice')status(String(message.text));});
   replayView=CodeAliveReplayUI.mount({getContext:()=>model&&({code:modelSource,language:model.language,scopeId:model.scopeId,name:model.summary.name}),onRange:activateRange});
   compareView=CodeAliveCompareUI.mount({host,getSource:()=>({code:$('source').value,language:$('language').value})});

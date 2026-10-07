@@ -33,6 +33,10 @@
   "contributes": {
     "commands": [
       {
+        "command": "codealive.start",
+        "title": "CodeAlive: Open CodeAlive"
+      },
+      {
         "command": "codealive.explain",
         "title": "CodeAlive: Explain Selected Code"
       },

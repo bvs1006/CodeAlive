@@ -20,6 +20,7 @@ explanation and replay engine for videos. Music remains an optional part of the 
 | Before/after observations and revision-bound PR evidence | PR #3 merged; 0.8 prerelease | [Main checks and release](https://github.com/bvs1006/CodeAlive/actions/runs/37567881283) |
 | Editable explanation videos with local narration | [PR #4](https://github.com/bvs1006/CodeAlive/pull/4) is open; updated package publication remains pending | [Original PR checks](https://github.com/bvs1006/CodeAlive/actions/runs/37497941870); [video scope](EXPLANATION_VIDEO.md) |
 | Unified 1.0.0 beta | Candidate branch `codex/release-1.0-beta`; includes all workflows and the replay fix | Version/package validation and [release acceptance checklist](RELEASE_CHECKLIST.md); not a published 1.0 release |
+| Shared workflow navigation | Open CodeAlive and a common Explain / Replay / Compare / Review PR / Create video bar in the candidate | Browser keyboard, value-preservation and invalid-source checks; installed VS Code navigation and PR action |
 | Music, sorting and existing Studio video tools | Available; retained in the candidate | Unit/browser coverage for the declared surfaces; wider physical-device testing remains |
 
 CI runs unit/extension checks on Linux, Windows and macOS, Chromium/media integration,
@@ -33,7 +34,7 @@ Those checks do not establish complete desktop, accessibility or audio-device co
 | 1 | Finish PR #4 integration after its publication block is resolved | Updated branch and merged `main` pass all checks before the release is considered ready. |
 | 2 | Prepare one 1.0 beta candidate | Matching version metadata, complete notes, verified VSIX/offline bundle and accurate status; no mixed preview installation guidance. |
 | 3 | Run fresh-install acceptance | Select function → Explain → Run → compare inputs → compare changes → create/save video → review a real PR; record actual results. |
-| 4 | Simplify product navigation | One entry surface leads to Explain, Run, Compare, Review PR and Create video, with keyboard-accessible actions. |
+| 4 | Simplify product navigation — implemented in the candidate | Open CodeAlive leads to Explain, Replay, Compare, Review PR and Create video, with keyboard focus and preserved inputs. CI gates each change; publication remains pending. |
 | 5 | Align repository/product metadata | Description, topics, install guidance and screenshots describe the current developer workflow. |
 | 6 | Decide licensing | Maintainer explicitly chooses reuse/distribution terms before open-source promotion or broader distribution. |
 | 7 | Publish through Marketplace/Open VSX | Confirm publisher identity and license, then verify a clean installation from the chosen listing. |

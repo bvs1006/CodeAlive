@@ -4,7 +4,8 @@ async function runSuite(browser){
   const extension=vscode.extensions.getExtension('codealive-local.codealive');assert(extension,'Packaged CodeAlive must be installed');assert.equal(extension.packageJSON.version,process.env.CODEALIVE_EXPECTED_VERSION);
   assert(extension.extensionPath.includes('installed'),'Test must exercise the installed VSIX, not the source checkout');
   const api=await extension.activate(),commands=await vscode.commands.getCommands(true);
-  for(const id of ['codealive.explain','codealive.openExplainer','codealive.explainChanges','codealive.open','codealive.selection','codealive.reviewPR'])assert(commands.includes(id),id);
+  for(const id of ['codealive.start','codealive.explain','codealive.openExplainer','codealive.explainChanges','codealive.open','codealive.selection','codealive.reviewPR'])assert(commands.includes(id),id);
+  await vscode.commands.executeCommand('codealive.start');await until(()=>api.getDiagnostics().explainer.ready,'Open CodeAlive entry');
   const code='// actual editor\n\nfunction total(x: number) {\n  return x + 1;\n}\n';
   const fixture=path.join(process.env.CODEALIVE_FIXTURE_DIR,'sample.ts');fs.writeFileSync(fixture,code);
   const document=await vscode.workspace.openTextDocument(vscode.Uri.file(fixture)),editor=await vscode.window.showTextDocument(document,vscode.ViewColumn.One);
