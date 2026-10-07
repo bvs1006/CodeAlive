@@ -5,6 +5,17 @@ OS, VS Code version, browser version, and results. A passing automated suite doe
 mark the manual rows complete. Automated gates apply to the beta prerelease; the
 manual rows track remaining desktop, physical-device and accessibility coverage.
 
+## Published 1.0 beta evidence
+
+| Evidence | Recorded result |
+|---|---|
+| Release | [v1.0.0 beta prerelease](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.0), published 7 October 2026 |
+| Exact source | Tag points to [7760091](https://github.com/bvs1006/CodeAlive/commit/7760091cbbead7de259c799533a78cb4fbc8d12d) |
+| Automated gates | [Release CI](https://github.com/bvs1006/CodeAlive/actions/runs/37646131724): five checks and the release job passed on that commit |
+| Packages | VSIX and offline ZIP uploaded; release job verified matching metadata, current sources, parser license and the exact embedded VSIX |
+
+The manual rows below remain pending. Their coverage is not implied by publication.
+
 ## Automated gates
 
 | Check | Expected outcome |

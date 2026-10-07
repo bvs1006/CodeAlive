@@ -1,4 +1,4 @@
-# Before/after change explanations — 1.0 beta candidate
+# Before/after change explanations — 1.0 beta
 
 Use **Explain a change** in the browser or VS Code explainer. Paste Before and After, choose JavaScript or TypeScript, and select **Explain changes**. **Use current source as After** copies the current explanation input. **Load change example** demonstrates changing a fixed discount into a percentage with a new guard.
 

@@ -4,7 +4,7 @@ Start with a small, reproducible developer task. Open a question or feature issu
 
 ## Choose the right version
 
-Use `codex/release-1.0-beta` for the unified candidate. `main` includes the merged 0.6–0.8 features; PR #4 video integration and public 1.0 publication remain pending. Follow the [README setup instructions](README.md#developer-quick-start) for the root npm commands below.
+Start from `main` for current development or tag `v1.0.0` to reproduce the published beta. The unified release includes explanation videos and shared navigation. Follow the [developer setup instructions](docs/DEVELOPMENT.md) for the root npm commands below.
 
 Use Node.js 22+ and Python 3. Install dependencies with `npm ci --ignore-scripts` from the repository root.
 

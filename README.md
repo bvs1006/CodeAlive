@@ -55,7 +55,7 @@ Desktop VS Code 1.90+, trusted workspace, up to 50,000 source characters. Local 
 
 | Version | Status and features |
 |---|---|
-| **1.0 beta** | Explanations, bounded replay, change comparisons, PR evidence, shared navigation, music/sorting and editable explanation videos with imported narration. [Release packages](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.0) are built after all CI gates pass on `main`. |
+| **1.0 beta** | [Published](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.0): explanations, bounded replay, change comparisons, PR evidence, shared navigation, music/sorting and editable explanation videos with imported narration. [All release checks passed](https://github.com/bvs1006/CodeAlive/actions/runs/37646131724). |
 | **0.8 prerelease** | [Earlier release](https://github.com/bvs1006/CodeAlive/releases/tag/v0.8.0), before shared navigation and narrated explanation videos. |
 
 CI covers platform unit checks, Chromium/media integration and installed Linux VS Code. Windows/macOS desktop, physical audio, private signed-in PRs and assistive-technology checks remain pending.

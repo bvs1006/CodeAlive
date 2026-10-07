@@ -18,7 +18,7 @@ The core workflow remains useful without sound.
 | Before/after, HEAD/editor and revision-bound PR comparisons | PR #3 merged; [0.8 release](https://github.com/bvs1006/CodeAlive/releases/tag/v0.8.0) |
 | Music, sorting demonstrations and studio recording | Available in the published feature set; wider physical-device checks remain |
 | Editable explanation scenes with imported narration | Included in the unified 1.0 beta from the PR #4 video work |
-| Unified 1.0 metadata, package verification, navigation and fresh-install acceptance | [PR #5](https://github.com/bvs1006/CodeAlive/pull/5); [release packages](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.0) are built after all CI gates pass on `main` |
+| Unified 1.0 metadata, package verification, navigation and fresh-install acceptance | [PR #5](https://github.com/bvs1006/CodeAlive/pull/5) merged; [1.0 beta published](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.0) after [five checks and the release job passed](https://github.com/bvs1006/CodeAlive/actions/runs/37646131724) |
 | Visual product overview and concise installation guidance | README uses a feature graphic, real screenshots/animation and task-based benefits; detailed setup is in [DEVELOPMENT.md](DEVELOPMENT.md) |
 
 CI covers Linux/Windows/macOS unit checks, Chromium/media integration and an installed

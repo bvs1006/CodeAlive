@@ -1,4 +1,4 @@
-# Beta candidate limitations
+# Beta limitations
 
 - Code soundtrack mode uses text-pattern mapping, not full AST parsing or execution. Live sorting mode runs only the two built-in algorithms on user-entered numbers.
 - 50,000-character input limit; select sections of larger files.
@@ -9,7 +9,7 @@
 - Videos can show code unless Hide source is enabled.
 - Sharing copies a sample/style link, not a saved performance or editor source. The currently hosted browser demo is private.
 - Follow editor changes source, not automatic music playback.
-- Narrated explanation videos accept imported audio in the 1.0 beta candidate. No automatic speech generation, thumbnails, batch exports or automated YouTube uploads.
+- Narrated explanation videos accept imported audio in the 1.0 beta. No automatic speech generation, thumbnails, batch exports or automated YouTube uploads.
 - The standalone web alpha does not yet include the extension's newer templates/presets.
 
 User testing confirmed sample playback and selection loading in a real installation. Other OS/browser combinations and full recording workflows still need testing.
