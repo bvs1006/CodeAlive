@@ -1,5 +1,10 @@
 # First code explanation
 
+These steps use the unpublished 1.0 beta candidate. For the published 0.8 feature set,
+download its [VSIX or offline ZIP](https://github.com/bvs1006/CodeAlive/releases/tag/v0.8.0)
+and install `codealive-0.8.0.vsix` instead; shared navigation and editable explanation
+videos require the candidate.
+
 1. Build the 1.0.0 beta candidate with `npm run package:release`, then extract its ZIP and install `codealive-1.0.0.vsix` through VS Code's Extensions menu.
 2. Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
 3. Select a JavaScript or TypeScript function and run **CodeAlive: Explain Selected Code**.
