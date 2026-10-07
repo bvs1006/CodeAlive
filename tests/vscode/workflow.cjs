@@ -1,12 +1,11 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{execFileSync}=require('node:child_process');
-const vscode=require('vscode'),{chromium}=require('playwright');
+const vscode=require('vscode');
 const output=path.resolve(__dirname,'../../test-results/vscode-acceptance');
 async function until(check,label){const end=Date.now()+45000;while(Date.now()<end){if(await check())return;await new Promise(r=>setTimeout(r,150));}throw Error('Timed out: '+label);}
 async function findFrame(browser,selector){let found;await until(async()=>{for(const context of browser.contexts())for(const page of context.pages())for(const frame of page.frames()){try{if(await frame.locator(selector).count()){found=frame;return true;}}catch{}}return false;},selector);return found;}
 function narrationWav(){const samples=48000,b=Buffer.alloc(44+samples*2);b.write('RIFF');b.writeUInt32LE(b.length-8,4);b.write('WAVEfmt ',8);b.writeUInt32LE(16,16);b.writeUInt16LE(1,20);b.writeUInt16LE(1,22);b.writeUInt32LE(48000,24);b.writeUInt32LE(96000,28);b.writeUInt16LE(2,32);b.writeUInt16LE(16,34);b.write('data',36);b.writeUInt32LE(samples*2,40);for(let i=0;i<samples;i++)b.writeInt16LE(Math.round(Math.sin(2*Math.PI*500*i/48000)*10000),44+i*2);return b;}
-exports.run=async(document)=>{
+exports.run=async(document,browser)=>{
   fs.mkdirSync(output,{recursive:true});
-  const browser=await chromium.connectOverCDP('http://127.0.0.1:'+process.env.CODEALIVE_CDP_PORT);
   try{
     const frame=await findFrame(browser,'#replay-run'),page=frame.page();
     assert.equal(await frame.textContent('#summary-name'),'total');
@@ -21,10 +20,11 @@ exports.run=async(document)=>{
     await frame.click('#movie-fit');await frame.check('#movie-music');await frame.check('#movie-hide');await frame.click('#movie-record');
     await until(async()=>/^Video ready\./.test(await frame.textContent('#movie-status')),'real VS Code recording');
     await until(()=>frame.locator('#movie-preview').evaluate(v=>v.videoWidth===1080),'encoded preview');assert.equal(await frame.locator('#movie-preview').evaluate(v=>v.videoHeight),1920);
-    const type=await frame.locator('#movie-preview').evaluate(async v=>(await fetch(v.currentSrc)).headers.get('content-type'));
-    const target=path.join(process.env.CODEALIVE_FIXTURE_DIR,'accepted-explanation.'+(type.includes('mp4')?'mp4':'webm'));
-    await frame.click('#movie-save');const input=page.locator('.quick-input-widget input:visible');await input.waitFor({state:'visible'});await input.fill(target);await input.press('Enter');
-    await until(()=>fs.existsSync(target),'Save dialog writes chosen destination');await until(async()=>/Explanation video saved/.test(await frame.textContent('#status')),'Save acknowledgement');
+    // Let the real Save dialog apply the recording's format filter. Fetching a
+    // preview blob would violate the webview's intentional connect-src policy.
+    const fixture=process.env.CODEALIVE_FIXTURE_DIR,basename='accepted-explanation';
+    await frame.click('#movie-save');const input=page.locator('.quick-input-widget input:visible');await input.waitFor({state:'visible'});await input.fill(path.join(fixture,basename));await input.press('Enter');
+    let target;await until(()=>{const name=fs.readdirSync(fixture).find(n=>n===basename||/^accepted-explanation\.(mp4|webm)$/.test(n));if(name)target=path.join(fixture,name);return !!target;},'Save dialog writes chosen destination');await until(async()=>/Explanation video saved/.test(await frame.textContent('#status')),'Save acknowledgement');
     const saved=path.join(output,path.basename(target));fs.copyFileSync(target,saved);
     const info=JSON.parse(execFileSync('ffprobe',['-v','error','-show_streams','-show_format','-of','json',saved],{encoding:'utf8'}));
     assert(info.streams.some(s=>s.codec_type==='video'&&s.width===1080&&s.height===1920));assert(info.streams.some(s=>s.codec_type==='audio'));assert(Number(info.format.duration)>=0.9&&Number(info.format.duration)<3.5);
@@ -49,6 +49,12 @@ exports.run=async(document)=>{
     }else console.log('Live public PR check not requested for this run; private sign-in remains a manual gate.');
     await page.screenshot({path:path.join(output,'installed-workflow.png')});
     console.log('FRESH VS CODE WORKFLOW PASS: real webview replay/input comparison, playback, narration/music recording, Save/cancel, export invalidation and HEAD comparison.');
-  }catch(error){for(const context of browser.contexts())for(const [i,page]of context.pages().entries()){console.error('VS Code frames:',page.frames().map(f=>f.url()));try{await page.screenshot({path:path.join(output,'failure-'+i+'.png')});}catch{}}throw error;}
-  finally{await browser.close();}
+  }catch(error){
+    try{const session=await browser.newBrowserCDPSession();console.error('VS Code targets:',JSON.stringify(await session.send('Target.getTargets')));await session.detach();}catch{}
+    for(const context of browser.contexts())for(const [i,page]of context.pages().entries()){
+      console.error('VS Code frames:',page.frames().map(f=>f.url()));
+      try{const session=await context.newCDPSession(page);console.error('VS Code frame tree:',JSON.stringify(await session.send('Page.getFrameTree')));await session.detach();await page.screenshot({path:path.join(output,'failure-'+i+'.png')});}catch{}
+    }
+    throw error;
+  }
 };

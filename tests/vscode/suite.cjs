@@ -1,6 +1,6 @@
 const fs=require('node:fs'),assert=require('node:assert/strict'),path=require('node:path'),vscode=require('vscode');
 async function until(check,label){const end=Date.now()+30000;while(Date.now()<end){if(await check())return;await new Promise(r=>setTimeout(r,100));}throw Error('Timed out: '+label);}
-exports.run=async()=>{
+async function runSuite(browser){
   const extension=vscode.extensions.getExtension('codealive-local.codealive');assert(extension,'Packaged CodeAlive must be installed');assert.equal(extension.packageJSON.version,process.env.CODEALIVE_EXPECTED_VERSION);
   assert(extension.extensionPath.includes('installed'),'Test must exercise the installed VSIX, not the source checkout');
   const api=await extension.activate(),commands=await vscode.commands.getCommands(true);
@@ -21,8 +21,14 @@ exports.run=async()=>{
   await vscode.window.showTextDocument(document,vscode.ViewColumn.One);editor.selection=new vscode.Selection(0,0,0,0);await vscode.commands.executeCommand('codealive.explain');await until(()=>api.getDiagnostics().explainer.sourceAcknowledged,'full file transfer');assert.equal(api.getDiagnostics().explainer.sourceLength,document.getText().length);
   const git=(await vscode.extensions.getExtension('vscode.git').activate()).getAPI(1);await until(()=>git.getRepository(document.uri)?.state.HEAD?.commit,'Git repository discovery');
   await vscode.window.showTextDocument(document,vscode.ViewColumn.One);await vscode.commands.executeCommand('codealive.explainChanges');await until(()=>api.getDiagnostics().explainer.comparison&&api.getDiagnostics().explainer.sourceAcknowledged,'real working-tree comparison');assert.equal(api.getDiagnostics().explainer.afterLength,document.getText().length);assert(api.getDiagnostics().explainer.beforeLength>0);
-  if(process.env.CODEALIVE_INSTALL_MODE==='fresh'){await vscode.window.showTextDocument(document,vscode.ViewColumn.One);await vscode.commands.executeCommand('codealive.explain');await until(()=>api.getDiagnostics().explainer.sourceAcknowledged,'workflow source');await require('./workflow.cjs').run(document);}
+  if(browser){await vscode.window.showTextDocument(document,vscode.ViewColumn.One);await vscode.commands.executeCommand('codealive.explain');await until(()=>api.getDiagnostics().explainer.sourceAcknowledged,'workflow source');await require('./workflow.cjs').run(document,browser);}
   await vscode.window.showTextDocument(document,vscode.ViewColumn.One);await vscode.commands.executeCommand('codealive.file');await until(()=>api.getDiagnostics().studio.sourceAcknowledged,'real studio bridge');
   assert(api.getDiagnostics().studio.ready);await document.save();await vscode.commands.executeCommand('workbench.action.closeAllEditors');
   console.log(`REAL VS CODE PASS: ${process.platform}, VS Code ${vscode.version}, ${process.env.CODEALIVE_INSTALL_MODE} installed CodeAlive ${extension.packageJSON.version}; activation, selection/file transfer, both webviews, exact navigation and stale-document guard.`);
+}
+exports.run=async()=>{
+  // Attach before any webview exists so Playwright observes its frame navigation.
+  const browser=process.env.CODEALIVE_INSTALL_MODE==='fresh'
+    ?await require('playwright').chromium.connectOverCDP('http://127.0.0.1:'+process.env.CODEALIVE_CDP_PORT):null;
+  try{await runSuite(browser);}finally{await browser?.close();}
 };
