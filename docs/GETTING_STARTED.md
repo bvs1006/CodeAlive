@@ -1,6 +1,6 @@
 # First code explanation
 
-1. Extract the 0.6.0 ZIP and install `codealive-0.6.0.vsix` through VS Code's Extensions menu.
+1. Download the [published 0.8 VSIX or offline ZIP](https://github.com/bvs1006/CodeAlive/releases/tag/v0.8.0), then install `codealive-0.8.0.vsix` through VS Code's Extensions menu.
 2. Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
 3. Select a JavaScript or TypeScript function and run **CodeAlive: Explain Selected Code**.
 4. Choose Plain language or Developer. Select a step or flow node to reveal its source.
