@@ -35,7 +35,7 @@ exports.run=async(document,browser)=>{
     await frame.locator('#movie-scenes textarea').fill('Updated caption invalidates the prior recording.');assert(await frame.locator('#movie-download').isHidden());
     await vscode.window.showTextDocument(document,vscode.ViewColumn.One);await vscode.commands.executeCommand('codealive.explainChanges');
     await until(async()=>/returns changed/.test(await frame.textContent('#compare-results')),'HEAD versus current source');
-    await frame.locator('#compare-results article').filter({hasText:'returns changed'}).getByRole('button',{name:'After',exact:true}).click();assert.match(await frame.textContent('#compare-source mark'),/x \+ 1/);
+    await frame.locator('#compare-results article').filter({hasText:'returns changed'}).getByRole('button',{name:/^After · L\d+$/}).click();assert.match(await frame.textContent('#compare-source mark'),/x \+ 1/);
     assert.match(await frame.textContent('#compare-evidence'),/No CI evidence/);
     const pr=process.env.CODEALIVE_ACCEPTANCE_PR;
     if(pr){
