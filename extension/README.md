@@ -1,8 +1,8 @@
 # CodeAlive 1.0.0 beta
 
-See what code does, what changed, and why it matters. This beta candidate unifies local JS/TS explanations, bounded replay, before/after observations, PR evidence and editable explanation videos. Music and sorting remain available.
+See what code does, what changed, and why it matters. This beta unifies local JS/TS explanations, bounded replay, before/after observations, PR evidence and editable explanation videos. Music and sorting remain available.
 
-This is a candidate build; a public 1.0 release and Marketplace/Open VSX listing are pending.
+The gated release workflow builds [1.0 beta installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.0) from verified source. Marketplace/Open VSX listings and manual desktop/audio/accessibility checks remain pending.
 
 ## Install and explain
 

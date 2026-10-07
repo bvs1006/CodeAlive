@@ -1,8 +1,9 @@
 # Developer setup and architecture
 
-`main` contains the published 0.8 feature set. The unified 1.0 beta is on
-`codex/release-1.0-beta` and remains unpublished. Use one branch and its matching
-package version when testing; do not mix installed VSIX versions.
+The unified 1.0 beta combines explanations, replay, comparisons, PR evidence and
+editable narrated videos. Use one commit and its matching package version when
+testing; do not mix installed VSIX versions. [Release installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.0)
+are built by the gated `main` release workflow.
 
 ## Run locally
 
@@ -21,11 +22,8 @@ Open [the explainer](http://localhost:8080/explain.html) or
 packaged. GitHub PR inspection and the studio's sorting/comparison modes are VS Code
 features. There is no public hosted demo at present.
 
-To try 1.0, switch to `codex/release-1.0-beta` before installing dependencies and
-building. Its **CodeAlive: Open CodeAlive** command provides a common navigation
-bar and editable explanation-video scenes with imported narration. See the
-[candidate PR](https://github.com/bvs1006/CodeAlive/pull/5) and
-[release checklist](https://github.com/bvs1006/CodeAlive/blob/codex/release-1.0-beta/docs/RELEASE_CHECKLIST.md).
+**CodeAlive: Open CodeAlive** provides a common navigation bar and editable
+explanation-video scenes with imported narration. See the [release checklist](RELEASE_CHECKLIST.md).
 
 ## Build and verify
 
@@ -39,7 +37,7 @@ Run commands from the repository root.
 | `npm run package` | Build the VSIX for the checked-out extension version |
 | `xvfb-run -a npm run test:vscode` | Real installed Linux VS Code check; omit Xvfb on a desktop with a display |
 | `python3 scripts/package-release.py` | Build the VSIX and offline browser ZIP for the current branch |
-| `npm run check:package` (1.0 candidate) | Verify versions, current payloads, parser license and the exact embedded VSIX |
+| `npm run check:package` | Verify versions, current payloads, parser license and the exact embedded VSIX |
 
 Install the resulting VSIX through VS Code's Extensions menu. Close older CodeAlive
 tabs and reload the window after upgrading. Rebuild and reinstall after source
@@ -47,7 +45,7 @@ changes. On systems without `python3`, use Python 3's `python` command directly 
 the packaging scripts. No F5 launch configuration is committed.
 
 CI runs unit/extension checks on Linux, Windows and macOS, Chromium/media integration,
-and a real installed VSIX on Linux. The 1.0 candidate additionally exercises fresh
+and a real installed VSIX on Linux. The 1.0 suite additionally exercises fresh
 profiles, upgrades, recorded narration/music, Save/cancel and a live public PR.
 Windows/macOS desktop, physical audio devices, private signed-in PRs and screen-reader
 checks remain manual work. [Known limits](KNOWN_LIMITATIONS.md).
@@ -64,7 +62,7 @@ checks remain manual work. [Known limits](KNOWN_LIMITATIONS.md).
 | `extension/compare-source.js`, `pr-changes.js` | HEAD/editor capture and exact PR revision reads |
 | `extension/pr-api.js`, `pr-core.js`, `pr-panel.js` | GitHub reads and evidence interpretation |
 | `extension/extension.js`, `extension/media/` | Studio host, music, sorting and video |
-| `shared/movie-engine.js`, `movie-ui.js`, `extension/video-save.js` (1.0) | Editable scenes, narration/music and validated video saving |
+| `shared/movie-engine.js`, `movie-ui.js`, `extension/video-save.js` | Editable scenes, narration/music and validated video saving |
 | `web/`, `scripts/`, `tests/` | Browser entry points, building, packaging and verification |
 
 Edit `shared/`, then build. Generated `web/explainer/` and

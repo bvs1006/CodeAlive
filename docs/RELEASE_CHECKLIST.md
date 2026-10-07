@@ -2,7 +2,8 @@
 
 Run this checklist against one commit and its exact packaged VSIX. Record the commit SHA,
 OS, VS Code version, browser version, and results. A passing automated suite does not
-mark the manual rows complete. The 1.0 candidate is not a published release.
+mark the manual rows complete. Automated gates apply to the beta prerelease; the
+manual rows track remaining desktop, physical-device and accessibility coverage.
 
 ## Automated gates
 
@@ -13,7 +14,7 @@ mark the manual rows complete. The 1.0 candidate is not a published release.
 | `npm run check:package` | Browser and extension contain identical shared engines and parser license; the ZIP embeds the exact verified VSIX. |
 | `npm run test:browser` | Source links, input replay, comparisons, mobile width and CSP pass; actual encoded videos contain expected dimensions and narration/music signals. Requires Chromium and FFmpeg. |
 | `xvfb-run -a npm run test:vscode` on Linux | The packaged extension upgrades the legacy fixture and activates; editor transfer, navigation, stale-source protection and a real Git comparison pass. |
-| CI on the candidate commit | Linux, Windows and macOS unit suites plus Chromium and installed Linux VS Code jobs pass. |
+| CI on the exact release commit | Linux, Windows and macOS unit suites plus Chromium and installed Linux VS Code jobs pass before publication. |
 
 ## Fresh-install acceptance
 
@@ -43,11 +44,11 @@ function discountedPrice(price, percent) {
 
 ## Release decisions and remaining platform work
 
-- Complete fresh-install acceptance and physical audio checks; record actual results.
+- Complete the pending manual acceptance and physical audio checks; record actual results before broader distribution.
 - Test Windows/macOS desktop installation and recording; unit CI on those systems is not desktop coverage.
 - Check keyboard navigation, screen-reader labels and reduced-motion behavior with users.
 - Resolve the maintainer's license and distribution decisions before promotion or Marketplace/Open VSX publication.
-- Approve publication of the exact package before merging the candidate into `main`: the existing main workflow publishes a prerelease after all checks pass.
+- Publish the beta through the existing `main` workflow after maintainer authorization: it builds and verifies the exact source package after all checks pass. Manual rows remain pending until their results are recorded.
 - Record the release URL and the passing CI run for its exact commit; do not describe an unmerged candidate as released.
 
 No source-code telemetry or new languages are required for this beta. Next work should

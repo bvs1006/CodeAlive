@@ -1,4 +1,4 @@
-# Narrated explanation videos — 1.0 beta candidate
+# Narrated explanation videos — 1.0 beta
 
 Use **Explain it in a video** after explaining a JS/TS function. This workflow works in the offline browser bundle and VS Code explainer. It captures a short, editable explanation with captions, source highlights and optional local audio.
 
