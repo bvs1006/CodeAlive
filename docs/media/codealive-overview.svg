@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="600" viewBox="0 0 1100 600" role="img" aria-labelledby="title description">
   <title id="title">CodeAlive: understand, replay, review and explain</title>
-  <desc id="description">Follow JavaScript and TypeScript source links, replay the discount example with inputs 100 and 20 for result 80 or 200 and 50 for result 100, compare changes and existing GitHub checks, and create editable narrated explanation videos in the 1.0 candidate.</desc>
+  <desc id="description">Follow JavaScript and TypeScript source links, replay the discount example with inputs 100 and 20 for result 80 or 200 and 50 for result 100, compare changes and existing GitHub checks, and create editable narrated explanation videos in the 1.0 beta.</desc>
   <style>
     text{font-family:DejaVu Sans,sans-serif}
     .label{font-size:17px;font-weight:700;letter-spacing:2px;fill:#a4edcf}
@@ -38,7 +38,7 @@
   <rect x="560" y="364" width="500" height="170" rx="12" class="card"/>
   <text x="586" y="395" class="label">04 / SHARE</text>
   <rect x="849" y="378" width="185" height="29" rx="7" fill="#30304d"/>
-  <text x="941" y="398" text-anchor="middle" font-size="15" font-weight="700" fill="#d8c9ff">1.0 CANDIDATE</text>
+  <text x="941" y="398" text-anchor="middle" font-size="15" font-weight="700" fill="#d8c9ff">1.0 BETA</text>
   <text x="586" y="435" class="title">Teach it visually</text>
   <text x="586" y="471" class="body">Editable scenes + your narration</text>
   <text x="586" y="508" class="note">Optional music · local video export</text>

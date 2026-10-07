@@ -15,7 +15,7 @@ function captureSource(editor) {
 function explainHtml(template,webview,extensionUri) {
   const nonce=crypto.randomBytes(18).toString('base64');
   const resource=name=>webview.asWebviewUri(vscode.Uri.joinPath(extensionUri,'media',name)).toString();
-  const csp=`default-src 'none'; script-src 'nonce-${nonce}'; style-src ${webview.cspSource}; img-src ${webview.cspSource} data:; connect-src 'none'; base-uri 'none'; form-action 'none';`;
+  const csp=`default-src 'none'; script-src 'nonce-${nonce}'; style-src ${webview.cspSource}; img-src ${webview.cspSource} data:; media-src blob:; connect-src 'none'; base-uri 'none'; form-action 'none';`;
   return template.replace('<meta charset="utf-8">',`<meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}">`)
     .replace(/href="(explainer\/[^"]+)"/g,(_,file)=>`href="${resource(file)}"`)
     .replace(/<script src="(explainer\/[^"]+)"><\/script>/g,(_,file)=>`<script nonce="${nonce}" src="${resource(file)}"></script>`)
@@ -48,6 +48,8 @@ function activateExplain(context) {
         else if(message.type==='sourceReceived'){if(queued?.sourceToken===message.sourceToken)queued=null;}
         else if(message.type==='loadEditor'){const source=captureSource(currentEditor());if(source)send(source);else created.webview.postMessage({type:'notice',text:'Open a JavaScript or TypeScript file, then load it here.'});}
         else if(message.type==='openStudio')await vscode.commands.executeCommand('codealive.open');
+        else if(message.type==='reviewPR')await vscode.commands.executeCommand('codealive.reviewPR');
+        else if(message.type==='saveExplanationVideo'){const saved=await require('./video-save').saveExplanationVideo(message);created.webview.postMessage({type:'notice',text:saved?'Explanation video saved.':'Save cancelled.'});}
         else if(message.type==='openEvidence'){const {safeLink}=require('./pr-core'),link=safeLink(message.url);if(link)await vscode.env.openExternal(vscode.Uri.parse(link));}
         else if(message.type==='revealComparison'){
           if(!loaded?.comparison||message.sourceToken!==loaded.payload.sourceToken||!['before','after'].includes(message.side))return;
@@ -67,6 +69,7 @@ function activateExplain(context) {
   }
   const command=(id,callback)=>disposables.push(vscode.commands.registerCommand(id,async(...args)=>{try{await callback(...args);}catch(error){vscode.window.showErrorMessage('CodeAlive: '+error.message);}}));
   command('codealive.explain',()=>show(captureSource(currentEditor())));
+  command('codealive.start',()=>show(null));
   command('codealive.openExplainer',()=>show(null));
   const showComparison=message=>{
     if(!message||typeof message.before!=='string'||typeof message.after!=='string'||Math.max(message.before.length,message.after.length)>MAX_CODE||!['JavaScript','TypeScript'].includes(message.language))throw new Error('Invalid comparison source.');

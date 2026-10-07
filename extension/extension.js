@@ -64,7 +64,7 @@ function activate(context) {
           await vscode.env.clipboard.writeText(`${SITE}#sample=${message.sample}&style=${message.style}`);
           created.webview.postMessage({type:'notice',text:'Sample link copied. The site is currently private; pasted source is not included.'});
         } else if(message.type==='saveVideo') {
-          if(typeof message.base64!=='string'||message.base64.length>Math.ceil(MAX_VIDEO*4/3)||!/^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(message.base64)||!['mp4','webm'].includes(message.format))throw Error('Invalid or oversized video. Maximum size is 50 MB.');
+          if(typeof message.base64!=='string'||message.base64.length>Math.ceil(MAX_VIDEO*4/3)||message.base64.length%4!==0||!/^[A-Za-z0-9+/]*={0,2}$/.test(message.base64)||!['mp4','webm'].includes(message.format))throw Error('Invalid or oversized video. Maximum size is 50 MB.');
           const bytes=Buffer.from(message.base64,'base64');if(!bytes.length||bytes.length>MAX_VIDEO)throw Error('Video is empty or too large.');
           const mp4=message.convertToMp4===true&&message.format==='webm';const format=mp4?'mp4':message.format;const target=await vscode.window.showSaveDialog({saveLabel:mp4?'Convert and save MP4':'Save CodeAlive video',filters:{Video:[format]}});
           if(!target)return;

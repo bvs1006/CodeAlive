@@ -1,4 +1,4 @@
-# Read-only PR companion — 0.5.0
+# Read-only PR companion and change explanations
 
 ## Start
 
@@ -21,7 +21,13 @@ Changed-file reads cap at 600 files; check/status reads cap at 600 per evidence 
 
 ## Review prompts
 
-Prompts come from filenames and change statuses. “No test files in the retrieved diff” does not mean tests are absent or inadequate. Dependency/configuration/deletion prompts are questions for the reviewer, not confirmed defects. No AST or semantic analysis is implemented.
+Prompts come from filenames and change statuses. “No test files in the retrieved diff” does not mean tests are absent or inadequate. Dependency/configuration/deletion prompts are questions for the reviewer, not confirmed defects. The review prompts themselves do not analyze code. The separate **Explain changes** action adds bounded AST observations for JavaScript/TypeScript; it does not establish semantic correctness.
+
+## Explain a changed JS/TS file
+
+For an open, unmerged PR, choose **Explain changes** beside a JS/TS file. The explainer reads the regular UTF-8 file at its exact merge-base and head revisions, supports fork heads and renamed paths, and shows source-linked structural observations. The report's existing checks, full checked revision SHAs, timestamp, warnings and changed test-file links accompany it. Test-file association is a filename heuristic, not coverage evidence.
+
+Moving revisions stop loading and require refresh. Editing either source version detaches old evidence and editor links. Source stays in the local webview after its explicit GitHub read; credentials remain in the extension host. Historical/closed PR versions can be pasted manually. See [the full change guide](CHANGE_EXPLANATIONS.md).
 
 ## What it does not do
 
@@ -29,6 +35,6 @@ No code checkout or execution, local command validation, CI reruns, check public
 
 ## Validation
 
-Mocked GitHub tests cover success/failure, annotations, missing/denied evidence, changing commits, truncation and URL restrictions. Mocked VS Code tests cover the command, authentication, content security policy and keeping tokens out of the webview. There was no open PR in the CodeAlive repository for a live end-to-end test, and VS Code is not installed in the build environment. Test against your PR before relying on the panel.
+Mocked GitHub tests cover success/failure, annotations, missing/denied evidence, changing commits, truncation and URL restrictions. Mocked VS Code tests cover the command, authentication, content security policy and keeping tokens out of the webview. Additional tests cover pinned Git blobs, forks, renames, moving heads, before/after rendering and evidence detachment. Real Linux VS Code tests exercise extension installation, commands, local Git comparison and source navigation. A signed-in private PR panel still needs a manual account-based smoke test; mocked API tests do not establish that integration.
 
 Report problems through the repository’s GitHub Issues form. Remove confidential check output and source paths before posting a public issue.

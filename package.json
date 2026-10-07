@@ -1,6 +1,6 @@
 {
   "name": "codealive-workspace",
-  "version": "0.8.0",
+  "version": "1.0.0",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -8,7 +8,9 @@
     "test": "node scripts/test.cjs",
     "test:browser": "node tests/browser.cjs",
     "package": "npm run build && python3 extension/package.py",
-    "test:vscode": "node tests/vscode/run.cjs"
+    "test:vscode": "node tests/vscode/run.cjs",
+    "package:release": "python3 scripts/package-release.py",
+    "check:package": "python3 scripts/check-package.py"
   },
   "devDependencies": {
     "@babel/parser": "7.29.9",

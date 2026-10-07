@@ -1,7 +1,51 @@
-# CodeAlive 0.8.0 alpha preview
+# CodeAlive 1.0.0 beta
 
-Adds source-linked before/after change explanations for JavaScript and TypeScript. Compare pasted versions, committed HEAD versus your current editor buffer, or a PR file at its exact merge-base/head revisions. Structural observations cover parameters, signatures, conditions, returns, calls and writes.
+**See what code does, what changed, and why it matters.**
 
-PR comparisons attach the existing report's timestamped checks, exact revision identities, warnings and changed test-file links. Moving revisions require refresh; editing source detaches evidence. This is read-only inspection, without test execution, coverage verification or a correctness/merge verdict. Function matching, file limits and supported workflows are documented in CHANGE_EXPLANATIONS.md.
+This beta brings the four feature milestones together under one version. Installers
+are built from the release commit after all CI gates pass. Marketplace/Open VSX
+listings and the manual platform checks below remain pending.
 
-Includes the tested 0.6 static explainer and 0.7 restricted execution replay. All local suites pass; review CI for cross-platform, real Chromium/media and installed-VSIX checks on the exact commit. Private signed-in PR use and physical Windows/macOS editor/audio behavior still need manual verification. Feature branches await merge and public-release approval.
+## Included workflows
+
+- Explain selected JavaScript/TypeScript with plain-language/developer steps, parameters,
+  return expressions, exact source links and static flow diagrams.
+- Explicitly replay the supported synchronous subset with JSON arguments, variable
+  snapshots, branches, step/play controls and a pinned input comparison.
+- Compare pasted versions, committed HEAD versus an unsaved editor buffer, or an open PR
+  file at its merge-base/head revisions with existing CI evidence attached.
+- Turn static or replay steps into editable video scenes with captions, local narration,
+  timing controls, optional music, source-panel hiding and browser/VS Code saving.
+- Use the existing music studio, Bubble/Quick Sort demonstrations, comparison and recording.
+- Start with **CodeAlive: Open CodeAlive** and navigate between Explain, Replay,
+  Compare, Review PR and Create video without clearing entered values.
+
+The beta includes the replay correction for `for (const item of item)`: evaluating
+its iterable now respects JavaScript's uninitialized loop binding instead of reading an
+outer value. Differential tests cover both `let` and `const`.
+
+## Installation and validation
+
+Download the [release VSIX or offline ZIP](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.0),
+or build with `npm ci --ignore-scripts` and `npm run package:release`. Install
+`codealive-1.0.0.vsix`, or extract `downloads/codealive-explainer-1.0.0.zip` and open
+`browser/explain.html`. Close old CodeAlive tabs and reload VS Code after upgrading.
+
+The package check verifies one version, current browser/extension source, the parser's
+license and the exact embedded VSIX. Use [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) to
+record the release commit, CI results and fresh-install acceptance. Existing passing
+milestone checks do not automatically count as validation of a new release commit.
+
+## Boundaries
+
+Static explanations never execute source. Replay uses a bounded interpreter with no
+host, module, file or network access; it is not the application's full runtime. Change
+observations and CI evidence do not prove correctness, coverage or merge readiness.
+
+Narration is a local audio file; automatic speech generation is not included. Review
+captions and audio when hiding source. Videos are limited to 20 scenes, 120 seconds and
+50 MB, with browser-dependent MP4/WebM encoding and no automatic upload.
+
+Physical audio devices, Windows/macOS desktop recording, private signed-in PR acceptance
+and accessibility checks remain manual work. Licensing and distribution decisions are
+still pending. No telemetry or additional language support is introduced by this beta.

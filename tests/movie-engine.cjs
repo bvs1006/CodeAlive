@@ -1,0 +1,7 @@
+const assert=require('node:assert/strict'),{plan,sceneAt,draw}=require('../shared/movie-engine');
+const source='function secretSource(x){\n  return x + 1;\n}',scene={caption:'Return the adjusted value.',duration:2,range:{start:33,end:38,line:2,endLine:2}};
+const p=plan(source,[scene,{...scene,caption:'Finish the explanation.',duration:1}]);assert.equal(p.seconds,3);assert.equal(sceneAt(p,0).index,0);assert.equal(sceneAt(p,1.99).index,0);assert.equal(sceneAt(p,2).index,1);assert.equal(sceneAt(p,100).index,1);assert.equal(p.scenes[1].start,2);
+assert.throws(()=>plan(source,[{...scene,duration:0}]),/seconds/);assert.throws(()=>plan(source,Array(21).fill(scene)),/20 scenes/);assert.throws(()=>plan(source,Array(20).fill({...scene,duration:15})),/120 seconds/);assert.throws(()=>plan(source,[{...scene,range:{start:0,end:500}}]),/stale/);assert.throws(()=>plan(source,[{...scene,caption:''}]),/caption/);
+assert.equal(plan(source,[{...scene,enabled:false},scene]).scenes.length,1);
+const texts=[],ctx={fillRect(){},fillText:t=>texts.push(t),measureText:t=>({width:t.length*15})};draw(ctx,p,0);assert(texts.some(t=>t.includes('secretSource')));texts.length=0;draw(ctx,plan(source,[scene],{hideSource:true}),0);assert(!texts.some(t=>t.includes('secretSource')));assert(texts.includes('Source panel hidden'));assert(texts.includes(scene.caption));
+console.log('Explanation video passed: scene boundaries, captions, duration/range limits and source-panel hiding.');
