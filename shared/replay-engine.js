@@ -122,7 +122,10 @@
         }
         case 'ForOfStatement':{
           if(n.await||n.left.type!=='VariableDeclaration'||n.left.kind==='var'||n.left.declarations.length!==1||n.left.declarations[0].id.type!=='Identifier')fail('Use for (const item of array) or for (let item of array).',n);
-          const values=expr(n.right,e);if(!Array.isArray(values)&&typeof values!=='string')fail('for-of requires an array or string.',n.right);
+          // The loop binding is already in its temporal dead zone while the
+          // iterable is evaluated, even when an outer binding has that name.
+          const iterableScope=scope(e);reserve(n.left,iterableScope);
+          const values=expr(n.right,iterableScope);if(!Array.isArray(values)&&typeof values!=='string')fail('for-of requires an array or string.',n.right);
           for(const value of values){tick(n);const local=scope(e),name=n.left.declarations[0].id.name;declare(local,name,value,n.left.kind==='const');record('iteration',n.left,local,value,name);const result=statement(n.body,local);if(result?.type==='return')return result;if(result?.type==='break')break;}return;
         }
         default:fail('Unsupported statement: '+n.type,n);

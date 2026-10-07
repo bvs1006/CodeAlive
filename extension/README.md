@@ -1,10 +1,12 @@
-# CodeAlive 0.9.0
+# CodeAlive 1.0.0 beta
 
-Local JavaScript and TypeScript explanations with source-linked steps and flow diagrams, plus a code music/video studio and read-only GitHub PR companion.
+See what code does, what changed, and why it matters. This beta candidate unifies local JS/TS explanations, bounded replay, before/after observations, PR evidence and editable explanation videos. Music and sorting remain available.
+
+This is a candidate build; a public 1.0 release and Marketplace/Open VSX listing are pending.
 
 ## Install and explain
 
-Install `codealive-0.9.0.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
+Install `codealive-1.0.0.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
 
 Select a complete JavaScript/TypeScript function and run **CodeAlive: Explain Selected Code**. With no selection, the active file is loaded. Choose a function scope, switch between Plain language and Developer, and select a step or diagram node to reveal its source. **Load editor** refreshes changed files. **CodeAlive: Open Explainer** opens ten examples.
 

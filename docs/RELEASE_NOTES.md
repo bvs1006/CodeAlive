@@ -1,7 +1,47 @@
-# CodeAlive 0.9.0 alpha preview
+# CodeAlive 1.0.0 beta candidate
 
-Adds editable explanation videos from static JS/TS steps or captured interpreter replay. Choose scenes, edit captions/timing, import local narration, fit durations proportionally and preview before recording. Optional quiet music follows scene timing; source-panel hiding, 1080 × 1920 rendering and browser/VS Code saving are included.
+**See what code does, what changed, and why it matters.**
 
-Narration uses your recorded audio; automatic speech generation and word alignment are not included. Source hiding affects the code panel only. Video limits are 20 scenes, 120 seconds and 50 MB; local narration is limited to mono/stereo, 120 seconds and 15 MB. Keep the view visible during recording. Review the encoded result before sharing. Nothing is uploaded automatically.
+This candidate brings the four feature milestones together under one version. It is
+prepared for validation; a public 1.0 release and Marketplace/Open VSX listings are pending.
 
-Includes the 0.6 explainer, 0.7 restricted replay and 0.8 before/after change explanations. Documentation describes source/privacy boundaries, developer setup and remaining alpha limits. CI checks timeline/rendering/save behavior and real encoded browser/webview exports, including imported audio and music signals, alongside the multi-OS and installed-VSIX suites. Physical device checks and private signed-in PR smoke testing remain pending. Merges and public releases require approval.
+## Included workflows
+
+- Explain selected JavaScript/TypeScript with plain-language/developer steps, parameters,
+  return expressions, exact source links and static flow diagrams.
+- Explicitly replay the supported synchronous subset with JSON arguments, variable
+  snapshots, branches, step/play controls and a pinned input comparison.
+- Compare pasted versions, committed HEAD versus an unsaved editor buffer, or an open PR
+  file at its merge-base/head revisions with existing CI evidence attached.
+- Turn static or replay steps into editable video scenes with captions, local narration,
+  timing controls, optional music, source-panel hiding and browser/VS Code saving.
+- Use the existing music studio, Bubble/Quick Sort demonstrations, comparison and recording.
+
+The candidate includes the replay correction for `for (const item of item)`: evaluating
+its iterable now respects JavaScript's uninitialized loop binding instead of reading an
+outer value. Differential tests cover both `let` and `const`.
+
+## Installation and validation
+
+Build with `npm ci --ignore-scripts` and `npm run package:release`. Install
+`codealive-1.0.0.vsix`, or extract `downloads/codealive-explainer-1.0.0.zip` and open
+`browser/explain.html`. Close old CodeAlive tabs and reload VS Code after upgrading.
+
+The package check verifies one version, current browser/extension source, the parser's
+license and the exact embedded VSIX. Use [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) to
+record the candidate commit, CI results and fresh-install acceptance. Existing passing
+milestone checks do not automatically count as validation of a new candidate.
+
+## Boundaries
+
+Static explanations never execute source. Replay uses a bounded interpreter with no
+host, module, file or network access; it is not the application's full runtime. Change
+observations and CI evidence do not prove correctness, coverage or merge readiness.
+
+Narration is a local audio file; automatic speech generation is not included. Review
+captions and audio when hiding source. Videos are limited to 20 scenes, 120 seconds and
+50 MB, with browser-dependent MP4/WebM encoding and no automatic upload.
+
+Physical audio devices, Windows/macOS desktop recording, private signed-in PR acceptance
+and accessibility checks remain manual work. Licensing and distribution decisions are
+still pending. No telemetry or additional language support is introduced by this candidate.

@@ -24,7 +24,7 @@ jobs:
         if: runner.os == 'Linux'
         with:
           python-version: '3.x'
-      - run: npm run package
+      - run: npm run package:release
         if: runner.os == 'Linux'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: runner.os == 'Linux'
@@ -84,7 +84,7 @@ jobs:
           python-version: '3.x'
       - run: npm ci --ignore-scripts
       - run: python3 scripts/package-release.py
-      - name: Publish tested alpha package once per version
+      - name: Publish tested beta package once per version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
@@ -94,4 +94,4 @@ jobs:
             echo "This version already has a release."
             exit 0
           fi
-          gh release create "v${release_version}" "codealive-${release_version}.vsix" "downloads/codealive-explainer-${release_version}.zip" --target "$GITHUB_SHA" --title "CodeAlive ${release_version} alpha" --notes-file docs/RELEASE_NOTES.md --prerelease
+          gh release create "v${release_version}" "codealive-${release_version}.vsix" "downloads/codealive-explainer-${release_version}.zip" --target "$GITHUB_SHA" --title "CodeAlive ${release_version} beta" --notes-file docs/RELEASE_NOTES.md --prerelease

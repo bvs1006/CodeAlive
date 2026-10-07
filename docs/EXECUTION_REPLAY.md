@@ -1,4 +1,4 @@
-# Execution replay — 0.7 alpha
+# Execution replay — 1.0 beta candidate
 
 After explaining a JavaScript or TypeScript function, open **Replay an input**, enter its arguments as a JSON array and choose **Run with these inputs**. Static explanation never starts a run. For `discountedPrice(price, percent)`, try `[100,20]`, pin the result, then try `[200,50]`.
 

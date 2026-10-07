@@ -1,8 +1,8 @@
 {
   "name": "codealive",
   "displayName": "CodeAlive",
-  "description": "Local JavaScript and TypeScript explanations with source-linked steps and flow diagrams, plus a music studio and read-only PR companion.",
-  "version": "0.9.0",
+  "description": "See what code does and what changed: local JS/TS explanations, bounded replay, PR evidence and editable explanation videos.",
+  "version": "1.0.0",
   "publisher": "codealive-local",
   "license": "UNLICENSED",
   "engines": {
@@ -91,5 +91,6 @@
   },
   "bugs": {
     "url": "https://github.com/bvs1006/CodeAlive/issues"
-  }
+  },
+  "preview": true
 }

@@ -1,23 +1,23 @@
-# CodeAlive — understand code, explore its flow, hear its structure
+# CodeAlive — See what code does, what changed, and why it matters
 
 CodeAlive is a developer tool for **source-linked code explanations**, **algorithm visualization**, **code-inspired music and video**, and **GitHub PR evidence review**. Use it to learn an unfamiliar function, demonstrate an algorithm, create an educational clip, or inspect existing CI results.
 
 Start with the workflow you need. The explainer describes JavaScript/TypeScript structure locally and offers explicit replay of a limited synchronous subset; the studio turns text patterns into music; the PR companion reads GitHub evidence.
 
-> **Status — 6 October 2026:** **0.9.0 alpha preview** on `codex/explanation-video` adds explanation videos with imported narration to the tested 0.6 explainer, 0.7 replay and 0.8 change explanations. `main` still contains the 0.5 runtime. PRs #1–#4 have passed all five automated jobs; merging and public releases await approval. Each feature branch is pushed and tested separately. Windows/macOS desktop and physical audio-device checks remain manual work.
+> **Status — 7 October 2026:** **1.0.0 beta candidate** on `codex/release-1.0-beta` unifies explanations, replay, change comparisons, PR evidence and editable narrated videos. PRs #1–#3 are merged and released through 0.8. PR #4 remains open while its updated package publication is pending. The 1.0 candidate is not yet a public release; build it locally for review. Windows/macOS desktop and physical audio-device checks remain manual work.
 
-[Download 0.9 preview](https://github.com/bvs1006/CodeAlive/raw/refs/heads/codex/explanation-video/downloads/codealive-explainer-0.9.0.zip) · [Download 0.5 from main](https://github.com/bvs1006/CodeAlive/raw/refs/heads/main/downloads/codealive-pr-companion-0.5.0.zip) · [Roadmap](docs/ROADMAP.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml)
+[Published prereleases](https://github.com/bvs1006/CodeAlive/releases) · [Build the candidate](#developer-quick-start) · [Release checklist](docs/RELEASE_CHECKLIST.md) · [Roadmap](docs/ROADMAP.md) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml)
 
 ## What can I do today?
 
 | Workflow | What you get | Availability |
 |---|---|---|
-| Understand a function | Plain-language/developer explanations, parameters, return expressions, calls/property writes, source-linked steps and a static flow diagram | **0.6:** VS Code and offline browser; JavaScript/TypeScript |
-| Replay a function | Explicit JSON inputs, bounded interpreter, variable snapshots, branch choices, step/play controls and pinned input comparison | **0.7 preview:** documented synchronous JS/TS subset |
-| Explain a change | Source-linked before/after observations for pasted versions, HEAD versus editor, or a PR file with revision-bound CI evidence | **0.8 preview:** JavaScript/TypeScript |
+| Understand a function | Plain-language/developer explanations, parameters, return expressions, calls/property writes, source-linked steps and a static flow diagram | **1.0 beta candidate:** VS Code and offline browser; JavaScript/TypeScript |
+| Replay a function | Explicit JSON inputs, bounded interpreter, variable snapshots, branch choices, step/play controls and pinned input comparison | **1.0 beta candidate:** documented synchronous JS/TS subset |
+| Explain a change | Source-linked before/after observations for pasted versions, HEAD versus editor, or a PR file with revision-bound CI evidence | **1.0 beta candidate:** JavaScript/TypeScript |
 | Hear code structure | Three music styles, code-linked visuals and synthesized audio from text patterns | **0.5+:** VS Code and browser studio |
 | Explore sorting | Built-in Bubble Sort and Quick Sort, pause/step/resume, operation counts and same-input comparison | **0.5+:** VS Code |
-| Narrate an explanation | Editable explanation/replay scenes, local narration import, timing controls, source highlights, optional music and video export | **0.9 preview:** browser and VS Code; no automatic speech generation |
+| Narrate an explanation | Editable explanation/replay scenes, local narration import, timing controls, source highlights, optional music and video export | **1.0 beta candidate:** browser and VS Code; no automatic speech generation |
 | Create a developer video | Vertical video with audio, captions, branding, source hiding and local presets | **0.5+:** VS Code; browser studio has basic recording |
 | Inspect a GitHub PR | Changed-file groups, existing head/test-merge checks and available failure annotations | **0.5+:** VS Code; read-only |
 
@@ -27,8 +27,8 @@ Start with the workflow you need. The explainer describes JavaScript/TypeScript 
 
 ### VS Code
 
-1. Download and extract the **0.9 preview ZIP** above.
-2. In desktop VS Code, open **Extensions → … → Install from VSIX…**, then choose `codealive-0.9.0.vsix`.
+1. Build the candidate with `npm run package:release` using the developer setup below, then extract `downloads/codealive-explainer-1.0.0.zip`. Published older prereleases are linked above.
+2. In desktop VS Code, open **Extensions → … → Install from VSIX…**, then choose `codealive-1.0.0.vsix`.
 3. After upgrading, close existing CodeAlive tabs and run **Developer: Reload Window**.
 4. Open a JavaScript or TypeScript file, select a complete function, and run **CodeAlive: Explain Selected Code** from the Command Palette. An empty selection loads the active file.
 5. Choose the function scope and explanation style. Select a step or diagram node to highlight the code and reveal it in the original editor.
@@ -115,10 +115,10 @@ The companion does not check out code, run tests, rerun CI, post comments, modif
 
 ## Developer quick start
 
-For these preview features, build from `codex/explanation-video`. `main` currently has the 0.5 runtime. Prerequisites: Git, **Node.js 22+** with npm, and **Python 3**. Use `python` instead of `python3` where that is your platform's Python 3 command.
+For the unified candidate, build from `codex/release-1.0-beta`. `main` includes the merged 0.6–0.8 features; the candidate also includes PR #4 video functionality. Prerequisites: Git, **Node.js 22+** with npm, and **Python 3**. Use `python` instead of `python3` where that is your platform's Python 3 command.
 
 ```sh
-git clone --branch codex/explanation-video https://github.com/bvs1006/CodeAlive.git
+git clone --branch codex/release-1.0-beta https://github.com/bvs1006/CodeAlive.git
 cd CodeAlive
 npm ci --ignore-scripts
 npm run build
@@ -133,8 +133,9 @@ Open [the explainer](http://localhost:8080/explain.html) or [the music studio](h
 | `npm test` | Build assets, run the parser/editor tests and eight existing suites, and check generated-asset equality |
 | `npx playwright install chromium` then `npm run test:browser` | Run real Chromium integration checks and create screenshots in `test-results/` |
 | `npm run test:vscode` | Install/upgrade the built VSIX and exercise real VS Code; on headless Linux run under `xvfb-run -a` |
-| `npm run package` | Build `codealive-0.9.0.vsix` in the repository root; needs `python3` on PATH |
-| `python3 scripts/package-release.py` | Build the VSIX plus offline browser ZIP in `downloads/` |
+| `npm run package` | Build `codealive-1.0.0.vsix` in the repository root; needs `python3` on PATH |
+| `npm run package:release` | Build and validate the VSIX plus offline browser ZIP in `downloads/` |
+| `npm run check:package` | Check version consistency, current source payloads, parser license and the embedded VSIX |
 
 On Linux, Playwright may also need system dependencies: use `npx playwright install --with-deps chromium`. On a system without a `python3` command, use `npm run build` followed by `python extension/package.py` to package with Python 3.
 
@@ -170,16 +171,16 @@ Unit-level editor and GitHub API tests use mocks; the additional installed-VSIX 
 
 ## Roadmap at a glance
 
-| Order | Milestone | Status |
-|---|---|---|
-| 1 | Explain selected code with source links and static diagrams | **0.6:** implemented and all five CI jobs passed; PR #1 awaiting merge approval |
-| 2 | Replay execution with inputs, values and step controls | **0.7:** implemented and all five CI jobs passed; PR #2 awaiting merge approval |
-| 3 | Explain before/after changes and connect them to test/CI evidence | **0.8:** implemented and all five CI jobs passed; PR #3 awaiting merge approval |
-| 4 | Export an explanation with narration, captions and synchronized optional music | **0.9:** implemented with imported narration and all five CI jobs passed; PR #4 awaiting merge approval |
+| Task | Status |
+|---|---|
+| Explain, replay and source-linked change observations | PRs #1–#3 merged; fresh main CI and prereleases passed |
+| Editable explanation videos | PR #4 code implemented; updated archive publication and main integration pending |
+| One 1.0 beta candidate | Prepared on `codex/release-1.0-beta`; new candidate CI and acceptance are required before release |
+| Fresh installation and full workflow acceptance | Repeatable [checklist](docs/RELEASE_CHECKLIST.md); manual rows remain pending until performed |
+| Unified navigation, metadata, license and distribution | Next consolidation tasks |
+| Developer review intelligence | Later: connect observed changes, captured behavior and tests/CI while distinguishing evidence from inference |
 
-Completion evidence: [0.6 / PR #1](https://github.com/bvs1006/CodeAlive/pull/1), [0.7 / PR #2](https://github.com/bvs1006/CodeAlive/pull/2), [0.8 / PR #3](https://github.com/bvs1006/CodeAlive/pull/3), [0.9 / PR #4](https://github.com/bvs1006/CodeAlive/pull/4). [Final runtime checks](https://github.com/bvs1006/CodeAlive/actions/runs/37497253797) passed for commit `4e04cac7eede4c13d22e4092e1d989140c4f7445`.
-
-Broad adoption also needs a license decision, straightforward distribution, accessibility testing, more explanation languages and user feedback. These are tracked with acceptance criteria in [the full roadmap](docs/ROADMAP.md); there are no committed delivery dates.
+[Full roadmap and integration evidence](docs/ROADMAP.md). No Marketplace/Open VSX listing or public 1.0 release is claimed. New languages, telemetry and major new features wait for validation of the current workflow.
 
 ## Privacy, support and licensing
 

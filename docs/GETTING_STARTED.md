@@ -1,6 +1,6 @@
 # First code explanation
 
-1. Extract the 0.9.0 ZIP and install `codealive-0.9.0.vsix` through VS Code's Extensions menu.
+1. Build the 1.0.0 beta candidate with `npm run package:release`, then extract its ZIP and install `codealive-1.0.0.vsix` through VS Code's Extensions menu.
 2. Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
 3. Select a JavaScript or TypeScript function and run **CodeAlive: Explain Selected Code**.
 4. Choose Plain language or Developer. Select a step or flow node to reveal its source.
@@ -39,4 +39,4 @@ Select Performance → Bubble vs Quick comparison. Try `8, 3, 6, 1, 9, 2, 5, 4`.
 - **Explain Working Tree Changes:** compare HEAD with the active editor buffer. The explainer also accepts pasted versions; the PR companion can load open-PR files with revision-bound evidence. [Guide](CHANGE_EXPLANATIONS.md)
 - **Explain it in a video:** choose steps, edit captions/timing, import narration, preview and record with optional music. [Guide](EXPLANATION_VIDEO.md)
 
-Use the 0.9 preview download and branch named in the repository README. Merges/public releases are pending approval; main still has the 0.5 runtime.
+Use `codex/release-1.0-beta` for this candidate. A public 1.0 release is pending; `main` already includes explanations, replay and change comparisons. See the [release checklist](RELEASE_CHECKLIST.md) for the full acceptance workflow.

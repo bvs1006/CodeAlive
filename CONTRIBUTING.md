@@ -4,7 +4,7 @@ Start with a small, reproducible developer task. Open a question or feature issu
 
 ## Choose the right version
 
-Use the feature branch named in the README for the latest preview; `main` still has the 0.5 runtime while merges await approval. Follow the [README setup instructions](README.md#developer-quick-start) for the root npm commands below.
+Use `codex/release-1.0-beta` for the unified candidate. `main` includes the merged 0.6–0.8 features; PR #4 video integration and public 1.0 publication remain pending. Follow the [README setup instructions](README.md#developer-quick-start) for the root npm commands below.
 
 Use Node.js 22+ and Python 3. Install dependencies with `npm ci --ignore-scripts` from the repository root.
 
@@ -33,7 +33,7 @@ On Linux, Playwright may require `npx playwright install --with-deps chromium`. 
 
 The VS Code test runner installs the legacy 0.5 package, upgrades to the built VSIX and exercises real editor commands, selection/file loading, source navigation and both webview bridges in an isolated profile. Headless Linux needs `xvfb-run -a npm run test:vscode`. Also install the VSIX on your target desktop to check device-specific behavior. Record your OS and VS Code version. Mocked tests do not validate actual desktop integration, audio or encoded videos. A VSIX can be inspected as a ZIP archive.
 
-`python3 scripts/package-release.py` builds the VSIX and offline browser release ZIP. Publish a refreshed package only when runtime or packaged content needs it. Update version/status/download guidance when a preview becomes the main release.
+`npm run package:release` builds and validates the VSIX and offline browser ZIP. `npm run check:package` rechecks existing artifacts for version or source drift. Generated release ZIPs are not added to new source commits; older tracked ZIPs remain historical previews. Follow [the release checklist](docs/RELEASE_CHECKLIST.md). Publish a refreshed package only when runtime or packaged content needs it. Update version/status/download guidance when a preview becomes the main release.
 
 ## Submit a reviewable change
 

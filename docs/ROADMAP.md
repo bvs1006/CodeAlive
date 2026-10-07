@@ -1,89 +1,59 @@
 # CodeAlive roadmap
 
-Status snapshot: **6 October 2026**. This is a prioritized product plan, not a delivery-date commitment. Revisit the status after each release and link completion claims to code, tests and a usable package.
+Status snapshot: **7 October 2026**. Track completion with a tested commit and usable
+package; candidate code and published releases are separate states.
 
 ## Direction
 
-Make code easier to understand, investigate and explain to other people. The near-term audience is developers reading unfamiliar functions, learners exploring control flow, and educators making demonstrations. Music is an optional part of that experience; the core explanation must remain useful without sound.
+**CodeAlive — See what code does, what changed, and why it matters.**
 
-Broad adoption means approachable onboarding, accessible interaction and dependable behavior. It does not mean claiming support for every language or workflow before those paths are implemented and tested.
+The shared workflow is understand → replay → compare → inspect evidence → explain/share.
+Developers reading and reviewing code are the primary focus. Educators can use the same
+explanation and replay engine for videos. Music remains an optional part of the experience.
 
-## Where we are
+## Built and validated
 
-| Area | Evidence today | Remaining work |
+| Capability | Integration status | Evidence |
 |---|---|---|
-| Music and video studio | Available in the 0.5 alpha on `main`; music from shared text patterns, local recording, captions and presets | 0.9 preview adds an explanation timeline with imported narration and optional music; wider device/media verification remains |
-| Algorithm demonstrations | Bundled Bubble Sort and Quick Sort with stepping, comparison and real operation traces | 0.7 preview offers a restricted interpreter; general application execution remains unsupported |
-| GitHub PR companion | Read-only changed-file groups and existing head/test-merge CI evidence | 0.8 preview adds structural change observations and revision-bound evidence; no test generation, required-check verification or automated fixes |
-| Explain selected code | JavaScript/TypeScript implementation in [PR #1](https://github.com/bvs1006/CodeAlive/pull/1); local parser, ten examples, two explanation styles, exact source links and static flow diagrams | Broader language/runtime semantics remain outside this milestone; Windows/macOS desktop and physical media-device checks remain |
-| Build and checks | Preview has shared explainer assets, packaged VSIX/offline browser, multi-OS unit/extension tests and real Chromium integration | CI includes a real Linux VS Code install/upgrade check and real Chromium recording; physical device coverage remains limited |
+| Local JS/TS explanation and source-linked flow | PR #1 merged into `main`; 0.6 prerelease | [Main checks and release](https://github.com/bvs1006/CodeAlive/actions/runs/37565036227) |
+| Bounded replay, snapshots and input comparison | PR #2 merged; 0.7 prerelease; loop-binding regression fixed | [Main checks and release](https://github.com/bvs1006/CodeAlive/actions/runs/37565658315) |
+| Before/after observations and revision-bound PR evidence | PR #3 merged; 0.8 prerelease | [Main checks and release](https://github.com/bvs1006/CodeAlive/actions/runs/37567881283) |
+| Editable explanation videos with local narration | [PR #4](https://github.com/bvs1006/CodeAlive/pull/4) is open; updated package publication remains pending | [Original PR checks](https://github.com/bvs1006/CodeAlive/actions/runs/37497941870); [video scope](EXPLANATION_VIDEO.md) |
+| Unified 1.0.0 beta | Candidate branch `codex/release-1.0-beta`; includes all workflows and the replay fix | Version/package validation and [release acceptance checklist](RELEASE_CHECKLIST.md); not a published 1.0 release |
+| Music, sorting and existing Studio video tools | Available; retained in the candidate | Unit/browser coverage for the declared surfaces; wider physical-device testing remains |
 
-The [CI workflow](https://github.com/bvs1006/CodeAlive/actions/workflows/ci.yml) covers Linux/Windows/macOS unit/extension tests, Chromium/media integration and real Linux VS Code installation. This is evidence for the tested scope, not proof of a production-ready release.
+CI runs unit/extension checks on Linux, Windows and macOS, Chromium/media integration,
+and a real installed VSIX on Linux. Windows/macOS unit checks use mocked editor APIs.
+Those checks do not establish complete desktop, accessibility or audio-device coverage.
 
-## First: finish the 0.6 release
+## Small tasks, in order
 
-The first feature milestone is implemented and all five CI jobs passed on PR #1. Merge and public release await approval. PR #2 replay and PR #3 change explanations passed all five CI jobs; the final stacked milestone branch is `codex/explanation-video` for 0.9; each milestone must pass its checks before the next begins. Alpha releases publish only from `main` after all checks pass.
-
-- [x] Local JavaScript/TypeScript parsing without executing or uploading source.
-- [x] Scope selection, declared inputs, return expressions, visible calls/property writes, and plain-language/developer steps.
-- [x] Source-linked static diagrams with visible limits for unsupported control flow.
-- [x] Ten examples, keyboard-operable diagram nodes and responsive browser layout.
-- [x] Version-checked editor source navigation and code preservation on language changes.
-- [x] Shared assets, installer/offline browser packaging, automated cross-platform and browser checks.
-- [x] Automated Linux VS Code install/upgrade check: commands, selection/file transfer, source navigation and stale-document handling.
-- [x] Verify the real studio webview bridge and a Chromium recording with audio/video tracks and source hiding enabled. Linux VS Code 1.140.0 passed; CI records the tested version.
-- [ ] Complete physical audio-device and Windows/macOS desktop checks, plus a signed-in PR panel smoke test.
-- [x] Add CI-gated versioned alpha release packaging. Review/merge evidence is in PR #1.
-- [x] Document feature-branch setup and usable preview packages.
-- [ ] Obtain approval to merge the tested PRs and publish their versioned alpha releases.
-
-Completion means a user can install the package, explain a complete supported function, inspect exact source links, and understand the feature's limits without assistance. Do not equate passing mocked tests with this installation check.
-
-## Next milestones
-
-| Order | Outcome | Proposed scope | Completion evidence |
-|---|---|---|---|
-| 2 — Execution replay | **Implemented in 0.7; all five CI jobs passed on PR #2** | Explicit JSON inputs; restricted synchronous interpreter; immutable variable snapshots, branches, writes, return/errors; step/play/slider and pinned input comparison | Differential tests against trusted JavaScript fixtures, early returns/loops/errors, isolation and resource-limit tests; browser playback checks; [supported execution model](EXECUTION_REPLAY.md) |
-| 3 — Before/after explanations | **Implemented in 0.8; all five CI jobs passed on PR #3** | Pasted versions, HEAD/editor buffers and exact PR merge-base/head files; source-linked structural observations, existing checks and test-file links | Structural/range/ambiguity tests; stale source and moving-head guards; mocked fork/rename/blob tests plus browser and installed-VSIX checks; [guide](CHANGE_EXPLANATIONS.md) |
-| 4 — Explain-to-video | **Implemented in 0.9; all five CI jobs passed on PR #4** | Select explanation/replay steps, edit captions and scene durations, import local narration, fit timing, preview and record with optional synthesized music and source hiding | Timeline/range/privacy tests, real Chromium browser/webview exports with encoded voice/music verification, duration/dimensions and Save validation; [guide](EXPLANATION_VIDEO.md) |
-
-For execution replay, define the supported execution model and its resource/access limits before accepting arbitrary user code. Execution must be an explicit action. Static explanation continues to work independently and must never silently run a selection.
-
-The existing sorting traces are a useful starting point for replay controls. The current studio provides recording and music infrastructure for explain-to-video. The restricted interpreter now supplies replay; the explanation timeline now mixes imported narration with synchronized optional music. Automatic speech generation, advanced editing and wider device support remain later candidates.
-
-## Verified milestone evidence
-
-Each milestone was pushed and passed its checks before the next feature began. All remain on stacked PRs awaiting approval to merge and publish alpha releases.
-
-| Preview | Review | Passing CI |
+| Order | Task | Expected outcome |
 |---|---|---|
-| 0.6 explanation | [PR #1](https://github.com/bvs1006/CodeAlive/pull/1) | [Five jobs](https://github.com/bvs1006/CodeAlive/actions/runs/37434015231) |
-| 0.7 replay | [PR #2](https://github.com/bvs1006/CodeAlive/pull/2) | [Five jobs](https://github.com/bvs1006/CodeAlive/actions/runs/37436760193) |
-| 0.8 change explanations | [PR #3](https://github.com/bvs1006/CodeAlive/pull/3) | [Five jobs](https://github.com/bvs1006/CodeAlive/actions/runs/37494347253) |
-| 0.9 explanation video | [PR #4](https://github.com/bvs1006/CodeAlive/pull/4) | [Five jobs](https://github.com/bvs1006/CodeAlive/actions/runs/37497253797) |
+| 1 | Finish PR #4 integration after its publication block is resolved | Updated branch and merged `main` pass all checks before the release is considered ready. |
+| 2 | Prepare one 1.0 beta candidate | Matching version metadata, complete notes, verified VSIX/offline bundle and accurate status; no mixed preview installation guidance. |
+| 3 | Run fresh-install acceptance | Select function → Explain → Run → compare inputs → compare changes → create/save video → review a real PR; record actual results. |
+| 4 | Simplify product navigation | One entry surface leads to Explain, Run, Compare, Review PR and Create video, with keyboard-accessible actions. |
+| 5 | Align repository/product metadata | Description, topics, install guidance and screenshots describe the current developer workflow. |
+| 6 | Decide licensing | Maintainer explicitly chooses reuse/distribution terms before open-source promotion or broader distribution. |
+| 7 | Publish through Marketplace/Open VSX | Confirm publisher identity and license, then verify a clean installation from the chosen listing. |
+| 8 | Design optional usage measurement | Explicit privacy choices; no source code, arguments, traces or narration collected. No telemetry is implemented now. |
+| 9 | Observe repeat usage | Learn which JS/TS understanding/review tasks users return for before adding languages. |
+| 10 | Build developer review intelligence | Connect structural changes, captured behavior and existing tests/CI; label observations, evidence gaps and inferences separately. |
 
-The final runtime/package revision is `4e04cac7eede4c13d22e4092e1d989140c4f7445`; later documentation updates record this evidence. The Linux installed-VSIX run used VS Code 1.140.0. Chromium exports contain the imported narration signal and optional music, with the expected dimensions and duration. Encoded frames and browser/editor screenshots were inspected. These checks do not replace the manual adoption requirements below.
+For each engineering task: make one reviewable change, validate its expected result,
+commit/push, check CI, then proceed. Stop for exhausted limits or a concrete external blocker.
 
-## Requirements for broader adoption
+## Keep the beta focused
 
-These work alongside the feature sequence, rather than expanding every feature at once.
+Do not expand into arbitrary application execution, many new languages, more sorting
+algorithms, cloud accounts, billing or a broad AI chat interface before validating the
+existing workflow. The interpreter remains explicit and bounded; the PR companion reads
+evidence without executing PR code or declaring it correct.
 
-| Priority | Work | Evidence of progress |
-|---|---|---|
-| Before promoting 0.6 | Clear installer/version guidance, honest limitations and clean installation tests | New users can find the right package and complete the first example; tested environments are recorded |
-| Before open-source promotion or wide distribution | Maintainer chooses licensing terms, confirms the public product name and packaging identity, and decides on Marketplace/Open VSX or other distribution | Explicit license and a maintained distribution path; no claim that a listing or public demo exists before it does |
-| Alongside each milestone | Keyboard and screen-reader checks, readable diagrams, reduced-motion behavior and useful error states | Documented checks with assistive technology and user feedback; keyboard browser tests alone are not a complete accessibility audit |
-| After validating the first explanation workflow | Prioritize another explanation language, likely Python if user demand supports it | Parser/source-range/flow tests and useful error handling for that language; existing music samples do not count as explanation support |
-| Before expanding to teams or paid plans | Learn which tasks users repeat and whether the tool improves understanding | Small task-based user sessions, concrete workflow feedback and repeated use; gather feedback without uploading source by default |
+Complete physical media and Windows/macOS desktop checks, a private signed-in PR smoke
+test, keyboard/screen-reader checks and reduced-motion review. Track failures as small
+reproducible tasks. [Known limitations](KNOWN_LIMITATIONS.md)
 
-## Keep later work focused
-
-Repository-wide Q&A, automated fixes, collaboration accounts, billing, more integrations and batch publishing are later candidates. Add them when usage justifies the complexity. Avoid building several partially supported workflows before the first explanation/replay experience is dependable.
-
-The PR companion should remain clear about its role: evidence inspection plus bounded structural change observations. Test execution, generated patches and repository writes would each need their own explicit user action and reviewable result.
-
-## How to propose or complete work
-
-Open a [feature request](https://github.com/bvs1006/CodeAlive/issues/new?template=feature_request.yml) with the user task, proposed behavior, example input/output and a way to verify success. Include a small sanitized example, not proprietary source.
-
-For completed milestones, link the PR, validation results and package; record remaining limits and update this file plus the README. For pending items, keep the wording as proposed work until that evidence exists.
+Propose work with a concrete user task, sanitized input, expected output and a verification
+method. Update the README and this roadmap when evidence changes the completion status.

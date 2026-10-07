@@ -20,6 +20,13 @@ const cases=[
 for(const [source,args]of cases){const expected=vm.runInNewContext('('+source+')(...'+JSON.stringify(args)+')',{}, {timeout:1000}),result=run(source,JSON.stringify(args));assert(result.ok,result.error);assert.equal(result.result,expected);}
 assert.match(run('function f(){let x=1;{return x;let x=2;}}','[]').error,/before initialization/);
 assert.match(run('function f(){let x=1;for(let x=x;x<2;x++){}return x;}','[]').error,/before initialization/);
+for(const kind of ['let','const']){
+  const source=`function f(){const item=[1,2];let total=0;for(${kind} item of item){total+=item;}return total;}`;
+  assert.throws(()=>vm.runInNewContext('('+source+')()',{}, {timeout:1000}),{name:'ReferenceError'});
+  const replay=run(source,'[]');assert.equal(replay.ok,false);assert.match(replay.error,/before initialization/);
+}
+const iterationSource='function f(){const values=[1,2,3];let total=0;for(const value of values){total+=value;}return total;}';
+assert.equal(run(iterationSource,'[]').result,vm.runInNewContext('('+iterationSource+')()',{}, {timeout:1000}));
 const limit=run('function f(){while(true){}}','[]');assert.equal(limit.ok,false);assert(limit.steps.length<=300);assert.match(limit.error,/limit/);
 assert.match(run('function f(){return f();}','[]').error,/recursion limit/);
 const guarded=run(examples[0].code,'[-1,20]');assert.equal(guarded.ok,false);assert(guarded.steps.some(s=>s.kind==='throw'));
