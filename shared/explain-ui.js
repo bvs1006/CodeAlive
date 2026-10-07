@@ -2,7 +2,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const host = typeof acquireVsCodeApi === 'function' ? acquireVsCodeApi() : null;
-  let model = null, modelSource = '', currentSource = {baseLine:1,baseColumn:0}, selectedRange = null, replayView;
+  let model = null, modelSource = '', currentSource = {baseLine:1,baseColumn:0}, selectedRange = null, replayView, compareView;
   const el = (tag,text,className) => {const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;};
   const svg = (tag,attrs,text) => {const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs||{}))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e;};
   const status = (text,error=false) => {$('status').textContent=text;$('status').classList.toggle('error',error);};
@@ -102,7 +102,8 @@
   document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();explain();}});
   $('load-editor').hidden=!host;$('load-editor').addEventListener('click',()=>host?.postMessage({type:'loadEditor'}));
   if(host){for(const link of [document.querySelector('.brand'),$('open-studio')])link.addEventListener('click',e=>{e.preventDefault();host.postMessage({type:'openStudio'});});}
-  window.addEventListener('message',event=>{const message=event.data;if(!host||!message)return;if(message.type==='explainSource'&&typeof message.code==='string'&&message.code.length<=50000&&typeof message.language==='string'){setSource(message);explain();host.postMessage({type:'sourceReceived',sourceToken:message.sourceToken});}else if(message.type==='notice')status(String(message.text));});
+  window.addEventListener('message',event=>{const message=event.data;if(!host||!message)return;if(message.type==='explainSource'&&typeof message.code==='string'&&message.code.length<=50000&&typeof message.language==='string'){setSource(message);explain();host.postMessage({type:'sourceReceived',sourceToken:message.sourceToken});}else if(message.type==='compareSource'&&typeof message.before==='string'&&typeof message.after==='string'&&Math.max(message.before.length,message.after.length)<=50000){compareView.setPayload(message);host.postMessage({type:'sourceReceived',sourceToken:message.sourceToken});}else if(message.type==='notice')status(String(message.text));});
   replayView=CodeAliveReplayUI.mount({getContext:()=>model&&({code:modelSource,language:model.language,scopeId:model.scopeId,name:model.summary.name}),onRange:activateRange});
+  compareView=CodeAliveCompareUI.mount({host,getSource:()=>({code:$('source').value,language:$('language').value})});
   setSource(CodeAliveExamples[0]);$('example-description').textContent=chosen().description;host?.postMessage({type:'ready'});
 })();

@@ -1,10 +1,10 @@
-# CodeAlive 0.7.0
+# CodeAlive 0.8.0
 
 Local JavaScript and TypeScript explanations with source-linked steps and flow diagrams, plus a code music/video studio and read-only GitHub PR companion.
 
 ## Install and explain
 
-Install `codealive-0.7.0.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
+Install `codealive-0.8.0.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
 
 Select a complete JavaScript/TypeScript function and run **CodeAlive: Explain Selected Code**. With no selection, the active file is loaded. Choose a function scope, switch between Plain language and Developer, and select a step or diagram node to reveal its source. **Load editor** refreshes changed files. **CodeAlive: Open Explainer** opens ten examples.
 
@@ -15,6 +15,12 @@ Static explanation parses code locally without executing or uploading it. No acc
 After explaining, enter a JSON argument array under **Replay an input**, then choose **Run with these inputs**. Inspect variables, branch choices and return/error results with Previous/Next or Play/Pause. Pin one run and change inputs to compare results. Source edits clear both runs.
 
 Replay explicitly interprets a limited synchronous JS/TS subset, without eval, host APIs, network, files or modules. Async code, callbacks, closures, classes and many other constructs are unsupported. Limits stop large runs; this is not your application runtime. Static explanation remains independent. See `docs/EXECUTION_REPLAY.md` in the repository.
+
+## Explain changes
+
+Use **CodeAlive: Explain Working Tree Changes** for committed HEAD versus the active editor buffer. Or paste Before/After in the explainer. Source-linked observations describe changed parameters, conditions, returns, calls and writes without running code.
+
+The PR companion's **Explain changes** button loads a JS/TS file at the exact merge-base/head revisions and attaches existing checks and changed test-file links. Source edits detach evidence; moving PR revisions require refresh. No correctness or coverage verdict is produced.
 
 ## Music and video
 

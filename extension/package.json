@@ -2,7 +2,7 @@
   "name": "codealive",
   "displayName": "CodeAlive",
   "description": "Local JavaScript and TypeScript explanations with source-linked steps and flow diagrams, plus a music studio and read-only PR companion.",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "publisher": "codealive-local",
   "license": "UNLICENSED",
   "engines": {
@@ -39,6 +39,10 @@
       {
         "command": "codealive.openExplainer",
         "title": "CodeAlive: Open Explainer"
+      },
+      {
+        "command": "codealive.explainChanges",
+        "title": "CodeAlive: Explain Working Tree Changes"
       },
       {
         "command": "codealive.open",

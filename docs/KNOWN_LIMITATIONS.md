@@ -31,3 +31,9 @@ Editor source links require the captured document version; after a change, use L
 ## Explicit execution replay
 
 The 0.7 preview interprets a limited synchronous JavaScript/TypeScript subset only after Run. It does not reproduce module state, closures or your full runtime. Unsupported syntax/methods, host APIs, async functions and non-finite numbers stop the run with a reason. Calls, operations, trace size and input structures are bounded; highly shared or cyclic structures are limited in snapshots. See [the execution model](EXECUTION_REPLAY.md).
+
+## Before/after explanations
+
+Structural comparisons support JavaScript/TypeScript and at most 50,000 characters and 100 functions per version, with 200 observations. They do not infer behavioral equivalence, execute/type-check code or establish correctness. Unique function names are paired; renames appear as removal/addition, and ambiguous names require inspecting the whole-file source. Formatting/comments are ignored for structural comparison.
+
+Working-tree comparison requires a local tracked file with a readable HEAD version; it includes unsaved editor changes. PR comparison supports open, unmerged PRs and reads regular UTF-8 source blobs at pinned revisions, with up to 20 path components; symlinks, submodules, unavailable forks and incomplete trees are rejected. CI evidence remains a timestamped snapshot; test-file links are a filename heuristic, not coverage. Signed-in private PR behavior still needs a manual account-based smoke test.

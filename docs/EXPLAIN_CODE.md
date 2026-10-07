@@ -4,7 +4,7 @@ CodeAlive 0.6 adds local, source-linked explanations for JavaScript and TypeScri
 
 ## Start in VS Code
 
-1. Install `codealive-0.7.0.vsix` from the download ZIP. Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
+1. Install `codealive-0.8.0.vsix` from the download ZIP. Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
 2. Open a JavaScript or TypeScript file. Select a complete function, or leave the selection empty to use the active file.
 3. Run **CodeAlive: Explain Selected Code**, or use the editor's context menu.
 4. Choose a function in **Function / scope**. Nested callbacks have their own scopes.

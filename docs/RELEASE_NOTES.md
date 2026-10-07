@@ -1,9 +1,7 @@
-# CodeAlive 0.7.0 alpha preview
+# CodeAlive 0.8.0 alpha preview
 
-Adds explicit execution replay to local JavaScript/TypeScript explanations. Enter JSON arguments, run a documented synchronous subset, inspect variable snapshots and branch decisions, step or play the trace, and pin a run to compare inputs. Both browser and VS Code packages include this workflow.
+Adds source-linked before/after change explanations for JavaScript and TypeScript. Compare pasted versions, committed HEAD versus your current editor buffer, or a PR file at its exact merge-base/head revisions. Structural observations cover parameters, signatures, conditions, returns, calls and writes.
 
-The interpreter has operation, step, recursion, snapshot and input limits. It cannot access browser/Node globals, files, network or modules; async code, callbacks and surrounding application state are unsupported. Static explanation never starts execution. Results describe the chosen interpreter run, not application correctness. See EXECUTION_REPLAY.md for supported semantics.
+PR comparisons attach the existing report's timestamped checks, exact revision identities, warnings and changed test-file links. Moving revisions require refresh; editing source detaches evidence. This is read-only inspection, without test execution, coverage verification or a correctness/merge verdict. Function matching, file limits and supported workflows are documented in CHANGE_EXPLANATIONS.md.
 
-Validation includes trusted-fixture comparisons with JavaScript, source ranges, early returns, loops, recursion, initialization, assignment order, immutable snapshots, rejection of unsupported access, resource limits, browser controls and the existing multi-platform and installed-VSIX suites. See the PR checks for the exact tested commit. Physical audio-device and Windows/macOS desktop integration checks remain pending.
-
-This is a feature-branch preview. Merging and public release await approval; main still contains the 0.5 runtime.
+Includes the tested 0.6 static explainer and 0.7 restricted execution replay. All local suites pass; review CI for cross-platform, real Chromium/media and installed-VSIX checks on the exact commit. Private signed-in PR use and physical Windows/macOS editor/audio behavior still need manual verification. Feature branches await merge and public-release approval.
