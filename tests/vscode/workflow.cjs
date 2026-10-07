@@ -42,7 +42,7 @@ exports.run=async(document,browser)=>{
       const opening=vscode.commands.executeCommand('codealive.reviewPR');
       const url=page.getByPlaceholder('https://github.com/owner/repo/pull/123');await url.fill(pr);await url.press('Enter');await page.getByText('Public PR without sign-in',{exact:true}).click();await opening;
       const report=await findFrame(browser,'#refresh');await until(async()=>{const status=await report.textContent('#status');if(/rate limit|HTTP|unavailable|timed out/.test(status))throw Error(status);return status.startsWith('Evidence loaded.');},'live public PR evidence');
-      assert.match(await report.textContent('#report'),/Required|coverage/);assert.match(await report.textContent('#report'),/Fetched/);
+      assert.match(await report.textContent('#status'),/Required-check coverage is not verified/);assert.match(await report.textContent('#report'),/Not verified\. Passing displayed checks is not approval to merge\./);assert.match(await report.textContent('#report'),/Fetched/);
       await report.getByRole('button',{name:'Explain changes',exact:true}).first().click();
       const compare=await findFrame(browser,'#compare-results');await until(async()=>/PR head [a-f0-9]{40}/.test(await compare.textContent('#compare-evidence')),'live PR source revisions');assert.match(await compare.textContent('#compare-results'),/structur|changed|added|removed/);
       console.log('LIVE PUBLIC PR PASS: '+pr+'; revision-bound source and evidence rendered in installed VS Code.');
