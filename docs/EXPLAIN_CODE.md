@@ -4,7 +4,7 @@ CodeAlive 0.6 adds local, source-linked explanations for JavaScript and TypeScri
 
 ## Start in VS Code
 
-1. Install `codealive-0.6.0.vsix` from the download ZIP. Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
+1. Install `codealive-0.7.0.vsix` from the download ZIP. Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
 2. Open a JavaScript or TypeScript file. Select a complete function, or leave the selection empty to use the active file.
 3. Run **CodeAlive: Explain Selected Code**, or use the editor's context menu.
 4. Choose a function in **Function / scope**. Nested callbacks have their own scopes.
@@ -43,7 +43,7 @@ Inputs are limited to 50,000 characters, 100 listed functions, 80 explanation st
 
 ## Privacy and implementation
 
-Source is held in memory. The explainer has no network requests, analytics, source persistence or code execution. The extension webview uses a nonce-based script policy and blocks network connections. Editor navigation validates a captured document version, an opaque snapshot token and source offsets.
+Source is held in memory. Static explanation has no network requests, analytics, source persistence or code execution. The separate [Replay an input](EXECUTION_REPLAY.md) action explicitly interprets a documented synchronous subset and keeps its trace in memory. The extension webview uses a nonce-based script policy and blocks network connections. Editor navigation validates a captured document version, an opaque snapshot token and source offsets.
 
 `shared/` is the canonical implementation for both surfaces. `npm run build` creates matching browser and extension assets, including the pinned Babel parser and its MIT license. Generated copies are ignored by git and included in installers. The rest of CodeAlive remains subject to the repository's current UNLICENSED status.
 

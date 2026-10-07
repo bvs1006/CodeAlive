@@ -1,14 +1,20 @@
-# CodeAlive 0.6.0
+# CodeAlive 0.7.0
 
 Local JavaScript and TypeScript explanations with source-linked steps and flow diagrams, plus a code music/video studio and read-only GitHub PR companion.
 
 ## Install and explain
 
-Install `codealive-0.6.0.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
+Install `codealive-0.7.0.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
 
 Select a complete JavaScript/TypeScript function and run **CodeAlive: Explain Selected Code**. With no selection, the active file is loaded. Choose a function scope, switch between Plain language and Developer, and select a step or diagram node to reveal its source. **Load editor** refreshes changed files. **CodeAlive: Open Explainer** opens ten examples.
 
-Code is parsed locally and never executed or uploaded by the explainer. No account or API key is required. Explanations describe syntax and return expressions, not computed values, business intent, correctness or complete runtime flow. Try, switch and labeled blocks are collapsed with warnings. Limits: 50,000 characters, 100 listed functions, 80 steps, 100 graph nodes and 12 return/call facts. Editor links stop working after source changes until refreshed.
+Static explanation parses code locally without executing or uploading it. No account or API key is required. Explanations describe syntax and return expressions, not computed values, business intent, correctness or complete runtime flow. Try, switch and labeled blocks are collapsed with warnings. Limits: 50,000 characters, 100 listed functions, 80 steps, 100 graph nodes and 12 return/call facts. Editor links stop working after source changes until refreshed.
+
+## Replay a supported function
+
+After explaining, enter a JSON argument array under **Replay an input**, then choose **Run with these inputs**. Inspect variables, branch choices and return/error results with Previous/Next or Play/Pause. Pin one run and change inputs to compare results. Source edits clear both runs.
+
+Replay explicitly interprets a limited synchronous JS/TS subset, without eval, host APIs, network, files or modules. Async code, callbacks, closures, classes and many other constructs are unsupported. Limits stop large runs; this is not your application runtime. Static explanation remains independent. See `docs/EXECUTION_REPLAY.md` in the repository.
 
 ## Music and video
 

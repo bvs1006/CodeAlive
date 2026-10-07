@@ -19,8 +19,9 @@ Select a JavaScript or TypeScript function, then run CodeAlive: Explain Selected
 Or run CodeAlive: Open Explainer to explore ten examples.
 
 Browser: open browser/explain.html. No npm installation is needed.
-Code is explained locally; your source is never executed or uploaded.
-See EXPLAIN_CODE.md for supported constructs and limitations.
+Static explanation never runs or uploads source. Optional Replay explicitly runs a bounded
+interpreter subset, without host, network, file or module access.
+See EXPLAIN_CODE.md and EXECUTION_REPLAY.md for supported constructs and limitations.
 
 Music, sorting, recording and the read-only PR companion remain available in VS Code.
 '''
@@ -28,6 +29,7 @@ with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as archive:
     archive.write(root / f'codealive-{version}.vsix', f'codealive-{version}.vsix')
     archive.writestr('START_HERE.txt', instructions)
     archive.write(root / 'docs/EXPLAIN_CODE.md', 'EXPLAIN_CODE.md')
+    archive.write(root / 'docs/EXECUTION_REPLAY.md', 'EXECUTION_REPLAY.md')
     for file in sorted((root / 'web').rglob('*')):
         if file.is_file():
             archive.write(file, 'browser/' + file.relative_to(root / 'web').as_posix())

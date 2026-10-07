@@ -9,7 +9,7 @@ const bundle = `(function(root,factory){if(typeof module==='object'&&module.expo
 for (const target of ['web', 'extension/media']) {
   const output = path.join(root, target, 'explainer');
   fs.mkdirSync(output, {recursive:true});
-  for (const file of ['explain-engine.js', 'explain-examples.js', 'explain-ui.js', 'explain.css']) {
+  for (const file of fs.readdirSync(path.join(root,'shared')).filter(f=>/\.(js|css)$/.test(f)).sort()) {
     fs.copyFileSync(path.join(root, 'shared', file), path.join(output, file));
   }
   fs.copyFileSync(path.join(root, 'shared/explain.html'), path.join(root, target, 'explain.html'));
