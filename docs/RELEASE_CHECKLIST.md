@@ -1,11 +1,25 @@
-# CodeAlive 1.0 beta release checklist
+# CodeAlive 1.0.1 beta release checklist
 
 Run this checklist against one commit and its exact packaged VSIX. Record the commit SHA,
 OS, VS Code version, browser version, and results. A passing automated suite does not
 mark the manual rows complete. Automated gates apply to the beta prerelease; the
 manual rows track remaining desktop, physical-device and accessibility coverage.
 
-## Published 1.0 beta evidence
+## Published 1.0.1 beta evidence
+
+| Evidence | Recorded result |
+|---|---|
+| Release | [v1.0.1 beta prerelease](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1), published 8 October 2026 |
+| Exact source | Tag points to [776d394](https://github.com/bvs1006/CodeAlive/commit/776d394ddfeec47d455d2757cc5e0bf96fcc9d4a) |
+| Automated gates | [Release CI](https://github.com/bvs1006/CodeAlive/actions/runs/37777462645): five checks and the release job passed on that commit |
+| Packages | Both published installers were downloaded: SHA-256 digests matched the release assets and packaged source bytes matched the exact release sources. The offline ZIP embeds the exact published VSIX. |
+
+| Published asset | Bytes | SHA-256 |
+|---|---:|---|
+| [codealive-1.0.1.vsix](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.1/codealive-1.0.1.vsix) | 198956 | `f9254c5ec640bc7a1f86c6818432c0ced4264550b2842e29c73195faef731b08` |
+| [codealive-explainer-1.0.1.zip](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.1/codealive-explainer-1.0.1.zip) | 360749 | `d205737a53135682075199c808c75c5ec3bab63dd87e8db785ef24fc6b5acb64` |
+
+## Earlier 1.0 beta evidence
 
 | Evidence | Recorded result |
 |---|---|
