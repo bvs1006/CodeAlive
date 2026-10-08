@@ -25,12 +25,24 @@ async function checkWorkflowNavigation(page,host=false){
 }
 function narrationWav(){const samples=96000,buffer=Buffer.alloc(44+samples*2);buffer.write('RIFF');buffer.writeUInt32LE(buffer.length-8,4);buffer.write('WAVEfmt ',8);buffer.writeUInt32LE(16,16);buffer.writeUInt16LE(1,20);buffer.writeUInt16LE(1,22);buffer.writeUInt32LE(48000,24);buffer.writeUInt32LE(96000,28);buffer.writeUInt16LE(2,32);buffer.writeUInt16LE(16,34);buffer.write('data',36);buffer.writeUInt32LE(samples*2,40);for(let i=0;i<samples;i++)buffer.writeInt16LE(Math.round(Math.sin(2*Math.PI*500*i/48000)*10000),44+i*2);return buffer;}
 async function checkExplanationVideo(page,host=false){
+  assert.equal(await page.locator('#movie-position').getAttribute('role'),null);
+  assert.equal(await page.locator('#movie-position').getAttribute('aria-live'),'off');
+  assert.equal(await page.locator('#movie-scene-status').getAttribute('role'),'status');
+  assert.equal(await page.locator('#movie-scene-status').getAttribute('aria-atomic'),'true');
   await page.fill('#movie-last','2');await page.click('#movie-build');assert.equal(await page.locator('#movie-scenes .movie-scene').count(),2);
   await page.locator('#movie-scenes textarea').first().fill('Check the inputs before calculating a result.');
   await page.locator('#movie-scenes textarea').nth(1).fill('Explain the error path and how it differs from a return.');
   await page.locator('#movie-narration').setInputFiles({name:'narration-test.wav',mimeType:'audio/wav',buffer:narrationWav()});await page.waitForFunction(()=>document.getElementById('movie-audio-status').textContent.includes('narration-test.wav'));
-  await page.click('#movie-fit');assert.match(await page.textContent('#movie-length'),/2.0 seconds/);await page.check('#movie-hide');await page.check('#movie-music');await page.click('#movie-record');
+  await page.click('#movie-fit');assert.match(await page.textContent('#movie-length'),/2.0 seconds/);await page.check('#movie-hide');await page.check('#movie-music');
+  await page.evaluate(()=>{
+    window.sceneAnnouncements=[];window.movieClockUpdates=0;
+    new MutationObserver(()=>{const text=document.getElementById('movie-scene-status').textContent;if(text)sceneAnnouncements.push(text);}).observe(document.getElementById('movie-scene-status'),{childList:true});
+    new MutationObserver(()=>movieClockUpdates++).observe(document.getElementById('movie-position'),{childList:true});
+  });
+  await page.locator('#movie-record').press('Enter');
   await page.waitForFunction(()=>document.getElementById('movie-status').textContent.startsWith('Video ready.'));await page.waitForFunction(()=>document.getElementById('movie-preview').videoWidth===1080);assert.equal(await page.locator('#movie-preview').evaluate(v=>v.videoHeight),1920);assert.match(await page.textContent('#movie-position'),/Scene 2\/2/);
+  assert.deepEqual(await page.evaluate(()=>sceneAnnouncements),['Scene 1 of 2. Check the inputs before calculating a result.','Scene 2 of 2. Explain the error path and how it differs from a return.']);
+  assert(await page.evaluate(()=>movieClockUpdates>10),'Visible clock advances while announcements occur only at scene boundaries');
   const name=host?'explanation-webview':'explanation-browser';let file;
   if(host){await page.click('#movie-save');await page.waitForFunction(()=>hostMessages.some(m=>m.type==='saveExplanationVideo'));const message=await page.evaluate(()=>hostMessages.find(m=>m.type==='saveExplanationVideo'));file=path.join(root,'test-results',name+'.'+message.format);fs.writeFileSync(file,Buffer.from(message.base64,'base64'));}
   else{const downloaded=page.waitForEvent('download');await page.click('#movie-save');const download=await downloaded;file=path.join(root,'test-results',name+path.extname(download.suggestedFilename()));await download.saveAs(file);}
@@ -39,7 +51,9 @@ async function checkExplanationVideo(page,host=false){
   function amplitude(hz){let real=0,imaginary=0;for(let i=0;i<count;i++){const x=pcm.stdout.readFloatLE(i*4),angle=2*Math.PI*hz*i/48000;real+=x*Math.cos(angle);imaginary+=x*Math.sin(angle);}return 2*Math.hypot(real,imaginary)/count;}
   assert(amplitude(500)>0.08,'Imported narration must be audible in encoded audio');assert(amplitude(130.81)>0.015,'Optional music must be mixed with narration');
   if(!host){const frame=spawn('ffmpeg',['-v','error','-y','-ss','1.5','-i',file,'-frames:v','1',path.join(root,'test-results/explanation-frame.png')]);assert.equal(frame.status,0,String(frame.stderr));await page.locator('#movie-panel').screenshot({path:path.join(root,'test-results/explanation-editor.png')});}
-  await page.locator('#movie-scenes textarea').first().fill('A revised caption clears the previous export.');assert(await page.locator('#movie-download').isHidden());
+  await page.locator('#movie-scenes textarea').first().fill('A revised caption clears the previous export.');assert(await page.locator('#movie-download').isHidden());assert.equal(await page.textContent('#movie-scene-status'),'');
+  await page.locator('#movie-play').press('Enter');await page.waitForFunction(()=>document.getElementById('movie-scene-status').textContent==='Scene 1 of 2. A revised caption clears the previous export.');
+  await page.locator('#movie-stop').press('Enter');
   await page.click('#replay-run');await page.selectOption('#movie-mode','replay');await page.fill('#movie-last','2');await page.click('#movie-build');assert.match(await page.textContent('#movie-length'),/Captured input: \[100,20\]/);assert.match(await page.locator('#movie-scenes textarea').first().inputValue(),/call/);
 }
 function preview(file,fn,template){
