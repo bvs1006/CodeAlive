@@ -26,6 +26,13 @@ CI covers Linux/Windows/macOS unit checks, Chromium/media integration and an ins
 VSIX on Linux. The 1.0 suite tests fresh profiles, upgrades, recording, Save/cancel
 and a real public PR. Unit checks on Windows/macOS are not desktop recording coverage.
 
+## Development after the published 1.0.1 beta
+
+The next IDE build adds an **Open CodeAlive** editor toolbar button and automatically
+explains the current JS/TS selection or file. Reopening from the CodeAlive panel
+preserves its work. This improvement is pending the next installer release; the
+published 1.0.1 downloads remain the accessibility maintenance beta.
+
 ## Next small tasks
 
 1. Align GitHub About settings with the current developer workflow; [suggested settings](GITHUB_ABOUT.md) need repository settings access.

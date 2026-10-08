@@ -4,6 +4,31 @@ const output=path.resolve(__dirname,'../../test-results/vscode-acceptance');
 async function until(check,label){const end=Date.now()+45000;while(Date.now()<end){if(await check())return;await new Promise(r=>setTimeout(r,150));}throw Error('Timed out: '+label);}
 async function findFrame(browser,selector){let found;await until(async()=>{for(const context of browser.contexts())for(const page of context.pages())for(const frame of page.frames()){try{if(await frame.locator(selector).count()){found=frame;return true;}}catch{}}return false;},selector);return found;}
 function narrationWav(){const samples=48000,b=Buffer.alloc(44+samples*2);b.write('RIFF');b.writeUInt32LE(b.length-8,4);b.write('WAVEfmt ',8);b.writeUInt32LE(16,16);b.writeUInt16LE(1,20);b.writeUInt16LE(1,22);b.writeUInt32LE(48000,24);b.writeUInt32LE(96000,28);b.writeUInt16LE(2,32);b.writeUInt16LE(16,34);b.write('data',36);b.writeUInt32LE(samples*2,40);for(let i=0;i<samples;i++)b.writeInt16LE(Math.round(Math.sin(2*Math.PI*500*i/48000)*10000),44+i*2);return b;}
+exports.checkIdeEntry=async(document,browser)=>{
+  fs.mkdirSync(output,{recursive:true});
+  const frame=await findFrame(browser,'#source'),page=frame.page();
+  try{
+    const action=()=>page.getByRole('button',{name:'CodeAlive: Open CodeAlive',exact:true});
+    let editor=await vscode.window.showTextDocument(document,vscode.ViewColumn.One);
+    editor.selection=new vscode.Selection(0,0,0,0);
+    await action().click();await until(async()=>await frame.inputValue('#source')===document.getText(),'toolbar loads active file');
+    editor.selection=new vscode.Selection(2,0,4,1);
+    await action().click();await until(async()=>await frame.inputValue('#source')===document.getText(editor.selection),'toolbar loads selection');
+    assert.equal(await frame.textContent('#source-name'),'sample.ts');assert.equal(await frame.textContent('#summary-name'),'total');
+    await page.screenshot({path:path.join(output,'installed-ide-entry.png')});
+    await frame.click('#edit-code');const local='function editedInCodeAlive() { return 9; }';await frame.fill('#source',local);
+    await until(()=>!vscode.window.activeTextEditor,'webview focus');const groups=vscode.window.tabGroups.all.length;await vscode.commands.executeCommand('codealive.start');
+    assert.equal(await frame.inputValue('#source'),local,'Opening from CodeAlive must preserve edited source');
+    assert.equal(vscode.window.tabGroups.all.length,groups,'Reopening CodeAlive must reuse its editor group');
+    const notePath=path.join(process.env.CODEALIVE_FIXTURE_DIR,'ide-entry.md');fs.writeFileSync(notePath,'# IDE entry check\n');
+    const note=await vscode.workspace.openTextDocument(vscode.Uri.file(notePath));
+    await vscode.window.showTextDocument(note,vscode.ViewColumn.One);await until(async()=>await action().count()===0,'toolbar hidden for Markdown');
+    await vscode.commands.executeCommand('codealive.start');assert.equal(await frame.inputValue('#source'),local,'Unsupported editor must preserve current source');
+    editor=await vscode.window.showTextDocument(document,vscode.ViewColumn.One);editor.selection=new vscode.Selection(2,0,4,1);
+    await action().click();await until(async()=>await frame.inputValue('#source')===document.getText(editor.selection),'restore selection after IDE entry check');
+    console.log('IDE ENTRY PASS: installed editor toolbar loads selection/file, hides for Markdown, and preserves panel edits.');
+  }catch(error){await page.screenshot({path:path.join(output,'ide-entry-failure.png')}).catch(()=>{});throw error;}
+};
 exports.run=async(document,browser)=>{
   fs.mkdirSync(output,{recursive:true});
   try{
@@ -12,6 +37,7 @@ exports.run=async(document,browser)=>{
     assert(await frame.locator('#workflow-review-pr').isVisible());
     await frame.locator('#workflow-replay').press('Enter');assert.equal(await frame.evaluate(()=>document.activeElement.id),'replay-args');assert(await frame.locator('#replay-results').isHidden());
     await frame.fill('#replay-args','[2]');await frame.click('#replay-run');assert.match(await frame.textContent('#replay-status'),/Returned 3/);
+    await until(()=>!vscode.window.activeTextEditor,'replay webview focus');await vscode.commands.executeCommand('codealive.start');assert.match(await frame.textContent('#replay-status'),/Returned 3/);assert.equal(await frame.inputValue('#replay-args'),'[2]','Opening from CodeAlive must preserve replay state');
     await frame.click('#replay-pin');await frame.fill('#replay-args','[5]');await frame.click('#replay-run');assert.match(await frame.textContent('#replay-status'),/Returned 6/);assert.match(await frame.textContent('#replay-baseline'),/"result": 3/);
     await frame.locator('#replay-slider').evaluate(el=>{el.value=el.max;el.dispatchEvent(new Event('input',{bubbles:true}));});assert.equal(await frame.textContent('#replay-value'),'6');
     await frame.click('#replay-play');await until(async()=>/Step 2 /.test(await frame.textContent('#replay-position')),'replay advances');await frame.click('#replay-play');assert.equal(await frame.textContent('#replay-play'),'Play');

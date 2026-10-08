@@ -6,10 +6,12 @@ CodeAlive 0.6 adds local, source-linked explanations for JavaScript and TypeScri
 
 1. Install `codealive-1.0.1.vsix` from the locally built beta ZIP (`npm run package:release`). Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
 2. Open a JavaScript or TypeScript file. Select a complete function, or leave the selection empty to use the active file.
-3. Run **CodeAlive: Explain Selected Code**, or use the editor's context menu.
+3. Click **Open CodeAlive** (the `</>` button in the editor toolbar), or run **CodeAlive: Open CodeAlive**. The current selection or file is loaded and explained automatically. **CodeAlive: Explain Selected Code** and its context-menu entry also remain available.
 4. Choose a function in **Function / scope**. Nested callbacks have their own scopes.
 5. Switch between **Plain language** and **Developer** explanations.
 6. Select a step or flow node to highlight the exact source and reveal it in the original editor. Keyboard users can focus diagram nodes and press Enter or Space.
+
+The toolbar shortcut and automatic editor loading are in development builds after the published 1.0.1 beta, pending the next installer release. Reopening **Open CodeAlive** while the panel has focus preserves your entered code and workflow state. Without supported source, it opens examples or reveals the existing panel.
 
 **CodeAlive: Open Explainer** opens the playground with ten examples. **Load editor** refreshes the selection or active file. If the editor document changes, source navigation is suspended until you load it again; stale offsets are never applied to changed code. Editing the playground detaches it from the editor.
 
@@ -55,4 +57,4 @@ npm run package
 python3 scripts/package-release.py
 ```
 
-The browser suite exercises rendered pages, keyboard navigation, source offsets, CSP, inert source text, all ten examples and mobile width. Extension-host integration is covered by mocks; actual VS Code installation and audio/video checks remain manual release checks.
+The browser suite exercises rendered pages, keyboard navigation, source offsets, CSP, inert source text, all ten examples and mobile width. The installed Linux VS Code suite covers fresh installation/upgrades, toolbar entry, editor transfer and navigation, stale-source protection and audio/video workflows. Windows/macOS desktop and physical audio/accessibility checks remain manual release checks.

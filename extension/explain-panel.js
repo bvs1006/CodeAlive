@@ -37,7 +37,10 @@ function activateExplain(context) {
   const currentEditor=()=>vscode.window.activeTextEditor || (lastEditor&&!lastEditor.document.isClosed?lastEditor:null) || vscode.window.visibleTextEditors?.[0];
   const send=snapshot=>{if(!snapshot)return;loaded=snapshot;queued=snapshot.payload;if(panel&&ready)panel.webview.postMessage(queued);};
   async function show(snapshot) {
-    if(panel){panel.reveal(vscode.ViewColumn.Beside,true);send(snapshot);return;}
+    if(panel){
+      const column=snapshot?.document&&snapshot.viewColumn===panel.viewColumn?vscode.ViewColumn.Beside:panel.viewColumn;
+      panel.reveal(column,true);send(snapshot);return;
+    }
     const created=vscode.window.createWebviewPanel('codealive.explain','CodeAlive · Explain',vscode.ViewColumn.Beside,{enableScripts:true,retainContextWhenHidden:true,localResourceRoots:[vscode.Uri.joinPath(context.extensionUri,'media')]});
     panel=created;ready=false;send(snapshot);
     disposables.push(created.onDidDispose(()=>{if(panel===created){panel=null;ready=false;loaded=null;queued=null;}}));
@@ -69,7 +72,17 @@ function activateExplain(context) {
   }
   const command=(id,callback)=>disposables.push(vscode.commands.registerCommand(id,async(...args)=>{try{await callback(...args);}catch(error){vscode.window.showErrorMessage('CodeAlive: '+error.message);}}));
   command('codealive.explain',()=>show(captureSource(currentEditor())));
-  command('codealive.start',()=>show(null));
+  command('codealive.start',resource=>{
+    const active=vscode.window.activeTextEditor;
+    const editor=vscode.Uri.isUri(resource)
+      ?[active,...(vscode.window.visibleTextEditors||[])].find(editor=>editor?.document.uri.toString()===resource.toString())
+      :active;
+    // A panel-focused invocation reveals existing work instead of reloading the last editor.
+    const supported=editor&&['javascript','javascriptreact','typescript','typescriptreact'].includes(editor.document.languageId);
+    const selection=editor?.selection&&!editor.selection.isEmpty?editor.selection:undefined;
+    const source=supported&&editor.document.getText(selection).trim()?captureSource(editor):null;
+    return show(source);
+  });
   command('codealive.openExplainer',()=>show(null));
   const showComparison=message=>{
     if(!message||typeof message.before!=='string'||typeof message.after!=='string'||Math.max(message.before.length,message.after.length)>MAX_CODE||!['JavaScript','TypeScript'].includes(message.language))throw new Error('Invalid comparison source.');
