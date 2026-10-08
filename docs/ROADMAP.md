@@ -19,6 +19,7 @@ The core workflow remains useful without sound.
 | Music, sorting demonstrations and studio recording | Available in the published feature set; wider physical-device checks remain |
 | Editable explanation scenes with imported narration | Included in the unified 1.0 beta from the PR #4 video work |
 | Unified 1.0 metadata, package verification, navigation and fresh-install acceptance | [PR #5](https://github.com/bvs1006/CodeAlive/pull/5) merged; [1.0 beta published](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.0) after [five checks and the release job passed](https://github.com/bvs1006/CodeAlive/actions/runs/37646131724) |
+| Reduced-motion music studio and scene-boundary video announcements | [PR #7](https://github.com/bvs1006/CodeAlive/pull/7) and [PR #8](https://github.com/bvs1006/CodeAlive/pull/8) merged; [PR #9](https://github.com/bvs1006/CodeAlive/pull/9) packaged the fixes in the [1.0.1 beta](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1) after [all release checks passed](https://github.com/bvs1006/CodeAlive/actions/runs/37777462645). Both published installer downloads were verified. |
 | Visual product overview and concise installation guidance | README uses a feature graphic, real screenshots/animation and task-based benefits; detailed setup is in [DEVELOPMENT.md](DEVELOPMENT.md) |
 
 CI covers Linux/Windows/macOS unit checks, Chromium/media integration and an installed
