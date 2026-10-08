@@ -1,6 +1,6 @@
 # CodeAlive roadmap
 
-Status: **7 October 2026**. Track implemented code, passing checks and published
+Status: **8 October 2026**. Track implemented code, passing checks and published
 packages as separate states.
 
 ## Direction
@@ -29,7 +29,8 @@ and a real public PR. Unit checks on Windows/macOS are not desktop recording cov
 
 1. Align GitHub About settings with the current developer workflow; [suggested settings](GITHUB_ABOUT.md) need repository settings access.
 2. Complete Windows/macOS desktop, physical audio-device, private signed-in PR,
-   screen-reader and reduced-motion checks.
+   screen-reader and reduced-motion checks. Music studio decorations now respect
+   the system motion preference on both surfaces; physical-device acceptance remains.
 3. Choose licensing and distribution terms; then confirm publisher identity before
    Marketplace/Open VSX publication.
 4. Observe repeat use before adding languages or building review intelligence that
