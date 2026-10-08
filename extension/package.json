@@ -34,7 +34,8 @@
     "commands": [
       {
         "command": "codealive.start",
-        "title": "CodeAlive: Open CodeAlive"
+        "title": "CodeAlive: Open CodeAlive",
+        "icon": "$(code)"
       },
       {
         "command": "codealive.explain",
@@ -70,6 +71,13 @@
       }
     ],
     "menus": {
+      "editor/title": [
+        {
+          "command": "codealive.start",
+          "when": "resourceLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/ && !isInDiffEditor",
+          "group": "navigation@10"
+        }
+      ],
       "editor/context": [
         {
           "command": "codealive.explain",

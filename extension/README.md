@@ -8,6 +8,8 @@ The gated release workflow builds [1.0.1 beta installers](https://github.com/bvs
 
 Install `codealive-1.0.1.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
 
+In development builds after the published 1.0.1 beta, click **Open CodeAlive** (the `</>` button in a JS/TS editor's toolbar), or run **CodeAlive: Open CodeAlive**. It explains your selection, or the whole file when nothing is selected. Reopening from the CodeAlive panel preserves your work. With no supported source, it opens examples or keeps the current panel. The published 1.0.1 installers use the command below.
+
 Select a complete JavaScript/TypeScript function and run **CodeAlive: Explain Selected Code**. With no selection, the active file is loaded. Choose a function scope, switch between Plain language and Developer, and select a step or diagram node to reveal its source. **Load editor** refreshes changed files. **CodeAlive: Open Explainer** opens ten examples.
 
 Static explanation parses code locally without executing or uploading it. No account or API key is required. Explanations describe syntax and return expressions, not computed values, business intent, correctness or complete runtime flow. Try, switch and labeled blocks are collapsed with warnings. Limits: 50,000 characters, 100 listed functions, 80 steps, 100 graph nodes and 12 return/call facts. Editor links stop working after source changes until refreshed.

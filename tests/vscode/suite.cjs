@@ -12,8 +12,9 @@ async function runSuite(browser){
   editor.selection=new vscode.Selection(2,0,4,1);
   const {captureSource,revealSource}=require(path.join(extension.extensionPath,'explain-panel.js'));
   const snapshot=captureSource(editor);assert.equal(snapshot.payload.baseLine,3);assert.equal(snapshot.payload.language,'TypeScript');
-  await vscode.commands.executeCommand('codealive.explain');await until(()=>api.getDiagnostics().explainer.sourceAcknowledged,'real webview source acknowledgement');
+  await vscode.commands.executeCommand('codealive.start');await until(()=>api.getDiagnostics().explainer.sourceAcknowledged,'automatic IDE source acknowledgement');
   assert.equal(api.getDiagnostics().explainer.sourceLength,snapshot.payload.code.length);
+  if(browser)await require('./workflow.cjs').checkIdeEntry(document,browser);
   const start=snapshot.payload.code.indexOf('x + 1');assert(await revealSource(snapshot,{sourceToken:snapshot.payload.sourceToken,start,end:start+5}));
   const revealed=vscode.window.visibleTextEditors.find(e=>e.document===document);assert.equal(revealed.selection.start.line,3);assert.equal(revealed.selection.start.character,9);
   assert.equal(await revealSource(snapshot,{sourceToken:'wrong',start,end:start+5}),false);
