@@ -21,6 +21,8 @@ exports.run=async(document,browser)=>{
     await until(async()=>/acceptance-narration.wav/.test(await frame.textContent('#movie-audio-status')),'local narration imported');
     await frame.click('#movie-fit');await frame.check('#movie-music');await frame.check('#movie-hide');await frame.click('#movie-record');
     await until(async()=>/^Video ready\./.test(await frame.textContent('#movie-status')),'real VS Code recording');
+    assert.equal(await frame.locator('#movie-position').getAttribute('aria-live'),'off');
+    assert.equal(await frame.textContent('#movie-scene-status'),'Scene 1 of 1. Return the input plus one.');
     await until(()=>frame.locator('#movie-preview').evaluate(v=>v.videoWidth===1080),'encoded preview');assert.equal(await frame.locator('#movie-preview').evaluate(v=>v.videoHeight),1920);
     // Let the real Save dialog apply the recording's format filter. Fetching a
     // preview blob would violate the webview's intentional connect-src policy.

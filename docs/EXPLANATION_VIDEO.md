@@ -14,6 +14,8 @@ Use **Explain it in a video** after explaining a JS/TS function. This workflow w
 
 Changing source/scope clears its script and narration. Editing captions, timing or output settings invalidates the old export. Reloading the view loses the in-memory script/audio; persistent project files are not included yet.
 
+During preview and recording, the live region announces the scene number and caption once when each scene starts. The elapsed clock remains visible without generating continuous announcements. Restarting a preview announces its first scene again; editing or clearing the script removes the previous scene announcement. Screen-reader testing on physical devices remains pending.
+
 ## Format and limits
 
 Vertical 1080 × 1920 canvas, captured at a requested 30 fps. MP4 is preferred when supported; otherwise WebM. The existing studio's FFmpeg conversion remains separate; explanation export saves its native browser format.
