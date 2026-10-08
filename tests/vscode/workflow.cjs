@@ -20,7 +20,8 @@ exports.checkIdeEntry=async(document,browser)=>{
     await until(()=>!vscode.window.activeTextEditor,'webview focus');const groups=vscode.window.tabGroups.all.length;await vscode.commands.executeCommand('codealive.start');
     assert.equal(await frame.inputValue('#source'),local,'Opening from CodeAlive must preserve edited source');
     assert.equal(vscode.window.tabGroups.all.length,groups,'Reopening CodeAlive must reuse its editor group');
-    const note=await vscode.workspace.openTextDocument({language:'markdown',content:'# IDE entry check'});
+    const notePath=path.join(process.env.CODEALIVE_FIXTURE_DIR,'ide-entry.md');fs.writeFileSync(notePath,'# IDE entry check\n');
+    const note=await vscode.workspace.openTextDocument(vscode.Uri.file(notePath));
     await vscode.window.showTextDocument(note,vscode.ViewColumn.One);await until(async()=>await action().count()===0,'toolbar hidden for Markdown');
     await vscode.commands.executeCommand('codealive.start');assert.equal(await frame.inputValue('#source'),local,'Unsupported editor must preserve current source');
     editor=await vscode.window.showTextDocument(document,vscode.ViewColumn.One);editor.selection=new vscode.Selection(2,0,4,1);
