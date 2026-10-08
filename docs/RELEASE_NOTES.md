@@ -1,10 +1,22 @@
-# CodeAlive 1.0.0 beta
+# CodeAlive 1.0.1 beta
 
 **See what code does, what changed, and why it matters.**
 
-This beta brings the four feature milestones together under one version. Installers
-are built from the release commit after all CI gates pass. Marketplace/Open VSX
+This maintenance beta packages the accessibility fixes merged after 1.0.0. Installers
+are built from the release commit after all five CI gates pass. Marketplace/Open VSX
 listings and the manual platform checks below remain pending.
+
+## Accessibility fixes
+
+- Music studio decorations honor the system's reduced-motion preference in both the
+  browser and VS Code. Preference changes apply without reloading; playback, source
+  highlights, sorting and recording remain usable. [PR #7](https://github.com/bvs1006/CodeAlive/pull/7)
+- Explanation videos announce the scene number and caption once at each scene boundary.
+  The visible clock updates without continuous live announcements. Editing clears stale
+  announcements, and restarting announces the first scene again. [PR #8](https://github.com/bvs1006/CodeAlive/pull/8)
+
+Automated browser and installed Linux VS Code checks cover these fixes. Physical
+screen-reader and audio-device acceptance remain pending.
 
 ## Included workflows
 
@@ -26,9 +38,9 @@ outer value. Differential tests cover both `let` and `const`.
 
 ## Installation and validation
 
-Download the [release VSIX or offline ZIP](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.0),
+Download the [release VSIX or offline ZIP](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1),
 or build with `npm ci --ignore-scripts` and `npm run package:release`. Install
-`codealive-1.0.0.vsix`, or extract `downloads/codealive-explainer-1.0.0.zip` and open
+`codealive-1.0.1.vsix`, or extract `downloads/codealive-explainer-1.0.1.zip` and open
 `browser/explain.html`. Close old CodeAlive tabs and reload VS Code after upgrading.
 
 The package check verifies one version, current browser/extension source, the parser's

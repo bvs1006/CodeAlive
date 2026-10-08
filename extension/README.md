@@ -1,12 +1,12 @@
-# CodeAlive 1.0.0 beta
+# CodeAlive 1.0.1 beta
 
 See what code does, what changed, and why it matters. This beta unifies local JS/TS explanations, bounded replay, before/after observations, PR evidence and editable explanation videos. Music and sorting remain available.
 
-The gated release workflow builds [1.0 beta installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.0) from verified source. Marketplace/Open VSX listings and manual desktop/audio/accessibility checks remain pending.
+The gated release workflow builds [1.0.1 beta installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1) from verified source. This update adds reduced-motion music decorations and scene announcements without continuous clock announcements. Marketplace/Open VSX listings and manual desktop/audio/accessibility checks remain pending.
 
 ## Install and explain
 
-Install `codealive-1.0.0.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
+Install `codealive-1.0.1.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
 
 Select a complete JavaScript/TypeScript function and run **CodeAlive: Explain Selected Code**. With no selection, the active file is loaded. Choose a function scope, switch between Plain language and Developer, and select a step or diagram node to reveal its source. **Load editor** refreshes changed files. **CodeAlive: Open Explainer** opens ten examples.
 
