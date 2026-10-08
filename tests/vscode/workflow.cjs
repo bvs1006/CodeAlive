@@ -37,7 +37,7 @@ exports.run=async(document,browser)=>{
     assert(await frame.locator('#workflow-review-pr').isVisible());
     await frame.locator('#workflow-replay').press('Enter');assert.equal(await frame.evaluate(()=>document.activeElement.id),'replay-args');assert(await frame.locator('#replay-results').isHidden());
     await frame.fill('#replay-args','[2]');await frame.click('#replay-run');assert.match(await frame.textContent('#replay-status'),/Returned 3/);
-    await vscode.commands.executeCommand('codealive.start');assert.match(await frame.textContent('#replay-status'),/Returned 3/);assert.equal(await frame.inputValue('#replay-args'),'[2]','Opening from CodeAlive must preserve replay state');
+    await until(()=>!vscode.window.activeTextEditor,'replay webview focus');await vscode.commands.executeCommand('codealive.start');assert.match(await frame.textContent('#replay-status'),/Returned 3/);assert.equal(await frame.inputValue('#replay-args'),'[2]','Opening from CodeAlive must preserve replay state');
     await frame.click('#replay-pin');await frame.fill('#replay-args','[5]');await frame.click('#replay-run');assert.match(await frame.textContent('#replay-status'),/Returned 6/);assert.match(await frame.textContent('#replay-baseline'),/"result": 3/);
     await frame.locator('#replay-slider').evaluate(el=>{el.value=el.max;el.dispatchEvent(new Event('input',{bubbles:true}));});assert.equal(await frame.textContent('#replay-value'),'6');
     await frame.click('#replay-play');await until(async()=>/Step 2 /.test(await frame.textContent('#replay-position')),'replay advances');await frame.click('#replay-play');assert.equal(await frame.textContent('#replay-play'),'Play');
