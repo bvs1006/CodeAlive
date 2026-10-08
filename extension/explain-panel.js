@@ -37,7 +37,10 @@ function activateExplain(context) {
   const currentEditor=()=>vscode.window.activeTextEditor || (lastEditor&&!lastEditor.document.isClosed?lastEditor:null) || vscode.window.visibleTextEditors?.[0];
   const send=snapshot=>{if(!snapshot)return;loaded=snapshot;queued=snapshot.payload;if(panel&&ready)panel.webview.postMessage(queued);};
   async function show(snapshot) {
-    if(panel){panel.reveal(panel.viewColumn,true);send(snapshot);return;}
+    if(panel){
+      const column=snapshot?.document&&snapshot.viewColumn===panel.viewColumn?vscode.ViewColumn.Beside:panel.viewColumn;
+      panel.reveal(column,true);send(snapshot);return;
+    }
     const created=vscode.window.createWebviewPanel('codealive.explain','CodeAlive · Explain',vscode.ViewColumn.Beside,{enableScripts:true,retainContextWhenHidden:true,localResourceRoots:[vscode.Uri.joinPath(context.extensionUri,'media')]});
     panel=created;ready=false;send(snapshot);
     disposables.push(created.onDidDispose(()=>{if(panel===created){panel=null;ready=false;loaded=null;queued=null;}}));

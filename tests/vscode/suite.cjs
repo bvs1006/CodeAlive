@@ -14,6 +14,7 @@ async function runSuite(browser){
   const snapshot=captureSource(editor);assert.equal(snapshot.payload.baseLine,3);assert.equal(snapshot.payload.language,'TypeScript');
   await vscode.commands.executeCommand('codealive.start');await until(()=>api.getDiagnostics().explainer.sourceAcknowledged,'automatic IDE source acknowledgement');
   assert.equal(api.getDiagnostics().explainer.sourceLength,snapshot.payload.code.length);
+  assert(vscode.window.visibleTextEditors.some(editor=>editor.document===document),'IDE entry must keep the source editor visible beside CodeAlive');
   if(browser)await require('./workflow.cjs').checkIdeEntry(document,browser);
   const start=snapshot.payload.code.indexOf('x + 1');assert(await revealSource(snapshot,{sourceToken:snapshot.payload.sourceToken,start,end:start+5}));
   const revealed=vscode.window.visibleTextEditors.find(e=>e.document===document);assert.equal(revealed.selection.start.line,3);assert.equal(revealed.selection.start.character,9);
