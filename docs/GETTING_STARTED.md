@@ -1,9 +1,9 @@
 # First code explanation
 
-These steps use the [1.0 beta VSIX or offline ZIP](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.0).
+These steps use the [1.0 beta VSIX or offline ZIP](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1).
 To build from source instead, follow [DEVELOPMENT.md](DEVELOPMENT.md).
 
-1. Download the 1.0 beta VSIX (also included in the offline ZIP), then install `codealive-1.0.0.vsix` through VS Code's Extensions menu.
+1. Download the 1.0 beta VSIX (also included in the offline ZIP), then install `codealive-1.0.1.vsix` through VS Code's Extensions menu.
 2. Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
 3. Select a JavaScript or TypeScript function and run **CodeAlive: Explain Selected Code**.
 4. Choose Plain language or Developer. Select a step or flow node to reveal its source.

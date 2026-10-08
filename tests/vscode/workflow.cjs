@@ -48,9 +48,15 @@ exports.run=async(document,browser)=>{
       const url=page.getByPlaceholder('https://github.com/owner/repo/pull/123');await url.fill(pr);await url.press('Enter');await page.getByText('Public PR without sign-in',{exact:true}).click();
       const report=await findFrame(browser,'#refresh');await until(async()=>{const status=await report.textContent('#status');if(/rate limit|HTTP|unavailable|timed out/.test(status))throw Error(status);return status.startsWith('Evidence loaded.');},'live public PR evidence');
       assert.match(await report.textContent('#status'),/Required-check coverage is not verified/);assert.match(await report.textContent('#report'),/Not verified\. Passing displayed checks is not approval to merge\./);assert.match(await report.textContent('#report'),/Fetched/);
-      await report.getByRole('button',{name:'Explain changes',exact:true}).first().click();
-      const compare=await findFrame(browser,'#compare-results');await until(async()=>/PR head [a-f0-9]{40}/.test(await compare.textContent('#compare-evidence')),'live PR source revisions');assert.match(await compare.textContent('#compare-results'),/structur|changed|added|removed/);
-      console.log('LIVE PUBLIC PR PASS: '+pr+'; revision-bound source and evidence rendered in installed VS Code.');
+      const files=report.locator('#report section').filter({has:report.getByRole('heading',{name:'Changed files by purpose',exact:true})});
+      const paths=await files.locator('article code').allTextContents();assert(paths.length>0,'The live PR fixture must report changed files');
+      const sources=paths.filter(path=>/\.(?:[cm]?jsx?|tsx?)$/i.test(path)),buttons=report.getByRole('button',{name:'Explain changes',exact:true});
+      assert.equal(await buttons.count(),sources.length,'Only supported source files offer change explanations');
+      if(sources.length){
+        await buttons.first().click();
+        const compare=await findFrame(browser,'#compare-results');await until(async()=>/PR head [a-f0-9]{40}/.test(await compare.textContent('#compare-evidence')),'live PR source revisions');assert.match(await compare.textContent('#compare-results'),/structur|changed|added|removed/);
+        console.log('LIVE PUBLIC PR PASS: '+pr+'; revision-bound source and evidence rendered in installed VS Code.');
+      }else console.log('LIVE PUBLIC PR PASS: '+pr+'; metadata/documentation evidence rendered with no source comparison controls.');
     }else console.log('Live public PR check not requested for this run; private sign-in remains a manual gate.');
     await page.screenshot({path:path.join(output,'installed-workflow.png')});
     console.log('FRESH VS CODE WORKFLOW PASS: real webview replay/input comparison, playback, narration/music recording, Save/cancel, export invalidation and HEAD comparison.');

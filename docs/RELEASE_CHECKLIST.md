@@ -21,7 +21,7 @@ The manual rows below remain pending. Their coverage is not implied by publicati
 | Check | Expected outcome |
 |---|---|
 | `npm ci --ignore-scripts` then `npm test` | All unit, mocked extension/API, replay differential and generated-asset checks pass. |
-| `npm run package:release` | One 1.0.0 version across workspace, lockfile, extension manifest, VSIX identity and installation instructions; archive payloads match current source. |
+| `npm run package:release` | One 1.0.1 version across workspace, lockfile, extension manifest, VSIX identity and installation instructions; archive payloads match current source. |
 | `npm run check:package` | Browser and extension contain identical shared engines and parser license; the ZIP embeds the exact verified VSIX. |
 | `npm run test:browser` | Source links, input replay, comparisons, mobile width and CSP pass; actual encoded videos contain expected dimensions and narration/music signals. Requires Chromium and FFmpeg. |
 | `xvfb-run -a npm run test:vscode` on Linux | The packaged extension upgrades the legacy fixture and activates; editor transfer, navigation, stale-source protection and a real Git comparison pass. |
@@ -29,7 +29,7 @@ The manual rows below remain pending. Their coverage is not implied by publicati
 
 ## Fresh-install acceptance
 
-Use a clean VS Code profile with no CodeAlive installed. Install `codealive-1.0.0.vsix`.
+Use a clean VS Code profile with no CodeAlive installed. Install `codealive-1.0.1.vsix`.
 Use a trusted temporary Git repository containing this committed function:
 
 ```js
