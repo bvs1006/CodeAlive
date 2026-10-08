@@ -42,6 +42,22 @@ async function checkExplanationVideo(page,host=false){
   await page.locator('#movie-scenes textarea').first().fill('A revised caption clears the previous export.');assert(await page.locator('#movie-download').isHidden());
   await page.click('#replay-run');await page.selectOption('#movie-mode','replay');await page.fill('#movie-last','2');await page.click('#movie-build');assert.match(await page.textContent('#movie-length'),/Captured input: \[100,20\]/);assert.match(await page.locator('#movie-scenes textarea').first().inputValue(),/call/);
 }
+async function checkStudioMotion(page){
+  const still=()=>page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>{
+    const canvas=document.getElementById('stage'),first=canvas.toDataURL();
+    requestAnimationFrame(()=>requestAnimationFrame(()=>resolve(first===canvas.toDataURL())));
+  })));
+  await page.emulateMedia({reducedMotion:'reduce'});assert(await still(),'Reduced-motion studio preview must stay still');
+  const before=await page.locator('#stage').evaluate(canvas=>canvas.toDataURL());
+  await page.fill('#videoTitle','A still preview with an editable title');
+  await page.waitForFunction(before=>document.getElementById('stage').toDataURL()!==before,before);
+  await page.emulateMedia({reducedMotion:'no-preference'});assert(!await still(),'Default studio preview should animate');
+  await page.emulateMedia({reducedMotion:'reduce'});assert(await still(),'Live motion preference changes must apply without reloading');
+  await page.click('#play');await page.waitForFunction(()=>session&&audio.state==='running'&&dest.stream.getAudioTracks().length===1);
+  await page.waitForFunction(()=>session&&(performance.now()-session.start)/session.step>=2);
+  await page.click('#play');assert(await page.evaluate(()=>session===null));
+  await page.emulateMedia({reducedMotion:'no-preference'});
+}
 function preview(file,fn,template){
   const api={Uri:{joinPath:(uri,...parts)=>({path:uri.path+'/'+parts.join('/')})}};
   const sandbox={module:{exports:{}},require:name=>name==='vscode'?api:name==='./export-utils'?{}:require(name),Buffer};
@@ -92,7 +108,7 @@ const server=http.createServer((req,res)=>{
     const message=await page.evaluate(()=>hostMessages.find(m=>m.type==='revealSource'));assert.equal(message.sourceToken,'snapshot');assert.equal(selection.slice(message.start,message.end),'x + 1');assert.deepEqual(await page.evaluate(()=>cspViolations),[]);
     await page.evaluate(()=>window.dispatchEvent(new MessageEvent('message',{data:{type:'compareSource',before:'function f(){return 1}',after:'function f(){return 2}',language:'JavaScript',sourceToken:'comparison',evidence:{beforeLabel:'merge base abc',afterLabel:'head def',checks:[{shaLabel:'PR head',name:'tests',category:'passed',conclusion:'success'}]}}})));assert.match(await page.textContent('#compare-evidence'),/tests · passed/);await page.locator('#compare-results article').first().getByRole('button',{name:'Before'}).click();assert(await page.evaluate(()=>hostMessages.some(m=>m.type==='revealComparison'&&m.sourceToken==='comparison'&&m.side==='before')));await page.fill('#compare-after','function f(){return 3}');assert.equal(await page.textContent('#compare-evidence'),'');
     await page.selectOption('#example-select','discount');await page.click('#load-example');await page.click('#explain');await checkExplanationVideo(page,true);assert.deepEqual(await page.evaluate(()=>cspViolations),[]);
-    for(const route of ['/web/index.html','/studio-preview']){await page.goto(origin+route);await page.fill('#code','const preserveMe = 42;');await page.selectOption('#language','Python');assert.equal(await page.inputValue('#code'),'const preserveMe = 42;');}
+    for(const route of ['/web/index.html','/studio-preview']){await page.goto(origin+route);await checkStudioMotion(page);await page.fill('#code','const preserveMe = 42;');await page.selectOption('#language','Python');assert.equal(await page.inputValue('#code'),'const preserveMe = 42;');}
     await page.click('#openExplainer');const transfer=await page.evaluate(()=>hostMessages.find(m=>m.type==='explainCode'));assert.equal(transfer.code,'const preserveMe = 42;');assert.equal(transfer.language,'Python');
     await page.selectOption('#language','JavaScript');await page.check('#hideSource');await page.selectOption('#duration','15');
     await page.click('#record');await page.waitForFunction(()=>recorder?.state==='recording'&&dest.stream.getAudioTracks().length===1);

@@ -18,6 +18,8 @@ Sorting input accepts 3–18 integers from 1–99. Preview speed controls operat
 
 Comparison mode treats each comparison and swap as one equal-cost operation. It excludes pivot/partition markers from the shared timeline; results are not wall-clock timing. Only the two bundled implementations are compared.
 
+The music studio honors the system's reduced-motion preference in both the browser and VS Code: decorative waves, moving particles and the audio spectrum stay still. Changes to the preference apply without reloading. Source highlights, playback progress, sorting operations and video scenes still update when you start playback or recording. Recordings use the same canvas treatment. Automated checks cover this behavior; physical-device and screen-reader acceptance remain pending.
+
 PR companion: required-check coverage and semantic correctness are not verified. Anonymous API limits, private repository permissions, data truncation and head changes can limit the evidence. See PR_COMPANION.md.
 
 ## Code explanations
