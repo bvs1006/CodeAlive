@@ -12,7 +12,7 @@
 - Narrated explanation videos accept imported audio in the 1.0 beta. No automatic speech generation, thumbnails, batch exports or automated YouTube uploads.
 - The standalone web alpha does not yet include the extension's newer templates/presets.
 
-User testing confirmed sample playback and selection loading in a real installation. Other OS/browser combinations and full recording workflows still need testing.
+Automated acceptance covers Chromium/media integration and installed VS Code on Linux, Windows and macOS. The exact published 1.0.3 VSIX also passed fresh/upgrade installation, narrated recording and Save/cancel on hosted Windows/macOS desktops. Human acceptance on developers' own machines, physical audio devices, private GitHub sign-in and assistive technology remains pending. See [the recorded release evidence](RELEASE_CHECKLIST.md).
 
 Sorting input accepts 3–18 integers from 1–99. Preview speed controls operation playback; recording fits the whole trace to the selected duration. Pause and Step are preview-only. Sorting inputs and playback controls are not part of saved branding presets.
 
@@ -44,4 +44,4 @@ Working-tree comparison requires a local tracked file with a readable HEAD versi
 
 Import a local narration recording; text-to-speech and microphone recording are not included. Timing fit is proportional, not automatic word alignment: preview and edit scene boundaries. Static steps may include unreachable source; replay scenes describe only the captured interpreter input. Scripts are limited to 20 scenes, 0.5–15 seconds each and 120 seconds total. Narration is mono/stereo, at most 120 seconds and 15 MB. Output stops at 50 MB.
 
-Source hiding affects the rendered source panel only; captions and narration may still contain code. Source windows crop long lines and show up to 13 lines around each highlight. Captions are capped at 240 characters; preview wrapping on the actual frame. Recording uses the local browser's supported MP4/WebM format and runs in real time. Hiding the view discards an active recording; Stop creates a labeled partial clip. Devices, codecs and system performance can affect results. Linux Chromium and the VS Code webview policy are automated targets; physical Windows/macOS devices remain manual checks.
+Source hiding affects the rendered source panel only; captions and narration may still contain code. Source windows crop long lines and show up to 13 lines around each highlight. Captions are capped at 240 characters; preview wrapping on the actual frame. Recording uses the local browser's supported MP4/WebM format and runs in real time. Hiding the view discards an active recording; Stop creates a labeled partial clip. Devices, codecs and system performance can affect results. Automated recording checks cover Chromium and installed VS Code on Linux, Windows and macOS; physical devices remain manual checks.

@@ -1,12 +1,14 @@
-# CodeAlive 1.0.2 beta
+# CodeAlive 1.0.3 beta
 
 See what code does, what changed, and why it matters. This beta unifies local JS/TS explanations, bounded replay, before/after observations, PR evidence and editable explanation videos. Music and sorting remain available.
 
-The gated release workflow builds [1.0.2 beta installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2) from verified source. This update packages editor-toolbar entry, automatic selection/file loading and preserved panel work. It includes the 1.0.1 reduced-motion and scene-announcement fixes. Marketplace/Open VSX listings and manual desktop/audio/accessibility checks remain pending.
+The gated release workflow builds [1.0.3 beta installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.3) from verified source. This update fixes video Save for codec-bearing recordings, including the Windows/macOS failure found in 1.0.2. It includes editor-toolbar entry, automatic selection/file loading, preserved panel work, reduced-motion studio behavior and scene-boundary announcements.
+
+All seven release gates passed. The exact published VSIX also passed fresh and legacy-upgrade installation, real narrated recording and Save/cancel on hosted Windows/macOS desktops. Acceptance on developers' own machines, physical audio devices, private GitHub sign-in and assistive technology remains pending. [Release evidence](https://github.com/bvs1006/CodeAlive/blob/main/docs/RELEASE_CHECKLIST.md). Marketplace/Open VSX listings remain pending.
 
 ## Install and explain
 
-Install `codealive-1.0.2.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
+Install [codealive-1.0.3.vsix](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.3/codealive-1.0.3.vsix) with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
 
 Click **Open CodeAlive** (the `</>` button in a JS/TS editor's toolbar), or run **CodeAlive: Open CodeAlive**. It explains your selection, or the whole file when nothing is selected, beside the source editor. Reopening from the CodeAlive panel preserves edited code and replay state. With no supported source, it opens examples or keeps the current panel.
 
