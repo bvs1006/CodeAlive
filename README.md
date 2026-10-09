@@ -62,7 +62,7 @@ Desktop VS Code 1.90+, trusted workspace, up to 50,000 source characters. Local 
 | **1.0.1 beta** | [Earlier release](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1) with reduced-motion music-studio behavior and scene-boundary video announcements. [All release checks passed](https://github.com/bvs1006/CodeAlive/actions/runs/37777462645). |
 | **0.8 prerelease** | [Earlier release](https://github.com/bvs1006/CodeAlive/releases/tag/v0.8.0), before shared navigation and narrated explanation videos. |
 
-CI covers platform unit checks, Chromium/media integration and installed Linux VS Code. Windows/macOS desktop, physical audio, private signed-in PRs and assistive-technology checks remain pending.
+CI covers unit checks and installed VS Code acceptance on Linux, Windows and macOS, plus Chromium/media integration. The published 1.0.3 installer also passed fresh/upgrade installation, real recording and Save/cancel on hosted Windows/macOS desktops. Acceptance on developers' own machines, physical audio devices, private signed-in PRs and assistive technology remains pending. [Recorded evidence and manual checks](docs/RELEASE_CHECKLIST.md).
 
 Explanations are static. Replay supports a restricted synchronous subset. PR checks and structural observations help you review evidence; they do not establish correctness or merge readiness. [Supported behavior and limits](docs/KNOWN_LIMITATIONS.md).
 

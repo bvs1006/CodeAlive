@@ -16,6 +16,13 @@ def release_version(root):
     return versions[0]
 
 
+def check_installation_guide(guide, version):
+    heading = re.search(r'^# CodeAlive (\d+\.\d+\.\d+) beta$', guide, re.MULTILINE)
+    installer_url = f'/releases/download/v{version}/codealive-{version}.vsix'
+    if heading is None or heading.group(1) != version or installer_url not in guide:
+        raise ValueError('The packaged README must describe and link the current installer.')
+
+
 def check_package(root):
     version = release_version(root)
     installer = root / f'codealive-{version}.vsix'
@@ -35,6 +42,7 @@ def check_package(root):
             raise ValueError('Extension identity changed during packaging.')
         if f'codealive-{version}.vsix' not in browser.read('START_HERE.txt').decode('utf-8'):
             raise ValueError('Installation instructions refer to a different version.')
+        check_installation_guide(extension.read('extension/README.md').decode('utf-8'), version)
         for path in sorted((root / 'web').rglob('*')):
             if path.is_file():
                 name = 'browser/' + path.relative_to(root / 'web').as_posix()
