@@ -55,7 +55,7 @@ exports.run=async(document,browser)=>{
     // preview blob would violate the webview's intentional connect-src policy.
     const fixture=process.env.CODEALIVE_FIXTURE_DIR,basename='accepted-explanation';
     const input=page.locator('.quick-input-widget input:visible'),beforeSave=await frame.textContent('#status');
-    await frame.click('#movie-save');await until(async()=>{const notice=await frame.textContent('#status');if(notice!==beforeSave)throw Error('Save response before dialog: '+notice);return input.isVisible();},'real Save dialog');await input.fill(path.join(fixture,basename));await input.press('Enter');
+    await frame.click('#movie-save');await until(async()=>{const error=(await page.locator('body').innerText()).match(/CodeAlive: [^\n]+/);if(error)throw Error(error[0]);const notice=await frame.textContent('#status');if(notice!==beforeSave)throw Error('Save response before dialog: '+notice);return input.isVisible();},'real Save dialog');await input.fill(path.join(fixture,basename));await input.press('Enter');
     let target;await until(()=>{const name=fs.readdirSync(fixture).find(n=>n===basename||/^accepted-explanation\.(mp4|webm)$/.test(n));if(name)target=path.join(fixture,name);return !!target;},'Save dialog writes chosen destination');await until(async()=>/Explanation video saved/.test(await frame.textContent('#status')),'Save acknowledgement');
     const saved=path.join(output,path.basename(target));fs.copyFileSync(target,saved);
     const info=JSON.parse(execFileSync('ffprobe',['-v','error','-show_streams','-show_format','-of','json',saved],{encoding:'utf8'}));
