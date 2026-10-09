@@ -1,20 +1,17 @@
 name: Published desktop acceptance
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/desktop-acceptance.yml
-      - tests/vscode/**
-  pull_request:
-    paths:
-      - .github/workflows/desktop-acceptance.yml
-      - tests/vscode/**
+  workflow_call:
+    inputs:
+      release_tag:
+        description: Published beta tag to install
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       release_tag:
         description: Published beta tag to install
         required: true
-        default: v1.0.2
+        default: v1.0.3
         type: string
 permissions:
   contents: read
@@ -60,7 +57,7 @@ jobs:
         run: node tests/vscode/published.cjs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CODEALIVE_ACCEPTANCE_TAG: ${{ inputs.release_tag || 'v1.0.2' }}
+          CODEALIVE_ACCEPTANCE_TAG: ${{ inputs.release_tag }}
       - name: Test fresh installation and legacy upgrade
         run: npm run test:vscode
         env:

@@ -2,7 +2,7 @@
   "name": "codealive",
   "displayName": "CodeAlive",
   "description": "See what code does and what changed: local JS/TS explanations, bounded replay, PR evidence and editable explanation videos.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "codealive-local",
   "license": "UNLICENSED",
   "engines": {

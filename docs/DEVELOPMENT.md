@@ -2,7 +2,7 @@
 
 The unified 1.0 beta combines explanations, replay, comparisons, PR evidence and
 editable narrated videos. Use one commit and its matching package version when
-testing; do not mix installed VSIX versions. [Release installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2)
+testing; do not mix installed VSIX versions. [Release installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.3)
 are built by the gated `main` release workflow.
 
 ## Run locally
@@ -44,31 +44,35 @@ tabs and reload the window after upgrading. Rebuild and reinstall after source
 changes. On systems without `python3`, use Python 3's `python` command directly for
 the packaging scripts. No F5 launch configuration is committed.
 
-CI runs unit/extension checks on Linux, Windows and macOS, Chromium/media integration,
-and a real installed VSIX on Linux. The 1.0 suite additionally exercises fresh
-profiles, upgrades, recorded narration/music, Save/cancel and a live public PR.
-Windows/macOS desktop, physical audio devices, private signed-in PRs and screen-reader
-checks remain manual work. [Known limits](KNOWN_LIMITATIONS.md).
+CI runs unit/extension checks and real installed VSIX acceptance on Linux, Windows
+and macOS, plus Chromium/media integration. These seven gates must pass before
+publication. Installed acceptance uses fresh and legacy-upgrade profiles; the fresh
+profile exercises toolbar entry, replay, recorded narration/music, Save/cancel and
+live public PR evidence. Physical audio devices, private signed-in PRs and
+screen-reader checks remain manual work. [Known limits](KNOWN_LIMITATIONS.md).
 
 ## Accept a published installer on Windows and macOS
 
-The separate **Published desktop acceptance** workflow installs the downloaded
-release VSIX on Windows/macOS hosted desktops. Choose its **Run workflow** action
-and `release_tag` (default `v1.0.2`). Changes to that workflow or `tests/vscode/`
-also run it for PRs and `main`. It verifies the asset's SHA-256, size, identity and
-tag commit before running the existing fresh-install and legacy-upgrade suite.
+The **Published desktop acceptance** reusable workflow runs after the gated `main`
+release job. It downloads that version's published VSIX and verifies its SHA-256,
+size, identity and tag commit before installation on Windows/macOS hosted desktops.
+It tests the downloaded bytes rather than rebuilding the release. To inspect an
+older release, choose its **Run workflow** action and `release_tag` (default `v1.0.3`).
 
 The fresh profile exercises the real toolbar, editor transfer, preserved panel/replay
 state, source navigation, Git comparison, recording with imported narration/music
-and Save/cancel. PR-triggered runs also inspect live public PR evidence. Each OS
-uploads screenshots, the saved recording and JSON receipts for the installer and
-both installation modes. Receipts distinguish the published source commit from the
-test harness commit and record the OS/architecture, VS Code version and installer hash.
+and Save/cancel. Each OS uploads screenshots, the saved recording and JSON receipts
+for the installer and both installation modes. Receipts distinguish the published
+source commit from the test harness commit and record the OS/architecture, VS Code
+version and installer hash. Candidate PR checks additionally inspect live public
+PR evidence using the locally built VSIX.
 
-These hosted desktop tests complement the five release gates, which still test the
-current branch's built VSIX on Linux. Physical audio, screen readers, private sign-in
-and behavior on developers' own Windows/macOS machines remain manual acceptance.
-Record actual runs in [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
+The published v1.0.2 failed Save on both hosted desktop platforms because a codec
+list's comma was mistaken for the data URL's payload separator. v1.0.3 preserves
+the complete base64 recording in the explanation and music-studio exports. The
+regression suite covers codec-bearing MP4/WebM and plain MIME types for all Save paths.
+Physical audio, screen readers, private sign-in and behavior on developers' own
+machines remain manual acceptance. Record actual runs in [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
 
 ## Where the code lives
 
