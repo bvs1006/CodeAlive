@@ -25,6 +25,24 @@ manual rows track remaining desktop, physical-device and accessibility coverage.
 Publication completes this packaging task. The manual rows below remain pending;
 automated Linux acceptance does not mark wider desktop or physical-device checks complete.
 
+## Published desktop acceptance
+
+The separate **Published desktop acceptance** workflow downloads the selected release's
+VSIX, verifies its digest, size, identity and tag commit, then installs those exact
+bytes on Windows and macOS hosted desktops. It uses fresh and legacy-upgrade profiles;
+the fresh profile also exercises the actual toolbar, replay, recording and Save/cancel.
+It does not rebuild or republish the release. See [DEVELOPMENT.md](DEVELOPMENT.md) for
+the workflow entry and artifact receipts. Passing results must be recorded below
+after the new workflow runs; existing Linux release checks do not imply this coverage.
+
+| Platform | Published installer | Desktop acceptance result |
+|---|---|---|
+| Windows | v1.0.2 | Pending the first workflow run |
+| macOS | v1.0.2 | Pending the first workflow run |
+
+Human acceptance on developers' machines, physical audio devices, screen readers and
+private GitHub sign-in remain pending. Do not mark the manual rows complete from CI.
+
 ## Published 1.0.1 beta evidence
 
 | Evidence | Recorded result |

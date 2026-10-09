@@ -50,6 +50,26 @@ profiles, upgrades, recorded narration/music, Save/cancel and a live public PR.
 Windows/macOS desktop, physical audio devices, private signed-in PRs and screen-reader
 checks remain manual work. [Known limits](KNOWN_LIMITATIONS.md).
 
+## Accept a published installer on Windows and macOS
+
+The separate **Published desktop acceptance** workflow installs the downloaded
+release VSIX on Windows/macOS hosted desktops. Choose its **Run workflow** action
+and `release_tag` (default `v1.0.2`). Changes to that workflow or `tests/vscode/`
+also run it for PRs and `main`. It verifies the asset's SHA-256, size, identity and
+tag commit before running the existing fresh-install and legacy-upgrade suite.
+
+The fresh profile exercises the real toolbar, editor transfer, preserved panel/replay
+state, source navigation, Git comparison, recording with imported narration/music
+and Save/cancel. PR-triggered runs also inspect live public PR evidence. Each OS
+uploads screenshots, the saved recording and JSON receipts for the installer and
+both installation modes. Receipts distinguish the published source commit from the
+test harness commit and record the OS/architecture, VS Code version and installer hash.
+
+These hosted desktop tests complement the five release gates, which still test the
+current branch's built VSIX on Linux. Physical audio, screen readers, private sign-in
+and behavior on developers' own Windows/macOS machines remain manual acceptance.
+Record actual runs in [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
+
 ## Where the code lives
 
 | Path | Responsibility |
