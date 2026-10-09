@@ -33,7 +33,9 @@ recording and Save/cancel. Physical devices and human accessibility remain manua
 
 1. Align GitHub About settings with the current developer workflow; [suggested settings](GITHUB_ABOUT.md) need repository settings access.
 2. Complete acceptance on developers' own desktops, physical audio devices, private
-   signed-in PRs, screen readers and reduced-motion preferences. Music studio decorations now respect
+   signed-in PRs, screen readers and reduced-motion preferences. Use the four focused
+   groups in [Manual beta acceptance](MANUAL_ACCEPTANCE.md) and the linked report form;
+   unattempted and blocked checks remain pending. Music studio decorations respect
    the system motion preference on both surfaces; physical-device acceptance remains.
 3. Choose licensing and distribution terms; then confirm publisher identity before
    Marketplace/Open VSX publication.

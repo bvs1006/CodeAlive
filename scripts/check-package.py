@@ -68,7 +68,8 @@ def check_package(root):
             if archive.read(prefix + 'explainer/parser.LICENSE.txt') != license_bytes:
                 raise ValueError('Bundled parser license is missing or stale.')
         for name in ['EXPLAIN_CODE.md', 'EXECUTION_REPLAY.md', 'CHANGE_EXPLANATIONS.md',
-                     'EXPLANATION_VIDEO.md', 'RELEASE_NOTES.md', 'RELEASE_CHECKLIST.md']:
+                     'EXPLANATION_VIDEO.md', 'RELEASE_NOTES.md', 'RELEASE_CHECKLIST.md',
+                     'MANUAL_ACCEPTANCE.md']:
             if browser.read(name) != (root / 'docs' / name).read_bytes():
                 raise ValueError('Stale release guide: ' + name)
     print(f'Package verified: {version}; matching metadata, current sources, parser license and embedded VSIX.')
