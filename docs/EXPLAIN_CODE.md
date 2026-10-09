@@ -4,14 +4,14 @@ CodeAlive 0.6 adds local, source-linked explanations for JavaScript and TypeScri
 
 ## Start in VS Code
 
-1. Install `codealive-1.0.2.vsix` from the [beta release](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2), or build it with `npm run package:release`. Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
+1. Install `codealive-1.0.3.vsix` from the [beta release](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.3), or build it with `npm run package:release`. Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
 2. Open a JavaScript or TypeScript file. Select a complete function, or leave the selection empty to use the active file.
 3. Click **Open CodeAlive** (the `</>` button in the editor toolbar), or run **CodeAlive: Open CodeAlive**. The current selection or file is loaded and explained automatically. **CodeAlive: Explain Selected Code** and its context-menu entry also remain available.
 4. Choose a function in **Function / scope**. Nested callbacks have their own scopes.
 5. Switch between **Plain language** and **Developer** explanations.
 6. Select a step or flow node to highlight the exact source and reveal it in the original editor. Keyboard users can focus diagram nodes and press Enter or Space.
 
-The 1.0.2 beta includes toolbar entry and automatic editor loading. The source editor stays visible beside CodeAlive. Reopening **Open CodeAlive** while the panel has focus preserves your entered code and replay state. Without supported source, it opens examples or reveals the existing panel.
+The 1.0.3 beta includes toolbar entry and automatic editor loading. The source editor stays visible beside CodeAlive. Reopening **Open CodeAlive** while the panel has focus preserves your entered code and replay state. Without supported source, it opens examples or reveals the existing panel.
 
 **CodeAlive: Open Explainer** opens the playground with ten examples. **Load editor** refreshes the selection or active file. If the editor document changes, source navigation is suspended until you load it again; stale offsets are never applied to changed code. Editing the playground detaches it from the editor.
 

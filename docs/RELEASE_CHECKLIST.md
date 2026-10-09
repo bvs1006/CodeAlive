@@ -1,4 +1,4 @@
-# CodeAlive 1.0.2 beta release checklist
+# CodeAlive 1.0.3 beta release checklist
 
 Run this checklist against one commit and its exact packaged VSIX. Record the commit SHA,
 OS, VS Code version, browser version, and results. A passing automated suite does not
@@ -24,6 +24,28 @@ manual rows track remaining desktop, physical-device and accessibility coverage.
 
 Publication completes this packaging task. The manual rows below remain pending;
 automated Linux acceptance does not mark wider desktop or physical-device checks complete.
+
+## Published desktop acceptance
+
+The **Published desktop acceptance** workflow downloads the selected release's VSIX,
+verifies its digest, size, identity and tag commit, then installs those exact bytes
+on Windows/macOS hosted desktops. It uses fresh and legacy-upgrade profiles; the
+fresh profile also exercises the actual toolbar, replay, recording and Save/cancel.
+It runs automatically after publication and can be invoked manually for older tags.
+See [DEVELOPMENT.md](DEVELOPMENT.md) for the workflow entry and artifact receipts.
+
+| Platform | Published installer | Desktop acceptance result |
+|---|---|---|
+| Windows | v1.0.2 | [Failed Save](https://github.com/bvs1006/CodeAlive/actions/runs/37900632833): `Invalid video data. Maximum size is 50 MB.` before the dialog; VS Code 1.141.0, x64. |
+| macOS | v1.0.2 | [Failed Save](https://github.com/bvs1006/CodeAlive/actions/runs/37900632833): same invalid-data error before the dialog; VS Code 1.141.0, arm64. |
+| Windows | v1.0.3 candidate | Pending candidate and published-installer acceptance. |
+| macOS | v1.0.3 candidate | Pending candidate and published-installer acceptance. |
+
+The 1.0.2 failure is caused by splitting a FileReader data URL at the first comma
+inside its codec list. v1.0.3 fixes all three export paths and adds MP4/WebM regression
+cases. Existing Linux-only release acceptance did not reveal this desktop failure.
+Human acceptance on developers' machines, physical audio devices, screen readers
+and private GitHub sign-in remain pending. Do not mark manual rows complete from CI.
 
 ## Published 1.0.1 beta evidence
 
@@ -55,15 +77,15 @@ The manual rows below remain pending. Their coverage is not implied by publicati
 | Check | Expected outcome |
 |---|---|
 | `npm ci --ignore-scripts` then `npm test` | All unit, mocked extension/API, replay differential and generated-asset checks pass. |
-| `npm run package:release` | One 1.0.2 version across workspace, lockfile, extension manifest, VSIX identity and installation instructions; archive payloads match current source. |
+| `npm run package:release` | One 1.0.3 version across workspace, lockfile, extension manifest, VSIX identity and installation instructions; archive payloads match current source. |
 | `npm run check:package` | Browser and extension contain identical shared engines and parser license; the ZIP embeds the exact verified VSIX. |
 | `npm run test:browser` | Source links, input replay, comparisons, mobile width and CSP pass; actual encoded videos contain expected dimensions and narration/music signals. Requires Chromium and FFmpeg. |
-| `xvfb-run -a npm run test:vscode` on Linux | Fresh and legacy-upgrade profiles activate the exact packaged version; the actual toolbar loads selection/file, stays hidden for Markdown and preserves panel edits, replay state and editor groups. Navigation, stale-source protection, Git comparison, encoded narration/music, Save/cancel and live public PR evidence pass. |
-| CI on the exact release commit | Linux, Windows and macOS unit suites plus Chromium and installed Linux VS Code jobs pass before publication. |
+| `npm run test:vscode` (under Xvfb on Linux) | Fresh and legacy-upgrade profiles activate the exact packaged version; the actual toolbar loads selection/file, stays hidden for Markdown and preserves panel edits, replay state and editor groups. Navigation, stale-source protection, Git comparison, encoded narration/music, Save/cancel and live public PR evidence pass. |
+| CI on the exact release commit | Linux, Windows and macOS unit suites and installed VS Code jobs plus Chromium pass before publication (seven gates). Published Windows/macOS installer acceptance follows the release job. |
 
 ## Fresh-install acceptance
 
-Use a clean VS Code profile with no CodeAlive installed. Install `codealive-1.0.2.vsix`.
+Use a clean VS Code profile with no CodeAlive installed. Install `codealive-1.0.3.vsix`.
 Use a trusted temporary Git repository containing this committed function:
 
 ```js
@@ -92,7 +114,7 @@ function discountedPrice(price, percent) {
 ## Release decisions and remaining platform work
 
 - Complete the pending manual acceptance and physical audio checks; record actual results before broader distribution.
-- Test Windows/macOS desktop installation and recording; unit CI on those systems is not desktop coverage.
+- Review hosted Windows/macOS installation and recording receipts; repeat acceptance on developers' own desktops and physical devices.
 - Check keyboard navigation, screen-reader labels and reduced-motion behavior with users.
 - Resolve the maintainer's license and distribution decisions before promotion or Marketplace/Open VSX publication.
 - Publish the beta through the existing `main` workflow after maintainer authorization: it builds and verifies the exact source package after all checks pass. Manual rows remain pending until their results are recorded.

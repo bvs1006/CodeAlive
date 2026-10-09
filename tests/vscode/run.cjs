@@ -1,10 +1,13 @@
-const fs=require('node:fs'),path=require('node:path'),net=require('node:net');
+const fs=require('node:fs'),path=require('node:path'),net=require('node:net'),crypto=require('node:crypto');
 const {execFileSync}=require('node:child_process');
 const {downloadAndUnzipVSCode,runVSCodeCommand,runTests}=require('@vscode/test-electron');
 const root=path.resolve(__dirname,'../..');
 async function freePort(){const server=net.createServer();await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const port=server.address().port;await new Promise(resolve=>server.close(resolve));return port;}
 (async()=>{
-  const vscodeExecutablePath=await downloadAndUnzipVSCode('stable'),version=require('../../extension/package.json').version;
+  const version=process.env.CODEALIVE_ACCEPTANCE_VERSION||require('../../extension/package.json').version;
+  if(!/^\d+\.\d+\.\d+$/.test(version))throw Error('Invalid acceptance installer version.');
+  const installer=path.join(root,`codealive-${version}.vsix`),installerSha256=crypto.createHash('sha256').update(fs.readFileSync(installer)).digest('hex');
+  const vscodeExecutablePath=await downloadAndUnzipVSCode('stable');
   fs.mkdirSync(path.join(root,'.vscode-test'),{recursive:true});
   const session=fs.mkdtempSync(path.join(root,'.vscode-test/acceptance-'));
   const oldPackage=path.join(session,'codealive-0.5.0.vsix');
@@ -18,8 +21,8 @@ async function freePort(){const server=net.createServer();await new Promise(reso
     const common=['--extensions-dir',extensions,'--user-data-dir',user];
     if(mode==='upgrade')await runVSCodeCommand([...common,'--install-extension',oldPackage,'--force'],{version:'stable'});
     else if(fs.existsSync(extensions)&&fs.readdirSync(extensions).length)throw Error('Fresh installation profile is not empty.');
-    for(let i=0;i<(mode==='upgrade'?2:1);i++)await runVSCodeCommand([...common,'--install-extension',path.join(root,`codealive-${version}.vsix`),'--force'],{version:'stable'});
+    for(let i=0;i<(mode==='upgrade'?2:1);i++)await runVSCodeCommand([...common,'--install-extension',installer,'--force'],{version:'stable'});
     const port=await freePort();
-    await runTests({vscodeExecutablePath,extensionDevelopmentPath:path.join(__dirname,'driver'),extensionTestsPath:path.join(__dirname,'suite.cjs'),launchArgs:[fixture,...common,'--skip-welcome','--skip-release-notes','--disable-workspace-trust',`--remote-debugging-port=${port}`,'--remote-debugging-address=127.0.0.1'],extensionTestsEnv:{CODEALIVE_EXPECTED_VERSION:version,CODEALIVE_FIXTURE_DIR:fixture,CODEALIVE_INSTALL_MODE:mode,CODEALIVE_CDP_PORT:String(port),CODEALIVE_ACCEPTANCE_PR:process.env.CODEALIVE_ACCEPTANCE_PR||''}});
+    await runTests({vscodeExecutablePath,extensionDevelopmentPath:path.join(__dirname,'driver'),extensionTestsPath:path.join(__dirname,'suite.cjs'),launchArgs:[fixture,...common,'--skip-welcome','--skip-release-notes','--disable-workspace-trust',`--remote-debugging-port=${port}`,'--remote-debugging-address=127.0.0.1'],extensionTestsEnv:{CODEALIVE_EXPECTED_VERSION:version,CODEALIVE_FIXTURE_DIR:fixture,CODEALIVE_INSTALL_MODE:mode,CODEALIVE_CDP_PORT:String(port),CODEALIVE_ACCEPTANCE_PR:process.env.CODEALIVE_ACCEPTANCE_PR||'',CODEALIVE_INSTALLER_SHA256:installerSha256,CODEALIVE_ACCEPTANCE_RELEASE_TAG:process.env.CODEALIVE_ACCEPTANCE_RELEASE_TAG||'',CODEALIVE_ACCEPTANCE_RELEASE_COMMIT:process.env.CODEALIVE_ACCEPTANCE_RELEASE_COMMIT||''}});
   }
 })().catch(error=>{console.error(error);process.exitCode=1;});

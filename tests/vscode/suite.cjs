@@ -27,6 +27,9 @@ async function runSuite(browser){
   if(browser){await vscode.window.showTextDocument(document,vscode.ViewColumn.One);await vscode.commands.executeCommand('codealive.explain');await until(()=>api.getDiagnostics().explainer.sourceAcknowledged,'workflow source');await require('./workflow.cjs').run(document,browser);}
   await vscode.window.showTextDocument(document,vscode.ViewColumn.One);await vscode.commands.executeCommand('codealive.file');await until(()=>api.getDiagnostics().studio.sourceAcknowledged,'real studio bridge');
   assert(api.getDiagnostics().studio.ready);await document.save();await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+  const output=path.resolve(__dirname,'../../test-results/vscode-acceptance');fs.mkdirSync(output,{recursive:true});
+  const receipt={platform:process.platform,architecture:process.arch,osRelease:require('node:os').release(),vscodeVersion:vscode.version,extensionVersion:extension.packageJSON.version,installMode:process.env.CODEALIVE_INSTALL_MODE,installerSha256:process.env.CODEALIVE_INSTALLER_SHA256,releaseTag:process.env.CODEALIVE_ACCEPTANCE_RELEASE_TAG||null,releaseSourceCommit:process.env.CODEALIVE_ACCEPTANCE_RELEASE_COMMIT||null,harnessCommit:process.env.GITHUB_SHA||null,installedVsix:true,passed:true};
+  fs.writeFileSync(path.join(output,receipt.installMode+'.json'),JSON.stringify(receipt,null,2)+'\n');
   console.log(`REAL VS CODE PASS: ${process.platform}, VS Code ${vscode.version}, ${process.env.CODEALIVE_INSTALL_MODE} installed CodeAlive ${extension.packageJSON.version}; activation, selection/file transfer, both webviews, exact navigation and stale-document guard.`);
 }
 exports.run=async()=>{

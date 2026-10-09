@@ -33,6 +33,7 @@ exports.run=async(document,browser)=>{
   fs.mkdirSync(output,{recursive:true});
   try{
     const frame=await findFrame(browser,'#replay-run'),page=frame.page();
+    assert.equal(vscode.workspace.getConfiguration('files').get('simpleDialog.enable'),true,'Acceptance uses the real VS Code simple Save dialog in its throwaway profile.');
     assert.equal(await frame.textContent('#summary-name'),'total');
     assert(await frame.locator('#workflow-review-pr').isVisible());
     await frame.locator('#workflow-replay').press('Enter');assert.equal(await frame.evaluate(()=>document.activeElement.id),'replay-args');assert(await frame.locator('#replay-results').isHidden());
@@ -53,7 +54,8 @@ exports.run=async(document,browser)=>{
     // Let the real Save dialog apply the recording's format filter. Fetching a
     // preview blob would violate the webview's intentional connect-src policy.
     const fixture=process.env.CODEALIVE_FIXTURE_DIR,basename='accepted-explanation';
-    await frame.click('#movie-save');const input=page.locator('.quick-input-widget input:visible');await input.waitFor({state:'visible'});await input.fill(path.join(fixture,basename));await input.press('Enter');
+    const input=page.locator('.quick-input-widget input:visible'),beforeSave=await frame.textContent('#status');
+    await frame.click('#movie-save');await until(async()=>{const error=(await page.locator('body').innerText()).match(/CodeAlive: [^\n]+/);if(error)throw Error(error[0]);const notice=await frame.textContent('#status');if(notice!==beforeSave)throw Error('Save response before dialog: '+notice);return input.isVisible();},'real Save dialog');await input.fill(path.join(fixture,basename));await input.press('Enter');
     let target;await until(()=>{const name=fs.readdirSync(fixture).find(n=>n===basename||/^accepted-explanation\.(mp4|webm)$/.test(n));if(name)target=path.join(fixture,name);return !!target;},'Save dialog writes chosen destination');await until(async()=>/Explanation video saved/.test(await frame.textContent('#status')),'Save acknowledgement');
     const saved=path.join(output,path.basename(target));fs.copyFileSync(target,saved);
     const info=JSON.parse(execFileSync('ffprobe',['-v','error','-show_streams','-show_format','-of','json',saved],{encoding:'utf8'}));
@@ -87,6 +89,8 @@ exports.run=async(document,browser)=>{
     await page.screenshot({path:path.join(output,'installed-workflow.png')});
     console.log('FRESH VS CODE WORKFLOW PASS: real webview replay/input comparison, playback, narration/music recording, Save/cancel, export invalidation and HEAD comparison.');
   }catch(error){
+    console.error('Save dialog setting:',vscode.workspace.getConfiguration('files').get('simpleDialog.enable'));
+    for(const context of browser.contexts())for(const page of context.pages())for(const frame of page.frames())try{if(await frame.locator('#movie-status').count())console.error('CodeAlive Save diagnostics:',JSON.stringify({status:await frame.textContent('#status'),recording:await frame.textContent('#movie-status')}));}catch{}
     try{const session=await browser.newBrowserCDPSession();console.error('VS Code targets:',JSON.stringify(await session.send('Target.getTargets')));await session.detach();}catch{}
     for(const context of browser.contexts())for(const [i,page]of context.pages().entries()){
       console.error('VS Code frames:',page.frames().map(f=>f.url()));

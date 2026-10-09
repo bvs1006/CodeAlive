@@ -53,8 +53,12 @@ jobs:
           if-no-files-found: ignore
 
   vscode:
-    runs-on: ubuntu-latest
-    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
@@ -65,15 +69,42 @@ jobs:
         with:
           python-version: '3.x'
       - run: npm ci --ignore-scripts
-      - run: npm run package
+      - run: npm run build
+      - run: python extension/package.py
       - run: sudo apt-get install -y ffmpeg
+        if: runner.os == 'Linux'
+      - name: Install media tools on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
+            choco install ffmpeg --yes --no-progress --limit-output
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          ffmpeg -version
+          ffprobe -version
+      - name: Install media tools on macOS
+        if: runner.os == 'macOS'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: '1'
+        run: |
+          if ! command -v ffmpeg >/dev/null; then
+            brew install ffmpeg
+          fi
+          ffmpeg -version
+          ffprobe -version
       - run: xvfb-run -a npm run test:vscode
+        if: runner.os == 'Linux'
+        env:
+          CODEALIVE_ACCEPTANCE_PR: ${{ github.event.pull_request.html_url }}
+      - run: npm run test:vscode
+        if: runner.os != 'Linux'
         env:
           CODEALIVE_ACCEPTANCE_PR: ${{ github.event.pull_request.html_url }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: vscode-acceptance
+          name: vscode-acceptance-${{ matrix.os }}
           path: test-results/vscode-acceptance/
           if-no-files-found: ignore
   release:
@@ -82,6 +113,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      release_tag: ${{ steps.publish.outputs.release_tag }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
@@ -94,13 +127,20 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: python3 scripts/package-release.py
       - name: Publish tested beta package once per version
+        id: publish
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           release_version=$(node -p 'const v=require("./extension/package.json").version;if(!/^\d+\.\d+\.\d+$/.test(v))throw Error("Invalid release version");v')
+          echo "release_tag=v${release_version}" >> "$GITHUB_OUTPUT"
           if gh release view "v${release_version}" >/dev/null 2>&1; then
             echo "This version already has a release."
             exit 0
           fi
           gh release create "v${release_version}" "codealive-${release_version}.vsix" "downloads/codealive-explainer-${release_version}.zip" --target "$GITHUB_SHA" --title "CodeAlive ${release_version} beta" --notes-file docs/RELEASE_NOTES.md --prerelease
+  published-desktop:
+    needs: release
+    uses: ./.github/workflows/desktop-acceptance.yml
+    with:
+      release_tag: ${{ needs.release.outputs.release_tag }}

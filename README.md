@@ -6,7 +6,7 @@
 
 A local developer tool for JavaScript/TypeScript in **VS Code** and an **offline browser**. Music, sorting demonstrations and video help you share what you learned.
 
-[Download 1.0.2 beta](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2) · [Try it](#try-it-in-two-minutes) · [Feature guides](#go-deeper) · [Roadmap](docs/ROADMAP.md)
+[Download 1.0.3 beta](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.3) · [Try it](#try-it-in-two-minutes) · [Feature guides](#go-deeper) · [Roadmap](docs/ROADMAP.md)
 
 ## Why use it?
 
@@ -34,7 +34,7 @@ Browser capture of the original 0.6 explainer. The 1.0 beta adds shared navigati
 
 ## Try it in two minutes
 
-1. Download the [1.0.2 VSIX](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.2/codealive-1.0.2.vsix) and install it through **Extensions → … → Install from VSIX…**. Reload VS Code after upgrading.
+1. Download the [1.0.3 VSIX](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.3/codealive-1.0.3.vsix) and install it through **Extensions → … → Install from VSIX…**. Reload VS Code after upgrading.
 2. Open a JavaScript/TypeScript file and click **Open CodeAlive** (the `</>` editor toolbar button), or run **CodeAlive: Open CodeAlive** (`Cmd/Ctrl+Shift+P`). It explains your selection, or the whole file, beside the source editor.
 3. Click a step to reveal its source. Under Replay, enter arguments and choose **Run with these inputs**.
 
@@ -49,7 +49,7 @@ Pin the first run to compare its result with the second. Use **CodeAlive: Explai
 
 Reopening from the CodeAlive panel keeps your edited code and replay state. **CodeAlive: Explain Selected Code** also remains available in the command palette and editor context menu.
 
-**Prefer the browser?** Download the [offline ZIP](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.2/codealive-explainer-1.0.2.zip), extract it and open `browser/explain.html`. GitHub PR review is a VS Code feature.
+**Prefer the browser?** Download the [offline ZIP](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.3/codealive-explainer-1.0.3.zip), extract it and open `browser/explain.html`. GitHub PR review is a VS Code feature.
 
 Desktop VS Code 1.90+, trusted workspace, up to 50,000 source characters. Local explanation/replay needs no CodeAlive account or API key.
 
@@ -57,6 +57,7 @@ Desktop VS Code 1.90+, trusted workspace, up to 50,000 source characters. Local 
 
 | Version | Status and features |
 |---|---|
+| **1.0.3 beta** | Candidate: fixes VS Code video Save for codec-bearing recordings; requires installed Linux, Windows and macOS acceptance before release and repeats Windows/macOS checks on the published download. [Acceptance evidence](docs/RELEASE_CHECKLIST.md). |
 | **1.0.2 beta** | [Published](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2): adds editor-toolbar entry, automatic selection/file loading and preserved panel work to the existing explanation, replay, comparison, PR evidence, music/sorting and video workflows. [All release checks passed](https://github.com/bvs1006/CodeAlive/actions/runs/37877906619); both downloaded installers were [verified](docs/RELEASE_CHECKLIST.md). |
 | **1.0.1 beta** | [Earlier release](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1) with reduced-motion music-studio behavior and scene-boundary video announcements. [All release checks passed](https://github.com/bvs1006/CodeAlive/actions/runs/37777462645). |
 | **0.8 prerelease** | [Earlier release](https://github.com/bvs1006/CodeAlive/releases/tag/v0.8.0), before shared navigation and narrated explanation videos. |
