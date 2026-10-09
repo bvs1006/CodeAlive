@@ -5,6 +5,27 @@ OS, VS Code version, browser version, and results. A passing automated suite doe
 mark the manual rows complete. Automated gates apply to the beta prerelease; the
 manual rows track remaining desktop, physical-device and accessibility coverage.
 
+## Published 1.0.3 beta evidence
+
+| Evidence | Recorded result |
+|---|---|
+| Release | [v1.0.3 beta prerelease](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.3), published 9 October 2026 |
+| Exact source | Tag points to [a4af9f5](https://github.com/bvs1006/CodeAlive/commit/a4af9f59f90fb95e5c68e8548cf069ffc48582d9), the merged [PR #13](https://github.com/bvs1006/CodeAlive/pull/13) video Save fix and desktop acceptance gates |
+| Automated gates | [Release CI](https://github.com/bvs1006/CodeAlive/actions/runs/37902510640): three unit suites, Chromium/media integration and installed Linux/Windows/macOS VS Code acceptance all passed before publication (seven gates). The release job and both published-desktop acceptance jobs then passed. |
+| Installed acceptance | VS Code 1.141.0 on Linux, Windows x64 and macOS arm64: fresh and legacy-upgrade profiles passed. The fresh profile exercised toolbar entry, selection/file loading, preserved panel/replay work, source navigation, stale guards, Git comparison, narration/music recording, Save/cancel and export invalidation. |
+| Published desktop acceptance | Windows/macOS downloaded the same verified VSIX (SHA-256 below), with tag and receipt source commit `a4af9f59f90fb95e5c68e8548cf069ffc48582d9`. Both installation modes passed. Actual saved videos are 1080×1920 H.264/AAC MP4s; encoded narration/music signal checks passed. |
+| Candidate evidence | [All seven PR gates](https://github.com/bvs1006/CodeAlive/actions/runs/37901956729) and [all seven branch gates](https://github.com/bvs1006/CodeAlive/actions/runs/37901952841) passed on `7a01cfe4aa235f2a3f1770bfd75dfcaae944ae69`. The PR run inspected live public PR #13; its macOS job passed after retrying an anonymous GitHub rate limit. |
+| Packages | Both published assets were downloaded. SHA-256 digests and sizes matched GitHub; both archive entry lists and every unpacked source/guide payload matched a build from the exact tagged sources. The offline ZIP embeds the exact published VSIX. |
+
+| Published asset | Bytes | SHA-256 |
+|---|---:|---|
+| [codealive-1.0.3.vsix](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.3/codealive-1.0.3.vsix) | 199527 | `7f1268cdbb11e5943154d870fed007b0b6bcb946df3e2c37d8303607d6d2fa56` |
+| [codealive-explainer-1.0.3.zip](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.3/codealive-explainer-1.0.3.zip) | 363488 | `814e3562abe4442d7e12c5666da3da2e90d00a7060469905e811df07141c6376` |
+
+The v1.0.2 Windows/macOS Save failure is resolved in this release. Human acceptance
+on developers' own desktops, physical audio devices, screen readers and private
+GitHub sign-in remain pending; the manual rows below are unchanged by CI results.
+
 ## Published 1.0.2 beta evidence
 
 | Evidence | Recorded result |
@@ -22,8 +43,8 @@ manual rows track remaining desktop, physical-device and accessibility coverage.
 | [codealive-1.0.2.vsix](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.2/codealive-1.0.2.vsix) | 199445 | `62693e5998bead624fcb8692b0a64578559e42d94a303e7e5f6c5c92fa944a70` |
 | [codealive-explainer-1.0.2.zip](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.2/codealive-explainer-1.0.2.zip) | 362560 | `0028253c20e85c5c0984e7dd7e89011b4ddbade20020c1dde96c85e7f31f6511` |
 
-Publication completes this packaging task. The manual rows below remain pending;
-automated Linux acceptance does not mark wider desktop or physical-device checks complete.
+The 1.0.2 package verification remains valid. Later Windows/macOS acceptance found
+the Save defect recorded below; the fix and wider desktop evidence belong to 1.0.3.
 
 ## Published desktop acceptance
 
@@ -38,8 +59,8 @@ See [DEVELOPMENT.md](DEVELOPMENT.md) for the workflow entry and artifact receipt
 |---|---|---|
 | Windows | v1.0.2 | [Failed Save](https://github.com/bvs1006/CodeAlive/actions/runs/37900632833): `Invalid video data. Maximum size is 50 MB.` before the dialog; VS Code 1.141.0, x64. |
 | macOS | v1.0.2 | [Failed Save](https://github.com/bvs1006/CodeAlive/actions/runs/37900632833): same invalid-data error before the dialog; VS Code 1.141.0, arm64. |
-| Windows | v1.0.3 candidate | Pending candidate and published-installer acceptance. |
-| macOS | v1.0.3 candidate | Pending candidate and published-installer acceptance. |
+| Windows | v1.0.3 | [Passed](https://github.com/bvs1006/CodeAlive/actions/runs/37902510640), VS Code 1.141.0 / x64: fresh installation, legacy upgrade, toolbar, replay, H.264/AAC recording with narration/music and Save/cancel. |
+| macOS | v1.0.3 | [Passed](https://github.com/bvs1006/CodeAlive/actions/runs/37902510640), VS Code 1.141.0 / arm64: same fresh, upgrade, toolbar, replay, recording and Save/cancel checks. |
 
 The 1.0.2 failure is caused by splitting a FileReader data URL at the first comma
 inside its codec list. v1.0.3 fixes all three export paths and adds MP4/WebM regression

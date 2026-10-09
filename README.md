@@ -57,7 +57,7 @@ Desktop VS Code 1.90+, trusted workspace, up to 50,000 source characters. Local 
 
 | Version | Status and features |
 |---|---|
-| **1.0.3 beta** | Candidate: fixes VS Code video Save for codec-bearing recordings; requires installed Linux, Windows and macOS acceptance before release and repeats Windows/macOS checks on the published download. [Acceptance evidence](docs/RELEASE_CHECKLIST.md). |
+| **1.0.3 beta** | [Published](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.3): fixes VS Code video Save for codec-bearing recordings. [All seven release gates and both published-desktop checks passed](https://github.com/bvs1006/CodeAlive/actions/runs/37902510640); fresh installation, legacy upgrade and real recording/Save passed on Windows/macOS using the exact downloaded VSIX. Both release assets were [verified](docs/RELEASE_CHECKLIST.md). |
 | **1.0.2 beta** | [Published](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2): adds editor-toolbar entry, automatic selection/file loading and preserved panel work to the existing explanation, replay, comparison, PR evidence, music/sorting and video workflows. [All release checks passed](https://github.com/bvs1006/CodeAlive/actions/runs/37877906619); both downloaded installers were [verified](docs/RELEASE_CHECKLIST.md). |
 | **1.0.1 beta** | [Earlier release](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1) with reduced-motion music-studio behavior and scene-boundary video announcements. [All release checks passed](https://github.com/bvs1006/CodeAlive/actions/runs/37777462645). |
 | **0.8 prerelease** | [Earlier release](https://github.com/bvs1006/CodeAlive/releases/tag/v0.8.0), before shared navigation and narrated explanation videos. |
