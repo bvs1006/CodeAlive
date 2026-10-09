@@ -1,17 +1,17 @@
 # First code explanation
 
-These steps use the [1.0 beta VSIX or offline ZIP](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1).
+These steps use the [1.0.2 beta VSIX or offline ZIP](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2).
 To build from source instead, follow [DEVELOPMENT.md](DEVELOPMENT.md).
 
-1. Download the 1.0 beta VSIX (also included in the offline ZIP), then install `codealive-1.0.1.vsix` through VS Code's Extensions menu.
+1. Download the 1.0.2 beta VSIX (also included in the offline ZIP), then install `codealive-1.0.2.vsix` through VS Code's Extensions menu.
 2. Close older CodeAlive tabs and run **Developer: Reload Window** after upgrading.
-3. Select a JavaScript or TypeScript function and run **CodeAlive: Explain Selected Code**.
+3. Open a JavaScript or TypeScript file and click **Open CodeAlive** (the `</>` editor toolbar button), or run **CodeAlive: Open CodeAlive**. It explains the selection, or the whole file when nothing is selected, beside the source editor.
 4. Choose Plain language or Developer. Select a step or flow node to reveal its source.
 5. Use **Load editor** after editing the original file to refresh the explanation.
 
 Without VS Code, open `browser/explain.html` from the ZIP. It works locally without an account or API key. Start with the discount example. See the [explanation guide](EXPLAIN_CODE.md) for scope selection, keyboard navigation and limits.
 
-Run **CodeAlive: Open CodeAlive** for a common starting point. In development builds after the published 1.0.1 beta, a JS/TS editor also has an **Open CodeAlive** toolbar button (`</>`): either entry explains the current selection, or the whole file without a selection. Reopening from the CodeAlive panel preserves your work. This shortcut is pending the next installer release.
+Reopening **CodeAlive: Open CodeAlive** from the panel preserves edited code and replay state. Without supported source, it opens examples or keeps the current panel. **CodeAlive: Explain Selected Code** remains available from the command palette and editor context menu.
 
 Use the navigation bar to reach Explain, Replay, Compare, Review PR or Create video. Each action moves keyboard focus to its controls without clearing your entered values. Replay and video prepare the explanation if needed, then wait for you to run or record. PR review appears in VS Code; the offline browser offers the four local workflows.
 

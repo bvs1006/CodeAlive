@@ -2,7 +2,7 @@
 
 The unified 1.0 beta combines explanations, replay, comparisons, PR evidence and
 editable narrated videos. Use one commit and its matching package version when
-testing; do not mix installed VSIX versions. [Release installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1)
+testing; do not mix installed VSIX versions. [Release installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2)
 are built by the gated `main` release workflow.
 
 ## Run locally

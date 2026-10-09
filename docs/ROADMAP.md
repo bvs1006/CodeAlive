@@ -1,6 +1,6 @@
 # CodeAlive roadmap
 
-Status: **8 October 2026**. Track implemented code, passing checks and published
+Status: **9 October 2026**. Track implemented code, passing checks and published
 packages as separate states.
 
 ## Direction
@@ -26,12 +26,14 @@ CI covers Linux/Windows/macOS unit checks, Chromium/media integration and an ins
 VSIX on Linux. The 1.0 suite tests fresh profiles, upgrades, recording, Save/cancel
 and a real public PR. Unit checks on Windows/macOS are not desktop recording coverage.
 
-## Development after the published 1.0.1 beta
+## 1.0.2 beta packaging
 
-The next IDE build adds an **Open CodeAlive** editor toolbar button and automatically
+The 1.0.2 beta packages an **Open CodeAlive** editor toolbar button and automatically
 explains the current JS/TS selection or file. Reopening from the CodeAlive panel
-preserves its work. This improvement is pending the next installer release; the
-published 1.0.1 downloads remain the accessibility maintenance beta.
+preserves edited source and replay state, with the source editor visible beside it.
+[PR #11](https://github.com/bvs1006/CodeAlive/pull/11) is merged. Publication uses
+the gated `main` workflow; record its exact commit, CI and downloaded installer
+verification in the [release checklist](RELEASE_CHECKLIST.md).
 
 ## Next small tasks
 
