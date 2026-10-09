@@ -57,7 +57,7 @@ Desktop VS Code 1.90+, trusted workspace, up to 50,000 source characters. Local 
 
 | Version | Status and features |
 |---|---|
-| **1.0.2 beta** | [Gated release](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2): adds editor-toolbar entry, automatic selection/file loading and preserved panel work to the existing explanation, replay, comparison, PR evidence, music/sorting and video workflows. Publication requires all five checks; see [release evidence](docs/RELEASE_CHECKLIST.md). |
+| **1.0.2 beta** | [Published](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2): adds editor-toolbar entry, automatic selection/file loading and preserved panel work to the existing explanation, replay, comparison, PR evidence, music/sorting and video workflows. [All release checks passed](https://github.com/bvs1006/CodeAlive/actions/runs/37877906619); both downloaded installers were [verified](docs/RELEASE_CHECKLIST.md). |
 | **1.0.1 beta** | [Earlier release](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1) with reduced-motion music-studio behavior and scene-boundary video announcements. [All release checks passed](https://github.com/bvs1006/CodeAlive/actions/runs/37777462645). |
 | **0.8 prerelease** | [Earlier release](https://github.com/bvs1006/CodeAlive/releases/tag/v0.8.0), before shared navigation and narrated explanation videos. |
 

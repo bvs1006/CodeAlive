@@ -5,13 +5,25 @@ OS, VS Code version, browser version, and results. A passing automated suite doe
 mark the manual rows complete. Automated gates apply to the beta prerelease; the
 manual rows track remaining desktop, physical-device and accessibility coverage.
 
-## 1.0.2 beta release evidence
+## Published 1.0.2 beta evidence
 
-The candidate packages the IDE entry improvements from [PR #11](https://github.com/bvs1006/CodeAlive/pull/11),
-merged at [1392495](https://github.com/bvs1006/CodeAlive/commit/13924953eabc071a8729ad5021da398c2db910c9).
-Record the release tag's exact commit, its passing CI run, downloaded asset digests
-and source-byte verification after publication. Prior PR checks do not replace
-the automated gates on the new release commit.
+| Evidence | Recorded result |
+|---|---|
+| Release | [v1.0.2 beta prerelease](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2), published 9 October 2026 |
+| Exact source | Tag points to [55953aa](https://github.com/bvs1006/CodeAlive/commit/55953aac576d5b2a87a1d8b38645d88c277c4d63), the merged [PR #12](https://github.com/bvs1006/CodeAlive/pull/12) release candidate containing PR #11's IDE entry improvements |
+| Automated gates | [Release CI](https://github.com/bvs1006/CodeAlive/actions/runs/37877906619): Linux, Windows and macOS unit suites, Chromium/media integration, installed Linux VS Code acceptance and the release job all passed on that commit |
+| Installed acceptance | Linux / VS Code 1.141.0: fresh and legacy-upgrade installations of 1.0.2 passed. The real toolbar loaded selection/file and stayed hidden for Markdown; panel edits, replay state and editor groups were preserved. Source links, stale guards, input comparison, encoded narration/music and Save/cancel passed. |
+| Browser acceptance | Chromium 151.0.7922.34: examples, source links, keyboard, CSP/injection, mobile layout, language preservation and actual audio/video recording passed |
+| Candidate evidence | [All five PR checks](https://github.com/bvs1006/CodeAlive/actions/runs/37877691837) and [all five branch checks](https://github.com/bvs1006/CodeAlive/actions/runs/37877666603) passed; the fresh installed PR run also inspected live public PR #12 evidence |
+| Packages | Both published assets were downloaded. SHA-256 digests and sizes matched GitHub; both archive entry lists and every unpacked source/guide payload matched the build from the exact release sources. The offline ZIP embeds the exact published VSIX. |
+
+| Published asset | Bytes | SHA-256 |
+|---|---:|---|
+| [codealive-1.0.2.vsix](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.2/codealive-1.0.2.vsix) | 199445 | `62693e5998bead624fcb8692b0a64578559e42d94a303e7e5f6c5c92fa944a70` |
+| [codealive-explainer-1.0.2.zip](https://github.com/bvs1006/CodeAlive/releases/download/v1.0.2/codealive-explainer-1.0.2.zip) | 362560 | `0028253c20e85c5c0984e7dd7e89011b4ddbade20020c1dde96c85e7f31f6511` |
+
+Publication completes this packaging task. The manual rows below remain pending;
+automated Linux acceptance does not mark wider desktop or physical-device checks complete.
 
 ## Published 1.0.1 beta evidence
 
