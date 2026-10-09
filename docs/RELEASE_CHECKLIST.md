@@ -1,9 +1,17 @@
-# CodeAlive 1.0.1 beta release checklist
+# CodeAlive 1.0.2 beta release checklist
 
 Run this checklist against one commit and its exact packaged VSIX. Record the commit SHA,
 OS, VS Code version, browser version, and results. A passing automated suite does not
 mark the manual rows complete. Automated gates apply to the beta prerelease; the
 manual rows track remaining desktop, physical-device and accessibility coverage.
+
+## 1.0.2 beta release evidence
+
+The candidate packages the IDE entry improvements from [PR #11](https://github.com/bvs1006/CodeAlive/pull/11),
+merged at [1392495](https://github.com/bvs1006/CodeAlive/commit/13924953eabc071a8729ad5021da398c2db910c9).
+Record the release tag's exact commit, its passing CI run, downloaded asset digests
+and source-byte verification after publication. Prior PR checks do not replace
+the automated gates on the new release commit.
 
 ## Published 1.0.1 beta evidence
 
@@ -35,15 +43,15 @@ The manual rows below remain pending. Their coverage is not implied by publicati
 | Check | Expected outcome |
 |---|---|
 | `npm ci --ignore-scripts` then `npm test` | All unit, mocked extension/API, replay differential and generated-asset checks pass. |
-| `npm run package:release` | One 1.0.1 version across workspace, lockfile, extension manifest, VSIX identity and installation instructions; archive payloads match current source. |
+| `npm run package:release` | One 1.0.2 version across workspace, lockfile, extension manifest, VSIX identity and installation instructions; archive payloads match current source. |
 | `npm run check:package` | Browser and extension contain identical shared engines and parser license; the ZIP embeds the exact verified VSIX. |
 | `npm run test:browser` | Source links, input replay, comparisons, mobile width and CSP pass; actual encoded videos contain expected dimensions and narration/music signals. Requires Chromium and FFmpeg. |
-| `xvfb-run -a npm run test:vscode` on Linux | The packaged extension upgrades the legacy fixture and activates; editor transfer, navigation, stale-source protection and a real Git comparison pass. |
+| `xvfb-run -a npm run test:vscode` on Linux | Fresh and legacy-upgrade profiles activate the exact packaged version; the actual toolbar loads selection/file, stays hidden for Markdown and preserves panel edits, replay state and editor groups. Navigation, stale-source protection, Git comparison, encoded narration/music, Save/cancel and live public PR evidence pass. |
 | CI on the exact release commit | Linux, Windows and macOS unit suites plus Chromium and installed Linux VS Code jobs pass before publication. |
 
 ## Fresh-install acceptance
 
-Use a clean VS Code profile with no CodeAlive installed. Install `codealive-1.0.1.vsix`.
+Use a clean VS Code profile with no CodeAlive installed. Install `codealive-1.0.2.vsix`.
 Use a trusted temporary Git repository containing this committed function:
 
 ```js
@@ -56,6 +64,8 @@ function discountedPrice(price, percent) {
 
 | Step | Expected outcome | Status |
 |---|---|---|
+| Click Open CodeAlive in the JS/TS editor toolbar with and without a selection | Loads the chosen selection or full file; the source editor stays visible beside CodeAlive. | Pending manual check |
+| Edit code in the panel, run Replay, then reopen Open CodeAlive from the panel | Edited source, captured replay and editor groups remain intact. | Pending manual check |
 | Select the function → Explain Selected Code | Correct function name, two inputs, source-linked steps; selecting a return reveals the exact editor range. | Pending manual check |
 | Run Replay with `[100,20]` | Returns `80`; the final snapshot includes `savings: 20`. | Pending manual check |
 | Pin the run; change arguments to `[200,50]` | New result `100`; baseline retains result `80`. Play/Pause and stepping follow captured values. | Pending manual check |

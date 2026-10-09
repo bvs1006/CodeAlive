@@ -18,7 +18,10 @@ instructions = f'''CodeAlive {version} beta — See what code does, what changed
 
 VS Code: Extensions > ... > Install from VSIX... > codealive-{version}.vsix
 After upgrading, close CodeAlive tabs and run Developer: Reload Window.
-Select a JavaScript or TypeScript function, then run CodeAlive: Explain Selected Code.
+Open a JavaScript or TypeScript file and click Open CodeAlive (the </> editor toolbar button),
+or run CodeAlive: Open CodeAlive. Your selection, or the whole file, is explained automatically.
+The source editor stays visible beside CodeAlive. Reopening from the panel preserves your work.
+CodeAlive: Explain Selected Code remains available from the command palette and context menu.
 Or run CodeAlive: Open Explainer to explore ten examples.
 
 Browser: open browser/explain.html. No npm installation is needed.

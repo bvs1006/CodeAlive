@@ -1,22 +1,33 @@
-# CodeAlive 1.0.1 beta
+# CodeAlive 1.0.2 beta
 
 **See what code does, what changed, and why it matters.**
 
-This maintenance beta packages the accessibility fixes merged after 1.0.0. Installers
+This maintenance beta packages the simplified IDE entry merged in PR #11. Installers
 are built from the release commit after all five CI gates pass. Marketplace/Open VSX
 listings and the manual platform checks below remain pending.
 
-## Accessibility fixes
+## Open CodeAlive from your editor
 
-- Music studio decorations honor the system's reduced-motion preference in both the
-  browser and VS Code. Preference changes apply without reloading; playback, source
-  highlights, sorting and recording remain usable. [PR #7](https://github.com/bvs1006/CodeAlive/pull/7)
-- Explanation videos announce the scene number and caption once at each scene boundary.
-  The visible clock updates without continuous live announcements. Editing clears stale
-  announcements, and restarting announces the first scene again. [PR #8](https://github.com/bvs1006/CodeAlive/pull/8)
+- Click **Open CodeAlive** (the `</>` button in a JavaScript/TypeScript editor toolbar),
+  or run **CodeAlive: Open CodeAlive**. Your selection, or the whole file when nothing
+  is selected, loads and explains automatically.
+- Keep the source editor visible beside CodeAlive; toolbar actions target their own
+  file when multiple editors are open.
+- Reopen from the CodeAlive panel without clearing edited code or captured replay
+  state, or creating another editor group.
+- Without supported source, open examples or keep the existing panel. The toolbar is
+  hidden for unsupported languages and diff editors. Existing size limits and
+  stale-source navigation guards continue to apply.
 
-Automated browser and installed Linux VS Code checks cover these fixes. Physical
-screen-reader and audio-device acceptance remain pending.
+**CodeAlive: Explain Selected Code** and its editor context-menu entry remain available.
+[PR #11](https://github.com/bvs1006/CodeAlive/pull/11) contains the IDE changes; this
+release updates package versions and installation guides. It also includes the 1.0.1
+reduced-motion music decorations and scene-boundary video announcements.
+
+Installed Linux VS Code acceptance uses fresh and legacy-upgrade profiles to click
+the actual toolbar, transfer a selection/file, check unsupported-language visibility
+and preserve panel edits, replay state and editor groups. CI also runs Linux, Windows
+and macOS unit suites and Chromium/media integration on the release commit.
 
 ## Included workflows
 
@@ -38,9 +49,9 @@ outer value. Differential tests cover both `let` and `const`.
 
 ## Installation and validation
 
-Download the [release VSIX or offline ZIP](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1),
+Download the [release VSIX or offline ZIP](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2),
 or build with `npm ci --ignore-scripts` and `npm run package:release`. Install
-`codealive-1.0.1.vsix`, or extract `downloads/codealive-explainer-1.0.1.zip` and open
+`codealive-1.0.2.vsix`, or extract `downloads/codealive-explainer-1.0.2.zip` and open
 `browser/explain.html`. Close old CodeAlive tabs and reload VS Code after upgrading.
 
 The package check verifies one version, current browser/extension source, the parser's

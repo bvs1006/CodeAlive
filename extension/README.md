@@ -1,14 +1,14 @@
-# CodeAlive 1.0.1 beta
+# CodeAlive 1.0.2 beta
 
 See what code does, what changed, and why it matters. This beta unifies local JS/TS explanations, bounded replay, before/after observations, PR evidence and editable explanation videos. Music and sorting remain available.
 
-The gated release workflow builds [1.0.1 beta installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.1) from verified source. This update adds reduced-motion music decorations and scene announcements without continuous clock announcements. Marketplace/Open VSX listings and manual desktop/audio/accessibility checks remain pending.
+The gated release workflow builds [1.0.2 beta installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.2) from verified source. This update packages editor-toolbar entry, automatic selection/file loading and preserved panel work. It includes the 1.0.1 reduced-motion and scene-announcement fixes. Marketplace/Open VSX listings and manual desktop/audio/accessibility checks remain pending.
 
 ## Install and explain
 
-Install `codealive-1.0.1.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
+Install `codealive-1.0.2.vsix` with **Extensions → … → Install from VSIX…**. After upgrading, close CodeAlive tabs and run **Developer: Reload Window**. Requires desktop VS Code 1.90+ and a trusted workspace.
 
-In development builds after the published 1.0.1 beta, click **Open CodeAlive** (the `</>` button in a JS/TS editor's toolbar), or run **CodeAlive: Open CodeAlive**. It explains your selection, or the whole file when nothing is selected. Reopening from the CodeAlive panel preserves your work. With no supported source, it opens examples or keeps the current panel. The published 1.0.1 installers use the command below.
+Click **Open CodeAlive** (the `</>` button in a JS/TS editor's toolbar), or run **CodeAlive: Open CodeAlive**. It explains your selection, or the whole file when nothing is selected, beside the source editor. Reopening from the CodeAlive panel preserves edited code and replay state. With no supported source, it opens examples or keeps the current panel.
 
 Select a complete JavaScript/TypeScript function and run **CodeAlive: Explain Selected Code**. With no selection, the active file is loaded. Choose a function scope, switch between Plain language and Developer, and select a step or diagram node to reveal its source. **Load editor** refreshes changed files. **CodeAlive: Open Explainer** opens ten examples.
 
