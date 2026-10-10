@@ -1,6 +1,6 @@
 # CodeAlive roadmap
 
-Status: **9 October 2026**. Track implemented code, passing checks and published
+Status: **10 October 2026**. Track implemented code, passing checks and published
 packages as separate states.
 
 ## Direction

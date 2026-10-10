@@ -40,7 +40,7 @@ speaker/headphone output and the external player used.
 | Check | Expected result |
 |---|---|
 | Preview with narration and optional quiet music | Both are audible through the selected physical output; captions and scene timing are readable. |
-| Record while keeping the view visible, then Save video | An external player opens the saved file with video and audible narration/music. |
+| Record while keeping the view visible, Save video, then open the file in an external player | The saved file plays with video and audible narration/music. |
 | Cancel a second Save dialog | No additional file is created. |
 | Hide source and record again | The saved video's source panel is hidden; review captions and narration separately. |
 | Edit a caption after recording | The prior export is invalidated; record again to save the changed script. |

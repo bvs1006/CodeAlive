@@ -5,7 +5,7 @@
 - **Feature or collaboration idea:** [request a feature](https://github.com/bvs1006/CodeAlive/issues/new?template=feature_request.yml).
 - **Beta testing result:** follow [manual acceptance](docs/MANUAL_ACCEPTANCE.md) and [report one group](https://github.com/bvs1006/CodeAlive/issues/new?template=release_acceptance.yml).
 
-Maintainer: [@bvs1006](https://github.com/bvs1006). These channels are public. Please do not include passwords, tokens, proprietary code or personal data. No response-time commitment is offered for this alpha.
+Maintainer: [@bvs1006](https://github.com/bvs1006). These channels are public. Please do not include passwords, tokens, proprietary code or personal data. No response-time commitment is offered for this beta.
 
 ## Code is not loading
 
