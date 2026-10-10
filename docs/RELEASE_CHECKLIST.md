@@ -53,7 +53,7 @@ verifies its digest, size, identity and tag commit, then installs those exact by
 on Windows/macOS hosted desktops. It uses fresh and legacy-upgrade profiles; the
 fresh profile also exercises the actual toolbar, replay, recording and Save/cancel.
 It runs automatically after publication and can be invoked manually for older tags.
-See [DEVELOPMENT.md](DEVELOPMENT.md) for the workflow entry and artifact receipts.
+See [DEVELOPMENT.md](https://github.com/bvs1006/CodeAlive/blob/main/docs/DEVELOPMENT.md) for the workflow entry and artifact receipts.
 
 | Platform | Published installer | Desktop acceptance result |
 |---|---|---|
@@ -105,6 +105,12 @@ The manual rows below remain pending. Their coverage is not implied by publicati
 | CI on the exact release commit | Linux, Windows and macOS unit suites and installed VS Code jobs plus Chromium pass before publication (seven gates). Published Windows/macOS installer acceptance follows the release job. |
 
 ## Fresh-install acceptance
+
+For human checks on developers' machines, physical audio, assistive technology and
+private GitHub sign-in, follow [Manual beta acceptance](MANUAL_ACCEPTANCE.md) and
+submit one [acceptance report](https://github.com/bvs1006/CodeAlive/issues/new?template=release_acceptance.yml)
+per group and environment. Keep unattempted or blocked steps pending; a report is
+evidence to review, not an automatic update to this checklist.
 
 Use a clean VS Code profile with no CodeAlive installed. Install `codealive-1.0.3.vsix`.
 Use a trusted temporary Git repository containing this committed function:

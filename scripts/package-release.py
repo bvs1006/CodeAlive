@@ -43,6 +43,7 @@ with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as archive:
     archive.write(root / 'docs/EXPLANATION_VIDEO.md', 'EXPLANATION_VIDEO.md')
     archive.write(root / 'docs/RELEASE_NOTES.md', 'RELEASE_NOTES.md')
     archive.write(root / 'docs/RELEASE_CHECKLIST.md', 'RELEASE_CHECKLIST.md')
+    archive.write(root / 'docs/MANUAL_ACCEPTANCE.md', 'MANUAL_ACCEPTANCE.md')
     for file in sorted((root / 'web').rglob('*')):
         if file.is_file():
             archive.write(file, 'browser/' + file.relative_to(root / 'web').as_posix())

@@ -1,0 +1,73 @@
+name: Beta acceptance report
+description: Record a manual desktop, physical audio, accessibility or private-PR check.
+title: "[Acceptance]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Follow [Manual beta acceptance](https://github.com/bvs1006/CodeAlive/blob/main/docs/MANUAL_ACCEPTANCE.md). Submit one group and environment per report.
+        Reports are public. Remove private repository names/URLs, proprietary code, tokens and personal information. Automated checks do not count as manual passes.
+  - type: input
+    id: versions
+    attributes:
+      label: CodeAlive and VS Code/browser versions
+      placeholder: "CodeAlive x.y.z; VS Code x.y.z or browser/version"
+    validations:
+      required: true
+  - type: input
+    id: installer
+    attributes:
+      label: Installer and installation mode
+      description: Give the public release tag or source commit and state fresh installation or upgrade. Include the installer SHA-256 if verified.
+      placeholder: "Published v1.0.3 VSIX; fresh installation"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Operating system, devices and assistive software
+      description: Include OS/version and architecture; add physical output/player or screen reader/version when relevant.
+    validations:
+      required: true
+  - type: dropdown
+    id: group
+    attributes:
+      label: Acceptance group
+      options:
+        - Your own desktop
+        - Physical audio and saved video
+        - Keyboard, screen reader and reduced motion
+        - Private GitHub sign-in
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: Step-by-step expected and actual results
+      description: List each attempted step with Pass, Fail or Blocked and what you observed. Mark unattempted steps Not tested.
+      placeholder: "Step | Expected | Actual | Pass/Fail/Blocked/Not tested"
+    validations:
+      required: true
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: Overall result for this group
+      options:
+        - All checks in this group passed
+        - One or more checks failed
+        - Blocked or partly tested
+        - Not tested
+    validations:
+      required: true
+  - type: textarea
+    id: remaining
+    attributes:
+      label: Unattempted checks and blockers
+      description: List what remains and why. Use None only when every check in the selected group was attempted.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Optional screenshots, public installer receipt or short sample recording. Review source, captions and audio before attaching; omit private account/repository information.
