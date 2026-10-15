@@ -1,6 +1,6 @@
 # CodeAlive roadmap
 
-Status: **10 October 2026**. Track implemented code, passing checks and published
+Status: **15 October 2026**. Track implemented code, passing checks and published
 packages as separate states.
 
 ## Direction
@@ -31,6 +31,19 @@ recording and Save/cancel. Physical devices and human accessibility remain manua
 
 ## Next small tasks
 
+CI usage pause: automatic `push` and `pull_request` triggers were removed from
+`.github/workflows/ci.yml` in commit `89dfc81`. The workflow remains available
+for manual dispatch, but **do not run it** while Actions capacity is exhausted.
+For now, validate locally when tooling is available, then commit and push one
+small change at a time. A pushed change without local checks is **unverified**;
+never describe historical CI results as validating new commits. Restore automatic
+triggers only after CI capacity and release readiness are confirmed.
+
+GitHub About settings: [the prepared description and topics](GITHUB_ABOUT.md)
+are ready, but the connected GitHub integration cannot edit repository metadata.
+A maintainer must apply them using the About gear and verify the saved settings.
+This task remains **blocked**, not completed.
+
 1. Align GitHub About settings with the current developer workflow; [suggested settings](GITHUB_ABOUT.md) need repository settings access.
 2. Complete acceptance on developers' own desktops, physical audio devices, private
    signed-in PRs, screen readers and reduced-motion preferences. Use the four focused
@@ -46,5 +59,7 @@ recording and Save/cancel. Physical devices and human accessibility remain manua
 · [Known limitations](KNOWN_LIMITATIONS.md)
 
 For each engineering task, make one reviewable change, validate the expected outcome,
-commit/push, check CI, then proceed. Stop for exhausted limits or a concrete blocker.
+commit/push, and verify the resulting repository files, then proceed.
+While Actions is paused, record whether local tests were actually run; do not
+require or trigger CI. Stop for exhausted limits or a concrete blocker.
 No telemetry, cloud accounts, billing or automatic fixes are required for this beta.
