@@ -1,7 +1,7 @@
 name: CodeAlive checks
 on:
-  push:
-  pull_request:
+  # Temporarily manual-only while GitHub Actions minutes are exhausted.
+  # Restore push/pull_request triggers after CI capacity returns.
   workflow_dispatch:
 permissions:
   contents: read
