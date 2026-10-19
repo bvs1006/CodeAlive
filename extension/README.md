@@ -46,4 +46,4 @@ Run **CodeAlive: Review GitHub PR** and paste a GitHub PR URL. Public reads can 
 
 ## Development
 
-From the repository root: `npm ci --ignore-scripts`, `npm test`, `npm run package`. Shared explainer sources are built from `shared/`. For actual browser checks use `npx playwright install chromium` then `npm run test:browser`. The generated browser parser includes its MIT license. The project has no open-source license selected.
+From the repository root: `npm ci --ignore-scripts`, `npm test`, `npm run package`. Shared explainer sources are built from `shared/`. For actual browser checks use `npx playwright install chromium` then `npm run test:browser`. The generated browser parser includes its MIT license. CodeAlive is open source under the [MIT License](../LICENSE).

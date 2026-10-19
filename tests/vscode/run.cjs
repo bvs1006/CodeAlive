@@ -8,8 +8,8 @@ async function freePort(){const server=net.createServer();await new Promise(reso
   if(!/^\d+\.\d+\.\d+$/.test(version))throw Error('Invalid acceptance installer version.');
   const installer=path.join(root,`codealive-${version}.vsix`),installerSha256=crypto.createHash('sha256').update(fs.readFileSync(installer)).digest('hex');
   const vscodeExecutablePath=await downloadAndUnzipVSCode('stable');
-  fs.mkdirSync(path.join(root,'.vscode-test'),{recursive:true});
-  const session=fs.mkdtempSync(path.join(root,'.vscode-test/acceptance-'));
+  const tmpBase=process.platform==='win32'?path.join(root,'.vscode-test'):'/tmp';
+  const session=fs.mkdtempSync(path.join(tmpBase,'ca-acc-'));
   const oldPackage=path.join(session,'codealive-0.5.0.vsix');
   execFileSync(process.platform==='win32'?'python':'python3',['-c','import zipfile,sys; z=zipfile.ZipFile(sys.argv[1]); names=[n for n in z.namelist() if n.endswith("codealive-0.5.0.vsix")]; assert len(names)==1; open(sys.argv[2],"wb").write(z.read(names[0]))',path.join(root,'downloads/codealive-pr-companion-0.5.0.zip'),oldPackage]);
   for(const mode of ['fresh','upgrade']){

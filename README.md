@@ -74,4 +74,4 @@ Explanations are static. Replay supports a restricted synchronous subset. PR che
 | [Compare changes](docs/CHANGE_EXPLANATIONS.md) · [Review PR evidence](docs/PR_COMPANION.md) | [Contributing](CONTRIBUTING.md) · [Roadmap](docs/ROADMAP.md) |
 | [Explanation videos](docs/EXPLANATION_VIDEO.md) · [Examples](examples/README.md) · [Getting started](docs/GETTING_STARTED.md) | [Report a bug](https://github.com/bvs1006/CodeAlive/issues/new?template=bug_report.yml) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml) |
 
-Explanation/replay source stays local. PR review reads GitHub through the extension host. Review exported captions, source and audio before sharing. No open-source license has been selected (`UNLICENSED`); Marketplace/Open VSX distribution remains pending.
+Explanation/replay source stays local. PR review reads GitHub through the extension host. Review exported captions, source and audio before sharing. CodeAlive is open source under the [MIT License](LICENSE); Marketplace/Open VSX distribution remains pending.

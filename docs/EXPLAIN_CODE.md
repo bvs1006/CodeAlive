@@ -47,7 +47,7 @@ Inputs are limited to 50,000 characters, 100 listed functions, 80 explanation st
 
 Source is held in memory. Static explanation has no network requests, analytics, source persistence or code execution. The separate [Replay an input](EXECUTION_REPLAY.md) action explicitly interprets a documented synchronous subset and keeps its trace in memory. The extension webview uses a nonce-based script policy and blocks network connections. Editor navigation validates a captured document version, an opaque snapshot token and source offsets.
 
-`shared/` is the canonical implementation for both surfaces. `npm run build` creates matching browser and extension assets, including the pinned Babel parser and its MIT license. Generated copies are ignored by git and included in installers. The rest of CodeAlive remains subject to the repository's current UNLICENSED status.
+`shared/` is the canonical implementation for both surfaces. `npm run build` creates matching browser and extension assets, including the pinned Babel parser and its MIT license. Generated copies are ignored by git and included in installers. CodeAlive is licensed under the [MIT License](../LICENSE).
 
 ```sh
 npm test

@@ -1,6 +1,6 @@
 # Contributing to CodeAlive
 
-Start with a small, reproducible developer task. Open a question or feature issue before a large change, and include a sanitized input plus expected behavior for bugs. The project has no open-source license selected; discuss contribution and reuse terms with the maintainer before substantial work.
+Start with a small, reproducible developer task. Open a question or feature issue before a large change, and include a sanitized input plus expected behavior for bugs. CodeAlive is open source under the [MIT License](LICENSE).
 
 ## Choose the right version
 

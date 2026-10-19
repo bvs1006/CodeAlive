@@ -4,7 +4,7 @@
   "description": "See what code does and what changed: local JS/TS explanations, bounded replay, PR evidence and editable explanation videos.",
   "version": "1.0.3",
   "publisher": "codealive-local",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.90.0"
   },
