@@ -8,4 +8,11 @@ async function saveExplanationVideo(message){
   const target=await vscode.window.showSaveDialog({saveLabel:'Save CodeAlive explanation video',filters:{Video:[message.format]}});if(!target)return false;
   await vscode.workspace.fs.writeFile(target,bytes);return true;
 }
-module.exports={saveExplanationVideo};
+const MAX_SUBTITLES=500000;
+async function saveSubtitles(message){
+  if(!message||!['srt','vtt'].includes(message.format)||typeof message.content!=='string'||!message.content.trim()||message.content.length>MAX_SUBTITLES)throw Error('Invalid subtitle data.');
+  const target=await vscode.window.showSaveDialog({saveLabel:'Save CodeAlive subtitles',filters:{Subtitles:[message.format]}});if(!target)return false;
+  await vscode.workspace.fs.writeFile(target,Buffer.from(message.content,'utf8'));return true;
+}
+module.exports={saveExplanationVideo,saveSubtitles};
+

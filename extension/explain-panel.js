@@ -53,6 +53,46 @@ function activateExplain(context) {
         else if(message.type==='openStudio')await vscode.commands.executeCommand('codealive.open');
         else if(message.type==='reviewPR')await vscode.commands.executeCommand('codealive.reviewPR');
         else if(message.type==='saveExplanationVideo'){const saved=await require('./video-save').saveExplanationVideo(message);created.webview.postMessage({type:'notice',text:saved?'Explanation video saved.':'Save cancelled.'});}
+        else if(message.type==='saveSubtitles'){const saved=await require('./video-save').saveSubtitles(message);created.webview.postMessage({type:'notice',text:saved?'Subtitles saved.':'Save cancelled.'});}
+        else if(message.type==='synthesizeNarration'){
+          let synth;try{synth=require('./narration-synth');}catch{synth=require('../shared/narration-synth');}
+          const res=synth.synthesizeNarration(message.scenes||[],{voice:message.voice});
+          if(res.ok){
+            created.webview.postMessage({
+              type:'narrationGenerated',
+              ok:true,
+              base64:res.wavBuffer.toString('base64'),
+              mimeType:'audio/wav',
+              name:'AI_Narration.wav',
+              scenes:res.scenes,
+              notice:`🎙️ AI voice narration generated (${res.totalSeconds.toFixed(1)}s). Ready to preview or record.`
+            });
+          }else{
+            created.webview.postMessage({type:'narrationGenerated',ok:false,error:res.error||'Could not synthesize speech.'});
+          }
+        }
+        else if(message.type==='requestAIScript'){
+          let aiScript;try{aiScript=require('./media/explainer/ai-script');}catch{aiScript=require('../shared/ai-script');}
+          let result=null;
+          if(vscode.lm&&typeof vscode.lm.selectChatModels==='function'){
+            try{
+              const models=await vscode.lm.selectChatModels();
+              if(models?.length){
+                const model=models[0];
+                const prompt=aiScript.buildPrompt(message.code,{language:message.language});
+                const chatReq=await model.sendRequest([vscode.LanguageModelChatMessage.User(prompt)],{});
+                let text='';for await(const chunk of chatReq.text)text+=chunk;
+                const parsed=aiScript.parseScript(message.code,text);
+                if(parsed.ok)result={ok:true,script:parsed,notice:`Generated script using ${model.name||'AI model'}.`};
+              }
+            }catch{}
+          }
+          if(!result){
+            const heuristic=aiScript.heuristicScript(message.code,{language:message.language});
+            result={ok:heuristic.ok,script:heuristic,fallback:true,notice:'Generated with local pedagogical heuristic engine.'};
+          }
+          created.webview.postMessage({type:'aiScriptResult',...result});
+        }
         else if(message.type==='openEvidence'){const {safeLink}=require('./pr-core'),link=safeLink(message.url);if(link)await vscode.env.openExternal(vscode.Uri.parse(link));}
         else if(message.type==='revealComparison'){
           if(!loaded?.comparison||message.sourceToken!==loaded.payload.sourceToken||!['before','after'].includes(message.side))return;
