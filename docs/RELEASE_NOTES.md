@@ -15,9 +15,7 @@ This maintenance beta repairs and tightens narration voice generation.
 - **Cleanup:** removed a developer-specific executable path; narration generation
   still blocks the extension host while it runs.
 
-Verification: local unit, extension and shared-asset suites and package verification
-passed. The CI release gates and Windows/macOS installed/published-desktop acceptance
-were not run for this release because Actions capacity is exhausted.
+Verification: all seven CI gates ([run](https://github.com/bvs1006/CodeAlive/actions/runs/39810903696)) passed on `91137c6`, which differs from the `v1.0.4` tag only in test files, and the [published desktop acceptance](https://github.com/bvs1006/CodeAlive/actions/runs/39809965115) passed on Windows and macOS against the released VSIX. Physical-device and human accessibility checks remain pending.
 
 ## 1.0.3 beta
 

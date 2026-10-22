@@ -5,6 +5,23 @@ OS, VS Code version, browser version, and results. A passing automated suite doe
 mark the manual rows complete. Automated gates apply to the beta prerelease; the
 manual rows track remaining desktop, physical-device and accessibility coverage.
 
+## Published 1.0.4 beta evidence
+
+| Evidence | Recorded result |
+|---|---|
+| Release | [v1.0.4 beta prerelease](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.4), published 22 October 2026 |
+| Exact source | Tag points to `6b28f82`. The gates ran on `91137c6`, whose only differences from the tag are `tests/browser.cjs` and `tests/vscode/workflow.cjs` (stale music-frequency and video-panel assertions fixed; installed Generate voice step added). |
+| Automated gates | [Manually dispatched CI](https://github.com/bvs1006/CodeAlive/actions/runs/39810903696): three unit suites, Chromium/media integration and installed Linux/Windows/macOS VS Code acceptance all passed (seven gates). The release and published-desktop jobs are push-only and were skipped. |
+| Published desktop acceptance | [Dispatched run](https://github.com/bvs1006/CodeAlive/actions/runs/39809965115): Windows and macOS installed the released VSIX; fresh and legacy-upgrade profiles passed, including the installed Generate voice narration step. |
+| Local acceptance | macOS, VS Code 1.143.0: fresh and upgrade installs of 1.0.4 passed. The same Generate voice step times out on the 1.0.3 VSIX. |
+
+| Published asset | SHA-256 |
+|---|---|
+| codealive-1.0.4.vsix | `9f81e80273974c6173197662059c42737097eaddb10d584c4bbcd9e416d65c51` |
+| codealive-explainer-1.0.4.zip | `cfe63ccacebd03a1bd7ee8291f5c14d5e1334f292dd327f64998b656fe891c16` |
+
+Online neural voices (`codealive.narration.onlineVoice`) were not exercised in automation because they send text to Microsoft. Human acceptance on developers' own desktops, physical audio devices, screen readers and private GitHub sign-in remains pending.
+
 ## Published 1.0.3 beta evidence
 
 | Evidence | Recorded result |
