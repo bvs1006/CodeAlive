@@ -86,8 +86,12 @@ machines remain manual acceptance. Record actual runs in [RELEASE_CHECKLIST.md](
 | `extension/compare-source.js`, `pr-changes.js` | HEAD/editor capture and exact PR revision reads |
 | `extension/pr-api.js`, `pr-core.js`, `pr-panel.js` | GitHub reads and evidence interpretation |
 | `extension/extension.js`, `extension/media/` | Studio host, music, sorting and video |
-| `shared/movie-engine.js`, `movie-ui.js`, `extension/video-save.js` | Editable scenes, narration/music and validated video saving |
+| `shared/movie-engine.js`, `movie-ui.js`, `extension/video-save.js` | Editable scenes, narration/music, subtitles (SRT/VTT) and validated video saving |
+| `shared/ai-script.js` | Pedagogical heuristics, LLM prompt generation, and line-to-byte range mapping |
+| `shared/narration-synth.js`, `extension/narration-synth.js` | Neural voice synthesis engine (Edge TTS, macOS `say`, espeak) and PCM WAV composition |
 | `web/`, `scripts/`, `tests/` | Browser entry points, building, packaging and verification |
+
+See the in-depth system blueprint in [ARCHITECTURE.md](ARCHITECTURE.md) and engine API details in [API_REFERENCE.md](API_REFERENCE.md).
 
 Edit `shared/`, then build. Generated `web/explainer/` and
 `extension/media/explainer/` copies are ignored by Git and included in packages.

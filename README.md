@@ -70,8 +70,8 @@ Explanations are static. Replay supports a restricted synchronous subset. PR che
 
 | Learn | Build and contribute |
 |---|---|
-| [Explain code](docs/EXPLAIN_CODE.md) · [Replay inputs](docs/EXECUTION_REPLAY.md) | [Developer setup and architecture](docs/DEVELOPMENT.md) |
-| [Compare changes](docs/CHANGE_EXPLANATIONS.md) · [Review PR evidence](docs/PR_COMPANION.md) | [Contributing](CONTRIBUTING.md) · [Roadmap](docs/ROADMAP.md) |
-| [Explanation videos](docs/EXPLANATION_VIDEO.md) · [Examples](examples/README.md) · [Getting started](docs/GETTING_STARTED.md) | [Report a bug](https://github.com/bvs1006/CodeAlive/issues/new?template=bug_report.yml) · [Ask a question](https://github.com/bvs1006/CodeAlive/issues/new?template=question.yml) |
+| [Explain code](docs/EXPLAIN_CODE.md) · [Replay inputs](docs/EXECUTION_REPLAY.md) | [Developer setup](docs/DEVELOPMENT.md) · [Architecture](docs/ARCHITECTURE.md) |
+| [Compare changes](docs/CHANGE_EXPLANATIONS.md) · [Review PR evidence](docs/PR_COMPANION.md) | [API Reference](docs/API_REFERENCE.md) · [Roadmap](docs/ROADMAP.md) |
+| [Explanation videos](docs/EXPLANATION_VIDEO.md) · [Examples](examples/README.md) · [Getting started](docs/GETTING_STARTED.md) | [Contributing](CONTRIBUTING.md) · [Report a bug](https://github.com/bvs1006/CodeAlive/issues/new?template=bug_report.yml) |
 
 Explanation/replay source stays local. PR review reads GitHub through the extension host. Review exported captions, source and audio before sharing. CodeAlive is open source under the [MIT License](LICENSE); Marketplace/Open VSX distribution remains pending.
