@@ -174,6 +174,18 @@ const wavSeconds=wav=>(wav.length-44)/(RATE*2);
     assert.throws(()=>synth.readWav(Buffer.from('not a wav file at all, definitely not riff data......')),/did not produce a WAV/);
   }
 
+  // Where the platform has a built-in voice, the system engine produces real speech (verified on hosted Windows and macOS).
+  if(process.platform==='win32'||process.platform==='darwin'){
+    const info=(await synth.describeEngines()).find(e=>e.id==='system');
+    assert.equal(info.available,true,'built-in speech should exist on this platform: '+info.detail);
+    const r=await synth.synthesizeNarration([{caption:'This function returns the discounted price.',duration:2},{caption:'',duration:1},{caption:'Then it stops.',duration:2}],{engine:'system',cache:false});
+    assert.equal(r.ok,true,r.error);
+    assert.equal(r.scenes.length,3);
+    assert(r.totalSeconds>=5&&r.totalSeconds<30,'plausible duration: '+r.totalSeconds);
+    let loud=0;for(let i=44;i<r.wavBuffer.length;i+=2)loud=Math.max(loud,Math.abs(r.wavBuffer.readInt16LE(i)));
+    assert(loud>1000,'the audio is not silent');
+  }
+
   // The online engine runs only when it is selected; the default never reaches uvx.
   if(process.platform!=='win32'){
     const dir=fs.mkdtempSync(path.join(os.tmpdir(),'codealive-fake-uvx-')),marker=path.join(dir,'called');

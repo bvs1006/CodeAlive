@@ -39,7 +39,7 @@
           "enum": ["system", "online", "tone"],
           "default": "system",
           "enumDescriptions": [
-            "Speech generated on this machine with macOS say, espeak-ng or espeak. No text leaves the machine.",
+            "Speech generated on this machine with macOS say, the built-in Windows speech voices, or espeak-ng/espeak on Linux. No text leaves the machine.",
             "Microsoft online neural voices through uvx edge-tts and ffmpeg. Caption text is sent to Microsoft's speech service and uvx may download edge-tts.",
             "A wordless placeholder tone with speech-like timing, for testing or when no voice is installed."
           ],

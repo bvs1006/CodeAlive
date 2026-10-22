@@ -75,19 +75,19 @@
   function abortError(){const error=Error('Narration generation cancelled.');error.name='AbortError';return error;}
 
   // Runs a command without a shell and without blocking the extension host.
-  function run(cmd,args,{timeout=15000,signal}={}){
+  function run(cmd,args,{timeout=15000,signal,env}={}){
     return new Promise(resolve=>{
       if(signal?.aborted)return resolve({status:null,aborted:true});
-      let child,stderr='',done=false,timer;
+      let child,stdout='',stderr='',done=false,timer;
       const finish=result=>{if(done)return;done=true;clearTimeout(timer);signal?.removeEventListener('abort',onAbort);resolve(result);};
       const onAbort=()=>{child?.kill();finish({status:null,aborted:true});};
-      try{child=cp.spawn(cmd,args,{stdio:['ignore','pipe','pipe']});}catch(error){return resolve({status:null,error});}
+      try{child=cp.spawn(cmd,args,{stdio:['ignore','pipe','pipe'],env:env?{...process.env,...env}:process.env});}catch(error){return resolve({status:null,error});}
       timer=setTimeout(()=>{child.kill();finish({status:null,timedOut:true});},timeout);
       signal?.addEventListener('abort',onAbort,{once:true});
-      child.stdout.resume();
+      child.stdout.on('data',chunk=>{if(stdout.length<2000)stdout+=chunk;});
       child.stderr.on('data',chunk=>{if(stderr.length<2000)stderr+=chunk;});
       child.on('error',error=>finish({status:null,error}));
-      child.on('close',status=>finish({status,stderr}));
+      child.on('close',status=>finish({status,stdout,stderr}));
     });
   }
 
@@ -131,28 +131,48 @@
     return pcm;
   }
 
+  // Windows speaks through the built-in SAPI voices that ship with Windows PowerShell (System.Speech).
+  // The text and output paths travel in environment variables so caption text is never parsed as script.
+  const WINDOWS_SPEECH_SCRIPT="$ErrorActionPreference='Stop';Add-Type -AssemblyName System.Speech;$s=New-Object System.Speech.Synthesis.SpeechSynthesizer;try{$gender=[System.Enum]::Parse([System.Speech.Synthesis.VoiceGender],$env:CODEALIVE_VOICE_GENDER);$pick=$s.GetInstalledVoices()|Where-Object{$_.Enabled -and $_.VoiceInfo.Gender -eq $gender}|Select-Object -First 1;if($pick){$s.SelectVoice($pick.VoiceInfo.Name)};$s.SetOutputToWaveFile($env:CODEALIVE_OUT_FILE);$s.Speak([System.IO.File]::ReadAllText($env:CODEALIVE_TEXT_FILE))}finally{$s.Dispose()}";
+  const WINDOWS_COUNT_SCRIPT="$ErrorActionPreference='Stop';Add-Type -AssemblyName System.Speech;$s=New-Object System.Speech.Synthesis.SpeechSynthesizer;try{$s.GetInstalledVoices().Count}finally{$s.Dispose()}";
+  // -EncodedCommand (UTF-16LE base64) avoids every command-line quoting rule.
+  const powershellArgs=script=>['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-EncodedCommand',Buffer.from(script,'utf16le').toString('base64')];
+
+  async function windowsVoiceCount(){
+    const probe=await run('powershell',powershellArgs(WINDOWS_COUNT_SCRIPT),{timeout:20000});
+    return probe.status===0?parseInt(probe.stdout,10)||0:0;
+  }
+
+  // Returns {command, detail} for the first local engine found, or {command:null, detail} explaining why not.
   async function localCommand(){
-    if(process.platform==='darwin')return (await onPath('say'))?'say':null;
-    for(const cmd of ['espeak-ng','espeak'])if(await onPath(cmd))return cmd;
-    return null;
+    if(process.platform==='darwin')return (await onPath('say'))?{command:'say',detail:'Using say.'}:{command:null,detail:'The macOS say command was not found.'};
+    if(process.platform==='win32'){
+      if(!(await onPath('powershell')))return {command:null,detail:'Windows PowerShell was not found on PATH.'};
+      const voices=await windowsVoiceCount();
+      return voices?{command:'powershell',detail:`Using Windows speech (${voices} installed voice${voices===1?'':'s'}).`}:{command:null,detail:'No Windows speech voices are installed (Settings > Time & language > Speech).'};
+    }
+    for(const cmd of ['espeak-ng','espeak'])if(await onPath(cmd))return {command:cmd,detail:`Using ${cmd}.`};
+    return {command:null,detail:'No espeak-ng or espeak on PATH. Install espeak-ng, or choose another voice engine.'};
   }
 
   // Each engine reports whether it can run, and speaks one caption as mono 16-bit PCM at the requested rate.
   const engines={
     system:{
-      label:'System voice (macOS say, espeak-ng or espeak)',
+      label:'System voice (macOS say, Windows speech, espeak-ng or espeak)',
       async check(){
-        const cmd=await localCommand();
-        if(cmd)return {available:true,detail:`Using ${cmd}. Speech is generated on this machine.`};
-        return {available:false,detail:process.platform==='darwin'?'The macOS say command was not found.':'No espeak-ng or espeak on PATH. Install espeak-ng, or choose another voice engine.'};
+        const found=await localCommand();
+        return found.command?{available:true,command:found.command,detail:`${found.detail} Speech is generated on this machine.`}:{available:false,detail:found.detail};
       },
-      async speak(text,{voice,sampleRate,signal,dir,index}){
-        const cmd=await localCommand(),textFile=writeTextFile(dir,index,text),wavFile=path.join(dir,`scene_${index}.wav`);
-        const options={timeout:30000,signal};
+      async speak(text,{voice,sampleRate,signal,dir,index,status}){
+        const cmd=status?.command||(await localCommand()).command,textFile=writeTextFile(dir,index,text),wavFile=path.join(dir,`scene_${index}.wav`);
+        const options={timeout:30000,signal},female=/ava|emma|jenny|female|aria/i.test(voice);
         if(cmd==='say'){
-          const female=/ava|emma|jenny|female|aria/i.test(voice),base=['-r','165','--file-format=WAVE',`--data-format=LEI16@${sampleRate}`,'-o',wavFile,'-f',textFile];
+          const base=['-r','165','--file-format=WAVE',`--data-format=LEI16@${sampleRate}`,'-o',wavFile,'-f',textFile];
           try{await runChecked('say','say',['-v',female?'Samantha':'Daniel',...base],options,wavFile);}
           catch(error){if(error.name==='AbortError')throw error;await runChecked('say','say',base,options,wavFile);}
+        }else if(cmd==='powershell'){
+          const env={CODEALIVE_TEXT_FILE:textFile,CODEALIVE_OUT_FILE:wavFile,CODEALIVE_VOICE_GENDER:female?'Female':'Male'};
+          await runChecked('Windows speech','powershell',powershellArgs(WINDOWS_SPEECH_SCRIPT),{...options,env},wavFile);
         }else await runChecked(cmd,cmd,['-w',wavFile,'-f',textFile],options,wavFile);
         return toMonoPcm(readWav(fs.readFileSync(wavFile)),sampleRate);
       }
@@ -240,7 +260,7 @@
         const hit=!!pcm;
         if(hit)cached++;
         else{
-          pcm=await engine.speak(caption,{voice,sampleRate,signal:options.signal,dir,index:i});
+          pcm=await engine.speak(caption,{voice,sampleRate,signal:options.signal,dir,index:i,status});
           if(!pcm?.length)throw Error('The voice engine produced no audio.');
           if(options.cache!==false)remember(key,pcm);
         }

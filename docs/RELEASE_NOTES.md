@@ -6,6 +6,7 @@
 - **Background generation:** voice generation no longer freezes VS Code. It shows progress, can be cancelled, and reuses cached audio for scenes whose caption, voice and engine are unchanged.
 - **Honest timing:** scene durations only ever grow to fit the speech, and the status line names each scene that changed.
 - **Fixes:** scenes with no caption no longer drop out of the narration, which had shifted every later scene; `espeak` output (22 kHz) is now resampled instead of playing too fast.
+- **Windows voice:** the `system` engine now uses the built-in Windows speech voices (male or female, matching the selected voice) through Windows PowerShell, so Windows needs no extra install.
 - **New command:** **CodeAlive: Check Voice Setup** shows which engines work on this machine.
 
 # CodeAlive 1.0.4 beta

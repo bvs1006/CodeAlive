@@ -209,7 +209,7 @@ Located in `shared/narration-synth.js`. It runs in the extension host (Node) onl
 
 | Engine id | What it does | Network |
 |---|---|---|
-| `system` (default) | macOS `say`, or `espeak-ng` / `espeak` elsewhere | None |
+| `system` (default) | macOS `say`; Windows built-in speech voices (SAPI, through Windows PowerShell); `espeak-ng` / `espeak` on Linux | None |
 | `online` | Microsoft neural voices through `uvx edge-tts` and `ffmpeg` | Sends caption text to Microsoft; `uvx` may download `edge-tts` |
 | `tone` | Wordless placeholder tone with speech-like timing, for tests or machines with no voice | None |
 
