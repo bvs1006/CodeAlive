@@ -46,14 +46,19 @@
     return new Uint8Array(buf);
   }
 
-  function synthesizeSceneAudio(text,outFile,sampleRate=48000,voice='en-US-AndrewMultilingualNeural'){
+  function findOnPath(cmd){
+    const probe=spawnSync(process.platform==='win32'?'where':'which',[cmd]);
+    return probe.status===0;
+  }
+
+  function synthesizeSceneAudio(text,outFile,sampleRate=48000,voice='en-US-AndrewMultilingualNeural',options={}){
     if(!spawnSync||!fs)return false;
-    // Priority 1: High-Definition AI Neural Voice (Microsoft Edge Neural Human Voice)
-    const uvPath=fs.existsSync('/Users/bhushan/.local/bin/uvx')?'/Users/bhushan/.local/bin/uvx':(spawnSync('which',['uvx']).status===0?'uvx':null);
-    if(uvPath){
+    // Opt-in only: edge-tts sends the caption text to Microsoft's online speech service
+    // and uvx may download the package on first use.
+    if(options.onlineVoice&&findOnPath('uvx')){
       try{
         const mp3Tmp=outFile.replace(/\.wav$/,'.mp3');
-        const res=spawnSync(uvPath,['edge-tts','--voice',voice,'--text',text,'--write-media',mp3Tmp],{timeout:15000});
+        const res=spawnSync('uvx',['edge-tts','--voice',voice,'--text',text,'--write-media',mp3Tmp],{timeout:15000});
         if(res.status===0&&fs.existsSync(mp3Tmp)){
           const ffmpeg=spawnSync('ffmpeg',['-y','-i',mp3Tmp,'-ar',String(sampleRate),'-ac','1',outFile]);
           try{fs.unlinkSync(mp3Tmp);}catch{}
@@ -62,7 +67,7 @@
       }catch{}
     }
     if(process.platform==='darwin'){
-      // Priority 2: macOS native TTS with natural voice selection
+      // macOS native TTS with natural voice selection
       const isFemale=/ava|emma|jenny|female|aria/i.test(voice);
       const macVoice=isFemale?'Samantha':'Daniel';
       const res=spawnSync('say',['-v',macVoice,'-r','165','--file-format=WAVE',`--data-format=LEI16@${sampleRate}`,'-o',outFile,text]);
@@ -141,7 +146,7 @@
       const tmpFile=path?.join?.(tmpDir,`codealive_scene_${Date.now()}_${i}.wav`);
       let pcmBytes=null;
 
-      const ok=tmpFile?synthesizeSceneAudio(caption,tmpFile,sampleRate,voice):false;
+      const ok=tmpFile?synthesizeSceneAudio(caption,tmpFile,sampleRate,voice,options):false;
       if(ok&&fs.existsSync(tmpFile)){
         try{
           const buf=fs.readFileSync(tmpFile);

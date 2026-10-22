@@ -55,8 +55,8 @@ function activateExplain(context) {
         else if(message.type==='saveExplanationVideo'){const saved=await require('./video-save').saveExplanationVideo(message);created.webview.postMessage({type:'notice',text:saved?'Explanation video saved.':'Save cancelled.'});}
         else if(message.type==='saveSubtitles'){const saved=await require('./video-save').saveSubtitles(message);created.webview.postMessage({type:'notice',text:saved?'Subtitles saved.':'Save cancelled.'});}
         else if(message.type==='synthesizeNarration'){
-          let synth;try{synth=require('./narration-synth');}catch{synth=require('../shared/narration-synth');}
-          const res=synth.synthesizeNarration(message.scenes||[],{voice:message.voice});
+          let synth;try{synth=require('./media/explainer/narration-synth');}catch{synth=require('../shared/narration-synth');}
+          const res=synth.synthesizeNarration(message.scenes||[],{voice:message.voice,onlineVoice:vscode.workspace.getConfiguration('codealive').get('narration.onlineVoice',false)===true});
           if(res.ok){
             created.webview.postMessage({
               type:'narrationGenerated',

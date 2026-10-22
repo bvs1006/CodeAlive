@@ -97,7 +97,7 @@ assert(userHeuristic.scenes.length>=4);
 assert(userHeuristic.scenes.some(s=>s.caption.toLowerCase().includes('async')||s.caption.toLowerCase().includes('request')));
 
 // Test Narration Synth Audio Generation
-const NarrationSynth=require('../extension/narration-synth');
+const NarrationSynth=require('../shared/narration-synth');
 const synthResult=NarrationSynth.synthesizeNarration([
   {caption:'Introduction to quicksort.',duration:3.0},
   {caption:'Partitioning elements around pivot.',duration:3.0}
@@ -108,5 +108,23 @@ assert(synthResult.wavBuffer.length>44);
 assert.equal(synthResult.wavBuffer.subarray(0,4).toString(),'RIFF');
 assert.equal(synthResult.wavBuffer.subarray(8,12).toString(),'WAVE');
 assert(synthResult.totalSeconds>=5.0);
+
+// Online neural voice is opt-in: a uvx on PATH must not be called unless onlineVoice is set.
+{
+  const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'codealive-fake-uvx-'));
+  const marker=path.join(dir,'called');
+  if(process.platform!=='win32'){
+    fs.writeFileSync(path.join(dir,'uvx'),`#!/bin/sh\ntouch "${marker}"\nexit 1\n`,{mode:0o755});
+    const oldPath=process.env.PATH;
+    process.env.PATH=dir+path.delimiter+oldPath;
+    try{
+      NarrationSynth.synthesizeNarration([{caption:'Default stays local.',duration:2}]);
+      assert.equal(fs.existsSync(marker),false,'uvx/edge-tts must not run by default');
+      NarrationSynth.synthesizeNarration([{caption:'Opt in.',duration:2}],{onlineVoice:true});
+      assert.equal(fs.existsSync(marker),true,'onlineVoice should invoke uvx');
+    }finally{process.env.PATH=oldPath;fs.rmSync(dir,{recursive:true,force:true});}
+  }
+}
 
 console.log('AI script generation passed: line range mapping, prompt building, JSON parsing, complex multi-function/class programs and narration synth.');

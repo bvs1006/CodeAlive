@@ -74,4 +74,4 @@ Explanations are static. Replay supports a restricted synchronous subset. PR che
 | [Compare changes](docs/CHANGE_EXPLANATIONS.md) · [Review PR evidence](docs/PR_COMPANION.md) | [API Reference](docs/API_REFERENCE.md) · [Roadmap](docs/ROADMAP.md) |
 | [Explanation videos](docs/EXPLANATION_VIDEO.md) · [Examples](examples/README.md) · [Getting started](docs/GETTING_STARTED.md) | [Contributing](CONTRIBUTING.md) · [Report a bug](https://github.com/bvs1006/CodeAlive/issues/new?template=bug_report.yml) |
 
-Explanation/replay source stays local. PR review reads GitHub through the extension host. Review exported captions, source and audio before sharing. CodeAlive is open source under the [MIT License](LICENSE); Marketplace/Open VSX distribution remains pending.
+Explanation/replay source stays local. Voice generation is local by default; the optional online neural voices (`codealive.narration.onlineVoice`) send caption text to Microsoft. PR review reads GitHub through the extension host. Review exported captions, source and audio before sharing. CodeAlive is open source under the [MIT License](LICENSE); Marketplace/Open VSX distribution remains pending.

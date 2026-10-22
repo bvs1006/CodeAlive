@@ -9,7 +9,7 @@
 - Videos can show code unless Hide source is enabled.
 - Sharing copies a sample/style link, not a saved performance or editor source. The currently hosted browser demo is private.
 - Follow editor changes source, not automatic music playback.
-- Narrated explanation videos accept imported audio in the 1.0 beta. No automatic speech generation, thumbnails, batch exports or automated YouTube uploads.
+- Narrated explanation videos accept imported audio in the 1.0 beta. Speech generation is local by default (online neural voices are opt-in and send caption text to Microsoft); no thumbnails, batch exports or automated YouTube uploads.
 - The standalone web alpha does not yet include the extension's newer templates/presets.
 
 Automated acceptance covers Chromium/media integration and installed VS Code on Linux, Windows and macOS. The exact published 1.0.3 VSIX also passed fresh/upgrade installation, narrated recording and Save/cancel on hosted Windows/macOS desktops. Human acceptance on developers' own machines, physical audio devices, private GitHub sign-in and assistive technology remains pending. See [the recorded release evidence](RELEASE_CHECKLIST.md).
@@ -42,6 +42,6 @@ Working-tree comparison requires a local tracked file with a readable HEAD versi
 
 ## Explanation videos
 
-Import a local narration recording; text-to-speech and microphone recording are not included. Timing fit is proportional, not automatic word alignment: preview and edit scene boundaries. Static steps may include unreachable source; replay scenes describe only the captured interpreter input. Scripts are limited to 20 scenes, 0.5–15 seconds each and 120 seconds total. Narration is mono/stereo, at most 120 seconds and 15 MB. Output stops at 50 MB.
+Import a local narration recording or generate speech (local by default; see EXPLANATION_VIDEO.md). Microphone recording is not included. Generation blocks the extension host while it runs. Timing fit is proportional, not automatic word alignment: preview and edit scene boundaries. Static steps may include unreachable source; replay scenes describe only the captured interpreter input. Scripts are limited to 20 scenes, 0.5–15 seconds each and 120 seconds total. Narration is mono/stereo, at most 120 seconds and 15 MB. Output stops at 50 MB.
 
 Source hiding affects the rendered source panel only; captions and narration may still contain code. Source windows crop long lines and show up to 13 lines around each highlight. Captions are capped at 240 characters; preview wrapping on the actual frame. Recording uses the local browser's supported MP4/WebM format and runs in real time. Hiding the view discards an active recording; Stop creates a labeled partial clip. Devices, codecs and system performance can affect results. Automated recording checks cover Chromium and installed VS Code on Linux, Windows and macOS; physical devices remain manual checks.
