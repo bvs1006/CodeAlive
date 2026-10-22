@@ -1,6 +1,6 @@
 # Manual beta acceptance
 
-Use the [published 1.0.3 beta](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.3)
+Use the [published 1.0.4 beta](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.4)
 and its exact VSIX for these checks. The [release checklist](RELEASE_CHECKLIST.md)
 records the installer hash, source commit and completed automated acceptance.
 These checks cover the remaining human, physical-device and private-account gaps.

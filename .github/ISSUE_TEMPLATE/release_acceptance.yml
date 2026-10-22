@@ -19,7 +19,7 @@ body:
     attributes:
       label: Installer and installation mode
       description: Give the public release tag or source commit and state fresh installation or upgrade. Include the installer SHA-256 if verified.
-      placeholder: "Published v1.0.3 VSIX; fresh installation"
+      placeholder: "Published v1.0.4 VSIX; fresh installation"
     validations:
       required: true
   - type: input

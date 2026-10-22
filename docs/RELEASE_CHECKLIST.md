@@ -1,4 +1,4 @@
-# CodeAlive 1.0.3 beta release checklist
+# CodeAlive 1.0.4 beta release checklist
 
 Run this checklist against one commit and its exact packaged VSIX. Record the commit SHA,
 OS, VS Code version, browser version, and results. A passing automated suite does not

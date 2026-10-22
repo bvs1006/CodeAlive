@@ -2,7 +2,7 @@
 
 The unified 1.0 beta combines explanations, replay, comparisons, PR evidence and
 editable narrated videos. Use one commit and its matching package version when
-testing; do not mix installed VSIX versions. [Release installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.3)
+testing; do not mix installed VSIX versions. [Release installers](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.4)
 are built by the gated `main` release workflow.
 
 ## Run locally
@@ -57,7 +57,7 @@ The **Published desktop acceptance** reusable workflow runs after the gated `mai
 release job. It downloads that version's published VSIX and verifies its SHA-256,
 size, identity and tag commit before installation on Windows/macOS hosted desktops.
 It tests the downloaded bytes rather than rebuilding the release. To inspect an
-older release, choose its **Run workflow** action and `release_tag` (default `v1.0.3`).
+older release, choose its **Run workflow** action and `release_tag` (default `v1.0.4`).
 
 The fresh profile exercises the real toolbar, editor transfer, preserved panel/replay
 state, source navigation, Git comparison, recording with imported narration/music

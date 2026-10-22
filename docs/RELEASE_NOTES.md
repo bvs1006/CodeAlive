@@ -1,4 +1,25 @@
-# CodeAlive 1.0.3 beta
+# CodeAlive 1.0.4 beta
+
+**See what code does, what changed, and why it matters.**
+
+This maintenance beta repairs and tightens narration voice generation.
+
+- **Fix:** the packaged extension could not load its narration module, so
+  **Generate voice narration** failed in the installed 1.0.3. It now loads the same
+  built module as the browser assets.
+- **Privacy:** online Microsoft neural voices (`uvx edge-tts`) are now opt-in through
+  the `codealive.narration.onlineVoice` setting, off by default. When off, speech is
+  generated locally (macOS `say`, `espeak-ng`/`espeak`, or a built-in tone fallback)
+  and no caption text leaves the machine. When on, caption text is sent to Microsoft's
+  speech service and `uvx` may download `edge-tts`.
+- **Cleanup:** removed a developer-specific executable path; narration generation
+  still blocks the extension host while it runs.
+
+Verification: local unit, extension and shared-asset suites and package verification
+passed. The CI release gates and Windows/macOS installed/published-desktop acceptance
+were not run for this release because Actions capacity is exhausted.
+
+## 1.0.3 beta
 
 **See what code does, what changed, and why it matters.**
 
