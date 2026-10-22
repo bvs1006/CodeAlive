@@ -44,6 +44,8 @@ exports.run=async(document,browser)=>{
     await frame.click('#replay-play');await until(async()=>/Step 2 /.test(await frame.textContent('#replay-position')),'replay advances');await frame.click('#replay-play');assert.equal(await frame.textContent('#replay-play'),'Play');
     await frame.click('#workflow-video');assert.equal(await frame.evaluate(()=>document.activeElement.id),'movie-build');await frame.fill('#movie-first','1');await frame.fill('#movie-last','1');await frame.click('#movie-build');
     await frame.locator('#movie-scenes textarea').fill('Return the input plus one.');
+    await frame.click('#movie-ai-voice');
+    await until(async()=>/AI_Narration\.wav/.test(await frame.textContent('#movie-audio-status')),'generated voice narration loaded by the installed extension');
     await frame.locator('#movie-narration').setInputFiles({name:'acceptance-narration.wav',mimeType:'audio/wav',buffer:narrationWav()});
     await until(async()=>/acceptance-narration.wav/.test(await frame.textContent('#movie-audio-status')),'local narration imported');
     await frame.click('#movie-fit');await frame.check('#movie-music');await frame.check('#movie-hide');await frame.click('#movie-record');
@@ -62,7 +64,7 @@ exports.run=async(document,browser)=>{
     assert(info.streams.some(s=>s.codec_type==='video'&&s.width===1080&&s.height===1920));assert(info.streams.some(s=>s.codec_type==='audio'));assert(Number(info.format.duration)>=0.9&&Number(info.format.duration)<3.5);
     const pcm=execFileSync('ffmpeg',['-v','error','-ss','0.3','-i',saved,'-t','0.4','-vn','-ar','48000','-ac','1','-f','f32le','pipe:1']);const count=pcm.length/4;
     function amplitude(hz){let re=0,im=0;for(let i=0;i<count;i++){const value=pcm.readFloatLE(i*4),angle=2*Math.PI*hz*i/48000;re+=value*Math.cos(angle);im+=value*Math.sin(angle);}return 2*Math.hypot(re,im)/count;}
-    assert(amplitude(500)>0.08,'Saved video includes imported narration');assert(amplitude(130.81)>0.015,'Saved video includes optional music');
+    assert(amplitude(500)>0.08,'Saved video includes imported narration');assert(amplitude(261.63)>0.015,'Saved video includes optional music');
     await frame.click('#movie-save');await input.waitFor({state:'visible'});await input.press('Escape');await until(async()=>/Save cancelled/.test(await frame.textContent('#status')),'Save cancellation');
     await frame.locator('#movie-scenes textarea').fill('Updated caption invalidates the prior recording.');assert(await frame.locator('#movie-download').isHidden());
     await frame.click('#workflow-compare');assert.equal(await frame.evaluate(()=>document.activeElement.id),'compare-before');
