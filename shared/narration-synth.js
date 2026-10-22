@@ -3,197 +3,262 @@
   else root.CodeAliveNarrationSynth=factory();
 })(globalThis,function(){
   'use strict';
-  const {spawnSync}=typeof require==='function'?require('node:child_process'):{};
-  const fs=typeof require==='function'?require('node:fs'):{};
-  const os=typeof require==='function'?require('node:os'):{};
-  const path=typeof require==='function'?require('node:path'):{};
+  // Speech engines run as local processes, so this module only works in Node (the extension host).
+  // In a browser or webview it still loads, and synthesizeNarration reports that no engine is available.
+  const hasNode=typeof require==='function'&&typeof process!=='undefined'&&!!process.versions?.node;
+  const cp=hasNode?require('node:child_process'):null;
+  const fs=hasNode?require('node:fs'):null;
+  const os=hasNode?require('node:os'):null;
+  const path=hasNode?require('node:path'):null;
+  const crypto=hasNode?require('node:crypto'):null;
 
-  function createWavHeader(dataLen,sampleRate=48000,numChannels=1,bitsPerSample=16){
-    if(typeof Buffer!=='undefined'){
-      const b=Buffer.alloc(44);
-      b.write('RIFF',0);
-      b.writeUInt32LE(36+dataLen,4);
-      b.write('WAVE',8);
-      b.write('fmt ',12);
-      b.writeUInt32LE(16,16);
-      b.writeUInt16LE(1,20);
-      b.writeUInt16LE(numChannels,22);
-      b.writeUInt32LE(sampleRate,24);
-      b.writeUInt32LE(sampleRate*numChannels*(bitsPerSample/8),28);
-      b.writeUInt16LE(numChannels*(bitsPerSample/8),32);
-      b.writeUInt16LE(bitsPerSample,34);
-      b.write('data',36);
-      b.writeUInt32LE(dataLen,40);
-      return b;
-    }
-    // Browser typed array implementation
-    const buf=new ArrayBuffer(44);
-    const view=new DataView(buf);
-    function writeStr(offset,str){for(let i=0;i<str.length;i++)view.setUint8(offset+i,str.charCodeAt(i));}
-    writeStr(0,'RIFF');
-    view.setUint32(4,36+dataLen,true);
-    writeStr(8,'WAVE');
-    writeStr(12,'fmt ');
-    view.setUint32(16,16,true);
-    view.setUint16(20,1,true);
-    view.setUint16(22,numChannels,true);
-    view.setUint32(24,sampleRate,true);
-    view.setUint32(28,sampleRate*numChannels*(bitsPerSample/8),true);
-    view.setUint16(32,numChannels*(bitsPerSample/8),true);
-    view.setUint16(34,bitsPerSample,true);
-    writeStr(36,'data');
-    view.setUint32(40,dataLen,true);
-    return new Uint8Array(buf);
+  const DEFAULT_VOICE='en-US-AndrewMultilingualNeural';
+  const VOICE_PATTERN=/^[A-Za-z0-9-]{1,64}$/;
+  const SAMPLE_RATE=48000;
+  const MAX_WORDS_PER_SECOND=3;
+  const CACHE_LIMIT=200;
+  const cache=new Map();
+
+  function createWavHeader(dataLen,sampleRate=SAMPLE_RATE,numChannels=1,bitsPerSample=16){
+    const b=Buffer.alloc(44);
+    b.write('RIFF',0);
+    b.writeUInt32LE(36+dataLen,4);
+    b.write('WAVE',8);
+    b.write('fmt ',12);
+    b.writeUInt32LE(16,16);
+    b.writeUInt16LE(1,20);
+    b.writeUInt16LE(numChannels,22);
+    b.writeUInt32LE(sampleRate,24);
+    b.writeUInt32LE(sampleRate*numChannels*(bitsPerSample/8),28);
+    b.writeUInt16LE(numChannels*(bitsPerSample/8),32);
+    b.writeUInt16LE(bitsPerSample,34);
+    b.write('data',36);
+    b.writeUInt32LE(dataLen,40);
+    return b;
   }
 
-  function findOnPath(cmd){
-    const probe=spawnSync(process.platform==='win32'?'where':'which',[cmd]);
+  // Reads a 16-bit PCM WAV by walking its chunks; engines add extra chunks and some leave placeholder sizes.
+  function readWav(buf){
+    if(buf.length<44||buf.toString('ascii',0,4)!=='RIFF'||buf.toString('ascii',8,12)!=='WAVE')throw Error('The speech engine did not produce a WAV file.');
+    let pos=12,fmt=null,data=null;
+    while(pos+8<=buf.length){
+      const id=buf.toString('ascii',pos,pos+4),start=pos+8;
+      let size=buf.readUInt32LE(pos+4);
+      if(start+size>buf.length)size=buf.length-start;
+      if(id==='fmt ')fmt={format:buf.readUInt16LE(start),channels:buf.readUInt16LE(start+2),rate:buf.readUInt32LE(start+4),bits:buf.readUInt16LE(start+14)};
+      else if(id==='data'){data=buf.subarray(start,start+size);break;}
+      pos=start+size+(size&1);
+    }
+    if(!fmt||!data)throw Error('The speech engine produced an incomplete WAV file.');
+    if(fmt.format!==1||fmt.bits!==16||fmt.channels<1)throw Error('The speech engine produced an unsupported WAV format (16-bit PCM is required).');
+    return {...fmt,data};
+  }
+
+  // Mono 16-bit PCM at the requested rate, using linear interpolation when the engine's rate differs.
+  function toMonoPcm(wav,targetRate){
+    const frames=Math.floor(wav.data.length/(2*wav.channels));
+    if(!frames)return Buffer.alloc(0);
+    const mono=new Float64Array(frames);
+    for(let i=0;i<frames;i++){
+      let sum=0;
+      for(let c=0;c<wav.channels;c++)sum+=wav.data.readInt16LE((i*wav.channels+c)*2);
+      mono[i]=sum/wav.channels;
+    }
+    const outFrames=Math.round(frames*targetRate/wav.rate),out=Buffer.alloc(outFrames*2);
+    for(let i=0;i<outFrames;i++){
+      const pos=i*wav.rate/targetRate,i0=Math.min(Math.floor(pos),frames-1),i1=Math.min(i0+1,frames-1),frac=pos-i0;
+      out.writeInt16LE(Math.max(-32768,Math.min(32767,Math.round(mono[i0]*(1-frac)+mono[i1]*frac))),i*2);
+    }
+    return out;
+  }
+
+  function abortError(){const error=Error('Narration generation cancelled.');error.name='AbortError';return error;}
+
+  // Runs a command without a shell and without blocking the extension host.
+  function run(cmd,args,{timeout=15000,signal}={}){
+    return new Promise(resolve=>{
+      if(signal?.aborted)return resolve({status:null,aborted:true});
+      let child,stderr='',done=false,timer;
+      const finish=result=>{if(done)return;done=true;clearTimeout(timer);signal?.removeEventListener('abort',onAbort);resolve(result);};
+      const onAbort=()=>{child?.kill();finish({status:null,aborted:true});};
+      try{child=cp.spawn(cmd,args,{stdio:['ignore','pipe','pipe']});}catch(error){return resolve({status:null,error});}
+      timer=setTimeout(()=>{child.kill();finish({status:null,timedOut:true});},timeout);
+      signal?.addEventListener('abort',onAbort,{once:true});
+      child.stdout.resume();
+      child.stderr.on('data',chunk=>{if(stderr.length<2000)stderr+=chunk;});
+      child.on('error',error=>finish({status:null,error}));
+      child.on('close',status=>finish({status,stderr}));
+    });
+  }
+
+  async function onPath(cmd){
+    if(!hasNode)return false;
+    const probe=await run(process.platform==='win32'?'where':'which',[cmd],{timeout:5000});
     return probe.status===0;
   }
 
-  function synthesizeSceneAudio(text,outFile,sampleRate=48000,voice='en-US-AndrewMultilingualNeural',options={}){
-    if(!spawnSync||!fs)return false;
-    // Opt-in only: edge-tts sends the caption text to Microsoft's online speech service
-    // and uvx may download the package on first use.
-    if(options.onlineVoice&&findOnPath('uvx')){
-      try{
-        const mp3Tmp=outFile.replace(/\.wav$/,'.mp3');
-        const res=spawnSync('uvx',['edge-tts','--voice',voice,'--text',text,'--write-media',mp3Tmp],{timeout:15000});
-        if(res.status===0&&fs.existsSync(mp3Tmp)){
-          const ffmpeg=spawnSync('ffmpeg',['-y','-i',mp3Tmp,'-ar',String(sampleRate),'-ac','1',outFile]);
-          try{fs.unlinkSync(mp3Tmp);}catch{}
-          if(ffmpeg.status===0&&fs.existsSync(outFile))return true;
-        }
-      }catch{}
-    }
-    if(process.platform==='darwin'){
-      // macOS native TTS with natural voice selection
-      const isFemale=/ava|emma|jenny|female|aria/i.test(voice);
-      const macVoice=isFemale?'Samantha':'Daniel';
-      const res=spawnSync('say',['-v',macVoice,'-r','165','--file-format=WAVE',`--data-format=LEI16@${sampleRate}`,'-o',outFile,text]);
-      if(res.status===0&&fs.existsSync(outFile))return true;
-      const fallback=spawnSync('say',['-r','165','--file-format=WAVE',`--data-format=LEI16@${sampleRate}`,'-o',outFile,text]);
-      if(fallback.status===0&&fs.existsSync(outFile))return true;
-    }
-    for(const cmd of ['espeak-ng','espeak']){
-      try{
-        const chk=spawnSync('which',[cmd]);
-        if(chk.status===0){
-          const res=spawnSync(cmd,['-w',outFile,text]);
-          if(res.status===0&&fs.existsSync(outFile))return true;
-        }
-      }catch{}
-    }
-    return false;
+  // Throws a readable error unless the command succeeded and produced the expected file.
+  async function runChecked(label,cmd,args,options,outFile){
+    const result=await run(cmd,args,options);
+    if(result.aborted)throw abortError();
+    if(result.timedOut)throw Error(`${label} timed out.`);
+    if(result.error)throw Error(`${label} could not start: ${result.error.message}`);
+    if(result.status!==0)throw Error(`${label} failed${result.stderr?': '+result.stderr.trim().split('\n').pop():'.'}`);
+    if(outFile&&!fs.existsSync(outFile))throw Error(`${label} produced no audio.`);
   }
 
-  function synthesizeSyntheticVoice(text,sampleRate=48000){
+  function writeTextFile(dir,index,text){
+    // A file avoids text beginning with "-" being read as a command-line option.
+    const file=path.join(dir,`scene_${index}.txt`);
+    fs.writeFileSync(file,text,'utf8');
+    return file;
+  }
+
+  function synthesizeTone(text,sampleRate){
+    // A placeholder with speech-like cadence and no words, for tests and for machines with no voice.
     const words=text.trim().split(/\s+/);
     const duration=Math.min(12.0,Math.max(1.8,words.length*0.35));
-    const totalSamples=Math.round(duration*sampleRate);
-    const baseFreq=140;
-    if(typeof Buffer!=='undefined'){
-      const pcm=Buffer.alloc(totalSamples*2);
-      for(let i=0;i<totalSamples;i++){
-        const t=i/sampleRate;
-        const wordIdx=Math.floor((t/duration)*words.length);
-        const inWord=(t%(duration/words.length))<(0.75*(duration/words.length));
-        let sample=0;
-        if(inWord){
-          const f0=baseFreq+(wordIdx%3)*15;
-          const v1=Math.sin(2*Math.PI*f0*t);
-          const v2=0.4*Math.sin(2*Math.PI*f0*2.8*t);
-          const v3=0.2*Math.sin(2*Math.PI*f0*5.2*t);
-          const envelope=Math.sin(Math.PI*((t%(duration/words.length))/(0.75*(duration/words.length))));
-          sample=(v1+v2+v3)*envelope*0.35;
-        }
-        const intVal=Math.max(-32768,Math.min(32767,Math.round(sample*32767)));
-        pcm.writeInt16LE(intVal,i*2);
-      }
-      return pcm;
-    }
-    const pcm=new Int16Array(totalSamples);
-    for(let i=0;i<totalSamples;i++){
-      const t=i/sampleRate;
-      const wordIdx=Math.floor((t/duration)*words.length);
-      const inWord=(t%(duration/words.length))<(0.75*(duration/words.length));
+    const total=Math.round(duration*sampleRate),pcm=Buffer.alloc(total*2),slot=duration/words.length;
+    for(let i=0;i<total;i++){
+      const t=i/sampleRate,word=Math.floor(t/slot),local=t%slot;
       let sample=0;
-      if(inWord){
-        const f0=baseFreq+(wordIdx%3)*15;
-        const v1=Math.sin(2*Math.PI*f0*t);
-        const v2=0.4*Math.sin(2*Math.PI*f0*2.8*t);
-        const v3=0.2*Math.sin(2*Math.PI*f0*5.2*t);
-        const envelope=Math.sin(Math.PI*((t%(duration/words.length))/(0.75*(duration/words.length))));
-        sample=(v1+v2+v3)*envelope*0.35;
+      if(local<0.75*slot){
+        const f0=140+(word%3)*15,envelope=Math.sin(Math.PI*(local/(0.75*slot)));
+        sample=(Math.sin(2*Math.PI*f0*t)+0.4*Math.sin(2*Math.PI*f0*2.8*t)+0.2*Math.sin(2*Math.PI*f0*5.2*t))*envelope*0.35;
       }
-      pcm[i]=Math.max(-32768,Math.min(32767,Math.round(sample*32767)));
+      pcm.writeInt16LE(Math.max(-32768,Math.min(32767,Math.round(sample*32767))),i*2);
     }
-    return new Uint8Array(pcm.buffer);
+    return pcm;
   }
 
-  function synthesizeNarration(scenes=[],options={}){
-    if(!Array.isArray(scenes)||!scenes.length)return {ok:false,error:'No scenes provided for narration.'};
-    const sampleRate=options.sampleRate||48000;
-    const voice=options.voice||'en-US-AndrewMultilingualNeural';
-    const tmpDir=os?.tmpdir?.()||'/tmp';
-    const chunks=[];
-    const updatedScenes=[];
-
-    for(let i=0;i<scenes.length;i++){
-      const s=scenes[i];
-      const caption=String(s.caption||'').trim();
-      if(!caption)continue;
-      const tmpFile=path?.join?.(tmpDir,`codealive_scene_${Date.now()}_${i}.wav`);
-      let pcmBytes=null;
-
-      const ok=tmpFile?synthesizeSceneAudio(caption,tmpFile,sampleRate,voice,options):false;
-      if(ok&&fs.existsSync(tmpFile)){
-        try{
-          const buf=fs.readFileSync(tmpFile);
-          pcmBytes=buf.subarray(44);
-        }catch{}
-        try{fs.unlinkSync(tmpFile);}catch{}
-      }
-
-      if(!pcmBytes||!pcmBytes.length){
-        pcmBytes=synthesizeSyntheticVoice(caption,sampleRate);
-      }
-
-      const byteLength=pcmBytes.byteLength||pcmBytes.length;
-      const speechSeconds=byteLength/(sampleRate*2);
-      const targetDuration=Math.max(Number(s.duration)||4.0,Math.ceil((speechSeconds+0.4)*10)/10);
-      updatedScenes.push({...s,duration:targetDuration});
-
-      chunks.push(pcmBytes);
-      const silenceSeconds=Math.max(0.1,targetDuration-speechSeconds);
-      const silenceBytes=Math.round(silenceSeconds*sampleRate)*2;
-      const silence=typeof Buffer!=='undefined'?Buffer.alloc(silenceBytes):new Uint8Array(silenceBytes);
-      chunks.push(silence);
-    }
-
-    if(!chunks.length)return {ok:false,error:'Could not synthesize narration audio.'};
-    
-    let totalPcm;
-    if(typeof Buffer!=='undefined'){
-      totalPcm=Buffer.concat(chunks);
-      const header=createWavHeader(totalPcm.length,sampleRate,1,16);
-      const wavBuffer=Buffer.concat([header,totalPcm]);
-      return {ok:true,wavBuffer,scenes:updatedScenes,totalSeconds:totalPcm.length/(sampleRate*2)};
-    }
-    const totalLen=chunks.reduce((acc,c)=>acc+(c.byteLength||c.length),0);
-    totalPcm=new Uint8Array(totalLen);
-    let offset=0;
-    for(const c of chunks){
-      const arr=c instanceof Uint8Array?c:new Uint8Array(c.buffer||c);
-      totalPcm.set(arr,offset);
-      offset+=arr.length;
-    }
-    const header=createWavHeader(totalLen,sampleRate,1,16);
-    const wavBuffer=new Uint8Array(44+totalLen);
-    wavBuffer.set(header,0);
-    wavBuffer.set(totalPcm,44);
-    return {ok:true,wavBuffer,scenes:updatedScenes,totalSeconds:totalLen/(sampleRate*2)};
+  async function localCommand(){
+    if(process.platform==='darwin')return (await onPath('say'))?'say':null;
+    for(const cmd of ['espeak-ng','espeak'])if(await onPath(cmd))return cmd;
+    return null;
   }
 
-  return {createWavHeader,synthesizeNarration,synthesizeSpeech:synthesizeSceneAudio};
+  // Each engine reports whether it can run, and speaks one caption as mono 16-bit PCM at the requested rate.
+  const engines={
+    system:{
+      label:'System voice (macOS say, espeak-ng or espeak)',
+      async check(){
+        const cmd=await localCommand();
+        if(cmd)return {available:true,detail:`Using ${cmd}. Speech is generated on this machine.`};
+        return {available:false,detail:process.platform==='darwin'?'The macOS say command was not found.':'No espeak-ng or espeak on PATH. Install espeak-ng, or choose another voice engine.'};
+      },
+      async speak(text,{voice,sampleRate,signal,dir,index}){
+        const cmd=await localCommand(),textFile=writeTextFile(dir,index,text),wavFile=path.join(dir,`scene_${index}.wav`);
+        const options={timeout:30000,signal};
+        if(cmd==='say'){
+          const female=/ava|emma|jenny|female|aria/i.test(voice),base=['-r','165','--file-format=WAVE',`--data-format=LEI16@${sampleRate}`,'-o',wavFile,'-f',textFile];
+          try{await runChecked('say','say',['-v',female?'Samantha':'Daniel',...base],options,wavFile);}
+          catch(error){if(error.name==='AbortError')throw error;await runChecked('say','say',base,options,wavFile);}
+        }else await runChecked(cmd,cmd,['-w',wavFile,'-f',textFile],options,wavFile);
+        return toMonoPcm(readWav(fs.readFileSync(wavFile)),sampleRate);
+      }
+    },
+    online:{
+      label:"Microsoft online neural voices (edge-tts; sends caption text to Microsoft)",
+      async check(){
+        if(!(await onPath('uvx')))return {available:false,detail:'uvx was not found on PATH (install uv to use edge-tts).'};
+        if(!(await onPath('ffmpeg')))return {available:false,detail:'ffmpeg was not found on PATH.'};
+        return {available:true,detail:'Caption text is sent to Microsoft\'s speech service. uvx may download edge-tts on first use.'};
+      },
+      async speak(text,{voice,sampleRate,signal,dir,index}){
+        const mp3=path.join(dir,`scene_${index}.mp3`),wavFile=path.join(dir,`scene_${index}.wav`);
+        // The "=" forms keep caption text from being read as an option.
+        await runChecked('edge-tts','uvx',['edge-tts',`--voice=${voice}`,`--text=${text}`,`--write-media=${mp3}`],{timeout:60000,signal},mp3);
+        await runChecked('ffmpeg','ffmpeg',['-y','-i',mp3,'-ar',String(sampleRate),'-ac','1','-f','wav',wavFile],{timeout:30000,signal},wavFile);
+        return toMonoPcm(readWav(fs.readFileSync(wavFile)),sampleRate);
+      }
+    },
+    tone:{
+      label:'Placeholder tone (no words; for timing and testing)',
+      async check(){return {available:true,detail:'Generates a wordless tone with speech-like timing.'};},
+      async speak(text,{sampleRate}){return synthesizeTone(text,sampleRate);}
+    }
+  };
+
+  async function describeEngines(registry=engines){
+    const out=[];
+    for(const [id,engine] of Object.entries(registry)){
+      const status=hasNode?await engine.check():{available:false,detail:'Voice generation needs the VS Code extension.'};
+      out.push({id,label:engine.label,available:status.available,detail:status.detail});
+    }
+    return out;
+  }
+
+  function remember(key,pcm){
+    if(cache.size>=CACHE_LIMIT)cache.delete(cache.keys().next().value);
+    cache.set(key,pcm);
+  }
+
+  function silence(seconds,sampleRate){return Buffer.alloc(Math.round(seconds*sampleRate)*2);}
+
+  const fail=(error,extra={})=>({ok:false,error,...extra});
+
+  // Options: engine ('system' | 'online' | 'tone'), voice, sampleRate, signal (AbortSignal),
+  // onProgress({phase,index,total,cached,engine,warnings}), cache (false to bypass), engines (for tests).
+  // Scene durations only ever grow, to fit the speech; `changes` lists each scene that was lengthened.
+  async function synthesizeNarration(scenes=[],options={}){
+    if(!hasNode)return fail('Voice generation needs the VS Code extension. Import a narration recording instead.');
+    if(!Array.isArray(scenes)||!scenes.length)return fail('No scenes provided for narration.');
+    const sampleRate=options.sampleRate||SAMPLE_RATE;
+    const voice=VOICE_PATTERN.test(options.voice||'')?options.voice:DEFAULT_VOICE;
+    const engineId=options.engine||(options.onlineVoice?'online':'system');
+    const engine=(options.engines||engines)[engineId];
+    if(!engine)return fail(`Unknown voice engine "${engineId}".`);
+    const spoken=scenes.filter(s=>String(s.caption||'').trim()).length;
+    if(!spoken)return fail('No scene has a caption to speak.');
+    const status=await engine.check();
+    if(!status.available)return fail(`Voice engine "${engineId}" is unavailable: ${status.detail}`,{engine:engineId});
+
+    const maxWps=options.maxWordsPerSecond||MAX_WORDS_PER_SECOND;
+    const warnings=[];
+    scenes.forEach((s,i)=>{
+      const caption=String(s.caption||'').trim(),duration=Number(s.duration)||4,words=caption?caption.split(/\s+/).length:0;
+      if(words/duration>maxWps)warnings.push(`Scene ${i+1} has ${words} words in ${duration}s; it will probably be lengthened to fit the speech.`);
+    });
+    options.onProgress?.({phase:'start',total:scenes.length,engine:engineId,warnings});
+
+    const dir=fs.mkdtempSync(path.join(os.tmpdir(),'codealive-voice-'));
+    const chunks=[],outScenes=[],changes=[];
+    let cached=0,current=0;
+    try{
+      for(let i=0;i<scenes.length;i++){
+        current=i;
+        if(options.signal?.aborted)throw abortError();
+        const s=scenes[i],caption=String(s.caption||'').trim(),base=Number(s.duration)||4;
+        if(!caption){
+          // A scene with nothing to say still takes its time, so later scenes stay in sync with the video.
+          chunks.push(silence(base,sampleRate));
+          outScenes.push({...s});
+          continue;
+        }
+        const key=crypto.createHash('sha256').update([engineId,voice,sampleRate,caption].join('\u0000')).digest('hex');
+        let pcm=options.cache===false?null:cache.get(key);
+        const hit=!!pcm;
+        if(hit)cached++;
+        else{
+          pcm=await engine.speak(caption,{voice,sampleRate,signal:options.signal,dir,index:i});
+          if(!pcm?.length)throw Error('The voice engine produced no audio.');
+          if(options.cache!==false)remember(key,pcm);
+        }
+        options.onProgress?.({phase:'scene',index:i,total:scenes.length,cached:hit,engine:engineId});
+        const speech=pcm.length/(sampleRate*2),target=Math.max(base,Math.ceil((speech+0.4)*10)/10);
+        if(target>base+1e-9)changes.push({index:i,from:base,to:target});
+        outScenes.push({...s,duration:target});
+        chunks.push(pcm,silence(Math.max(0.1,target-speech),sampleRate));
+      }
+    }catch(error){
+      if(error.name==='AbortError')return fail('Narration generation cancelled.',{cancelled:true,engine:engineId});
+      return fail(`Scene ${current+1}: ${error.message}`,{engine:engineId});
+    }finally{
+      try{fs.rmSync(dir,{recursive:true,force:true});}catch{}
+    }
+    const pcm=Buffer.concat(chunks);
+    return {ok:true,wavBuffer:Buffer.concat([createWavHeader(pcm.length,sampleRate,1,16),pcm]),scenes:outScenes,totalSeconds:pcm.length/(sampleRate*2),engine:engineId,voice,cached,spoken,changes,warnings};
+  }
+
+  return {createWavHeader,readWav,toMonoPcm,synthesizeNarration,describeEngines,engines,clearCache:()=>cache.clear()};
 });

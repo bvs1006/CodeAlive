@@ -86,7 +86,7 @@
     // Codec lists contain commas; base64 follows the final comma in a data URL.
     $('movie-save').onclick=()=>{if(!blob)return;if(host){const reader=new FileReader();reader.onload=()=>host.postMessage({type:'saveExplanationVideo',base64:String(reader.result).split(',').pop(),format:blob.type.includes('mp4')?'mp4':'webm'});reader.onerror=()=>status('Could not read the recording.');reader.readAsDataURL(blob);}else{const a=document.createElement('a');a.href=url;a.download='codealive-explanation.'+(blob.type.includes('mp4')?'mp4':'webm');a.click();}};
     if($('movie-export-subtitles'))$('movie-export-subtitles').onclick=()=>{try{const p=readPlan(),format=$('movie-sub-format')?.value||'srt';const content=format==='vtt'?CodeAliveMovie.toVTT(p):CodeAliveMovie.toSRT(p);if(host){host.postMessage({type:'saveSubtitles',content,format});}else{const a=document.createElement('a');a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(content);a.download=`codealive-explanation.${format}`;a.click();status('Subtitles exported.');}}catch(e){status(e.message);}};
-    async function loadNarrationBuffer(arrayBuffer,name='Generated_Voice.wav',updatedScenes){
+    async function loadNarrationBuffer(arrayBuffer,name='Generated_Voice.wav',updatedScenes,summary){
       try{
         const Audio=root.AudioContext||root.webkitAudioContext;
         if(!Audio)throw Error('Web Audio is unavailable.');
@@ -99,18 +99,31 @@
           renderScenes();
         }
         audioNote(readPlan());
-        status(`🎙️ Voice narration loaded (${buffer.duration.toFixed(1)}s). Ready to preview or record.`);
+        status(`🎙️ Voice narration loaded (${buffer.duration.toFixed(1)}s).${summary||''} Ready to preview or record.`);
         await audio.close();
         controls(false);
       }catch(e){
         status('Failed to load narration audio: '+e.message);
       }
     }
+    function narrationBusy(on){
+      const cancel=$('movie-ai-voice-cancel'),go=$('movie-ai-voice');
+      if(cancel)cancel.hidden=!on;
+      if(go)go.disabled=on;
+    }
+    function handleNarrationProgress(msg){
+      if(msg.phase==='start')status(`Generating voice with the "${msg.engine}" engine…${msg.warnings?.length?' '+msg.warnings.join(' '):''}`);
+      else if(msg.phase==='scene')status(`Generating voice: scene ${msg.index+1} of ${msg.total}${msg.cached?' (reused)':''}…`);
+    }
     function handleNarrationGenerated(msg){
-      if(!msg.ok||!msg.base64){status(msg.error||'Narration generation failed.');return;}
+      narrationBusy(false);
+      if(!msg.ok||!msg.base64){status(msg.cancelled?'Voice generation cancelled. Your script is unchanged.':(msg.error||'Narration generation failed.'));return;}
       const bin=atob(msg.base64),bytes=new Uint8Array(bin.length);
       for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
-      loadNarrationBuffer(bytes.buffer,msg.name||'AI_Narration.wav',msg.scenes);
+      // Durations only grow to fit the speech, so name each scene that changed.
+      const changes=(msg.changes||[]).map(c=>`scene ${c.index+1} ${c.from.toFixed(1)}→${c.to.toFixed(1)}s`);
+      const parts=[` Engine: ${msg.engine}${msg.cached?`, ${msg.cached} of ${msg.spoken} reused`:''}.`,changes.length?` Lengthened to fit the speech: ${changes.join(', ')}.`:' Scene timing unchanged.'];
+      loadNarrationBuffer(bytes.buffer,msg.name||'AI_Narration.wav',msg.scenes,parts.join(''));
     }
     function applyScript(res,notice){
       if(res.title)$('movie-title').value=res.title;
@@ -145,37 +158,14 @@
     if($('movie-ai-voice'))$('movie-ai-voice').onclick=()=>{
       try{
         if(!scenes.length)throw Error('Generate or build scenes first.');
+        if(!host)throw Error('Voice generation needs the VS Code extension. Import a recording, or preview with your browser\'s speech.');
         const voice=$('movie-voice')?.value||'en-US-AndrewMultilingualNeural';
-        if(host){
-          status('Synthesizing voice narration...');
-          host.postMessage({type:'synthesizeNarration',scenes,voice});
-        }else{
-          status('Synthesizing voice narration...');
-          if(typeof fetch==='function'){
-            fetch('/api/synthesize-narration',{
-              method:'POST',
-              headers:{'Content-Type':'application/json'},
-              body:JSON.stringify({scenes,voice})
-            }).then(r=>r.json()).then(res=>{
-              if(res?.ok&&res.base64)handleNarrationGenerated(res);
-              else throw Error(res?.error||'Local server returned no audio.');
-            }).catch(()=>{
-              const local=root.CodeAliveNarrationSynth?.synthesizeNarration(scenes,{voice});
-              if(!local?.ok)throw Error(local?.error||'Speech synthesis unavailable.');
-              const raw=local.wavBuffer;
-              const ab=raw.buffer?raw.buffer.slice(raw.byteOffset,raw.byteOffset+raw.byteLength):raw;
-              loadNarrationBuffer(ab,'Local_Voice.wav',local.scenes);
-            });
-          }else{
-            const res=root.CodeAliveNarrationSynth?.synthesizeNarration(scenes,{voice});
-            if(!res?.ok)throw Error(res?.error||'Speech synthesis unavailable.');
-            const raw=res.wavBuffer;
-            const ab=raw.buffer?raw.buffer.slice(raw.byteOffset,raw.byteOffset+raw.byteLength):raw;
-            loadNarrationBuffer(ab,'Local_Voice.wav',res.scenes);
-          }
-        }
+        narrationBusy(true);
+        status('Starting voice generation…');
+        host.postMessage({type:'synthesizeNarration',scenes,voice});
       }catch(e){status(e.message);}
     };
+    if($('movie-ai-voice-cancel'))$('movie-ai-voice-cancel').onclick=()=>{if(host)host.postMessage({type:'cancelNarration'});};
     if($('movie-complex-sample'))$('movie-complex-sample').onchange=()=>{
       const val=$('movie-complex-sample').value;
       if(!val)return;
@@ -214,6 +204,6 @@
       }catch(e){status(e.message);}
     };
     document.addEventListener('visibilitychange',()=>{if(document.hidden&&state){stop(true);status('Stopped because the view was hidden. Keep it visible during preview or recording.');}});
-    return {clear,setContext(){setContext();stepRange();},getBlob:()=>blob,getState:()=>state?{recording:!!state.recorder,seconds:state.plan.seconds}:null,handleAIScript,handleNarrationGenerated};
+    return {clear,setContext(){setContext();stepRange();},getBlob:()=>blob,getState:()=>state?{recording:!!state.recorder,seconds:state.plan.seconds}:null,handleAIScript,handleNarrationGenerated,handleNarrationProgress};
   }};
 })(globalThis);

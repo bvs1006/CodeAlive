@@ -33,6 +33,13 @@ async function revealSource(snapshot,message,notice=()=>{}) {
 function activateExplain(context) {
   let panel,ready=false,loaded=null,queued=null,lastEditor=vscode.window.activeTextEditor;
   const disposables=[],documents=new Map();
+  let narrationAbort=null;
+  const loadSynth=()=>{try{return require('./media/explainer/narration-synth');}catch{return require('../shared/narration-synth');}};
+  // The deprecated onlineVoice flag still selects the online engine when the engine setting is left at its default.
+  const narrationEngine=()=>{
+    const config=vscode.workspace.getConfiguration('codealive'),engine=config.get('narration.engine','system');
+    return engine==='system'&&config.get('narration.onlineVoice',false)===true?'online':engine;
+  };
   if(vscode.workspace.registerTextDocumentContentProvider)disposables.push(vscode.workspace.registerTextDocumentContentProvider('codealive-snapshot',{provideTextDocumentContent:uri=>documents.get(uri.toString())||''}));
   const currentEditor=()=>vscode.window.activeTextEditor || (lastEditor&&!lastEditor.document.isClosed?lastEditor:null) || vscode.window.visibleTextEditors?.[0];
   const send=snapshot=>{if(!snapshot)return;loaded=snapshot;queued=snapshot.payload;if(panel&&ready)panel.webview.postMessage(queued);};
@@ -43,7 +50,7 @@ function activateExplain(context) {
     }
     const created=vscode.window.createWebviewPanel('codealive.explain','CodeAlive · Explain',vscode.ViewColumn.Beside,{enableScripts:true,retainContextWhenHidden:true,localResourceRoots:[vscode.Uri.joinPath(context.extensionUri,'media')]});
     panel=created;ready=false;send(snapshot);
-    disposables.push(created.onDidDispose(()=>{if(panel===created){panel=null;ready=false;loaded=null;queued=null;}}));
+    disposables.push(created.onDidDispose(()=>{if(panel===created){narrationAbort?.abort();narrationAbort=null;panel=null;ready=false;loaded=null;queued=null;}}));
     disposables.push(created.webview.onDidReceiveMessage(async message=>{
       if(panel!==created||!message||typeof message.type!=='string')return;
       try {
@@ -54,9 +61,14 @@ function activateExplain(context) {
         else if(message.type==='reviewPR')await vscode.commands.executeCommand('codealive.reviewPR');
         else if(message.type==='saveExplanationVideo'){const saved=await require('./video-save').saveExplanationVideo(message);created.webview.postMessage({type:'notice',text:saved?'Explanation video saved.':'Save cancelled.'});}
         else if(message.type==='saveSubtitles'){const saved=await require('./video-save').saveSubtitles(message);created.webview.postMessage({type:'notice',text:saved?'Subtitles saved.':'Save cancelled.'});}
+        else if(message.type==='cancelNarration')narrationAbort?.abort();
         else if(message.type==='synthesizeNarration'){
-          let synth;try{synth=require('./media/explainer/narration-synth');}catch{synth=require('../shared/narration-synth');}
-          const res=synth.synthesizeNarration(message.scenes||[],{voice:message.voice,onlineVoice:vscode.workspace.getConfiguration('codealive').get('narration.onlineVoice',false)===true});
+          narrationAbort?.abort();
+          const abort=narrationAbort=new AbortController();
+          const res=await loadSynth().synthesizeNarration(message.scenes||[],{voice:message.voice,engine:narrationEngine(),signal:abort.signal,onProgress:progress=>{if(!abort.signal.aborted)created.webview.postMessage({type:'narrationProgress',...progress});}});
+          // A newer request replaced this one, so its result must not overwrite the newer run's status.
+          if(narrationAbort!==abort)return;
+          narrationAbort=null;
           if(res.ok){
             created.webview.postMessage({
               type:'narrationGenerated',
@@ -65,10 +77,15 @@ function activateExplain(context) {
               mimeType:'audio/wav',
               name:'AI_Narration.wav',
               scenes:res.scenes,
-              notice:`🎙️ AI voice narration generated (${res.totalSeconds.toFixed(1)}s). Ready to preview or record.`
+              engine:res.engine,
+              voice:res.voice,
+              cached:res.cached,
+              spoken:res.spoken,
+              changes:res.changes,
+              warnings:res.warnings
             });
           }else{
-            created.webview.postMessage({type:'narrationGenerated',ok:false,error:res.error||'Could not synthesize speech.'});
+            created.webview.postMessage({type:'narrationGenerated',ok:false,cancelled:!!res.cancelled,error:res.error||'Could not synthesize speech.'});
           }
         }
         else if(message.type==='requestAIScript'){
@@ -124,6 +141,11 @@ function activateExplain(context) {
     return show(source);
   });
   command('codealive.openExplainer',()=>show(null));
+  command('codealive.checkVoiceSetup',async()=>{
+    const synth=loadSynth(),selected=narrationEngine(),found=await synth.describeEngines();
+    const lines=found.map(engine=>`${engine.id===selected?'▶ ':'   '}${engine.id}: ${engine.available?'available':'unavailable'}. ${engine.detail}`);
+    await vscode.window.showInformationMessage(`CodeAlive voice engines (selected: ${selected})\n${lines.join('\n')}`,{modal:true});
+  });
   const showComparison=message=>{
     if(!message||typeof message.before!=='string'||typeof message.after!=='string'||Math.max(message.before.length,message.after.length)>MAX_CODE||!['JavaScript','TypeScript'].includes(message.language))throw new Error('Invalid comparison source.');
     documents.clear();return show({comparison:true,document:message.document,version:message.version,viewColumn:message.viewColumn,payload:{type:'compareSource',before:message.before,after:message.after,language:message.language,filename:message.filename,evidence:message.evidence,sourceToken:crypto.randomBytes(18).toString('hex')}});

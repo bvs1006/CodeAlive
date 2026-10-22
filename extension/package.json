@@ -34,14 +34,30 @@
     "configuration": {
       "title": "CodeAlive",
       "properties": {
+        "codealive.narration.engine": {
+          "type": "string",
+          "enum": ["system", "online", "tone"],
+          "default": "system",
+          "enumDescriptions": [
+            "Speech generated on this machine with macOS say, espeak-ng or espeak. No text leaves the machine.",
+            "Microsoft online neural voices through uvx edge-tts and ffmpeg. Caption text is sent to Microsoft's speech service and uvx may download edge-tts.",
+            "A wordless placeholder tone with speech-like timing, for testing or when no voice is installed."
+          ],
+          "markdownDescription": "Voice engine for **Generate voice narration**. If the chosen engine is unavailable, generation stops with an explanation instead of switching engines. Run **CodeAlive: Check Voice Setup** to see what is installed."
+        },
         "codealive.narration.onlineVoice": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Use Microsoft's online neural voices (via `uvx edge-tts`) for **Generate voice narration**. Scene caption text is sent to Microsoft's speech service and `uvx` may download the package. When off, speech is generated locally with macOS `say`, `espeak` or a built-in tone fallback."
+          "deprecationMessage": "Use codealive.narration.engine set to \"online\" instead.",
+          "markdownDescription": "Deprecated. Set `codealive.narration.engine` to `online`. When true and the engine is left at `system`, the online engine is used."
         }
       }
     },
     "commands": [
+      {
+        "command": "codealive.checkVoiceSetup",
+        "title": "CodeAlive: Check Voice Setup"
+      },
       {
         "command": "codealive.start",
         "title": "CodeAlive: Open CodeAlive",

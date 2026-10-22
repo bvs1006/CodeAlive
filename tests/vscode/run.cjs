@@ -15,7 +15,7 @@ async function freePort(){const server=net.createServer();await new Promise(reso
   for(const mode of ['fresh','upgrade']){
     const base=path.join(session,mode),extensions=path.join(base,'installed'),user=path.join(base,'profile'),fixture=path.join(base,'fixture');
     fs.mkdirSync(path.join(user,'User'),{recursive:true});fs.mkdirSync(fixture,{recursive:true});
-    fs.writeFileSync(path.join(user,'User/settings.json'),JSON.stringify({'telemetry.telemetryLevel':'off','workbench.startupEditor':'none','security.workspace.trust.enabled':false,'files.simpleDialog.enable':true}));
+    fs.writeFileSync(path.join(user,'User/settings.json'),JSON.stringify({'telemetry.telemetryLevel':'off','codealive.narration.engine':'tone','workbench.startupEditor':'none','security.workspace.trust.enabled':false,'files.simpleDialog.enable':true}));
     const git=args=>execFileSync('git',args,{cwd:fixture});git(['init']);
     fs.writeFileSync(path.join(fixture,'sample.ts'),'function total(x: number) { return x; }\n');git(['add','sample.ts']);git(['-c','user.name=CodeAlive test','-c','user.email=test@example.invalid','commit','-m','Comparison fixture']);
     const common=['--extensions-dir',extensions,'--user-data-dir',user];

@@ -46,6 +46,7 @@ exports.run=async(document,browser)=>{
     await frame.locator('#movie-scenes textarea').fill('Return the input plus one.');
     await frame.click('#movie-ai-voice');
     await until(async()=>/AI_Narration\.wav/.test(await frame.textContent('#movie-audio-status')),'generated voice narration loaded by the installed extension');
+    await until(async()=>/Engine: tone/.test(await frame.textContent('#movie-status')),'generated voice reports the selected engine');
     await frame.locator('#movie-narration').setInputFiles({name:'acceptance-narration.wav',mimeType:'audio/wav',buffer:narrationWav()});
     await until(async()=>/acceptance-narration.wav/.test(await frame.textContent('#movie-audio-status')),'local narration imported');
     await frame.click('#movie-fit');await frame.check('#movie-music');await frame.check('#movie-hide');await frame.click('#movie-record');

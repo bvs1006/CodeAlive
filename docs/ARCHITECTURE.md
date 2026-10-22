@@ -175,11 +175,11 @@ sequenceDiagram
     MUI->>Dev: Display Editable Scenes & Captions
     Dev->>MUI: Select Voice (e.g. Andrew / Emma) & Click "Generate Voice"
     MUI->>Host: postMessage({ type: 'synthesizeNarration', scenes, voice })
-    Host->>Synth: synthesizeNarration(scenes, { voice })
-    Synth->>TTS: Invoke edge-tts / say / espeak
-    TTS-->>Synth: Audio PCM / MP3 -> Converted to 48kHz WAV
-    Synth-->>Host: Combined WAV Buffer & Adjusted Scene Timings
-    Host-->>MUI: postMessage({ type: 'narrationGenerated', base64, scenes })
+    Host->>Synth: synthesizeNarration(scenes, { engine, voice, signal })
+    Synth->>TTS: Spawn the selected engine (say / espeak / edge-tts), async, per uncached scene
+    TTS-->>Synth: Audio converted to 48kHz mono PCM
+    Synth-->>Host: progress events, then WAV Buffer, timings and the list of lengthened scenes
+    Host-->>MUI: postMessage narrationProgress ... then narrationGenerated
     MUI->>MUI: Web Audio Context decodes audio buffer & fits timeline
     MUI->>Dev: Ready for Synchronized Preview or Recording
 ```

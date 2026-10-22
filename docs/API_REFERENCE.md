@@ -203,28 +203,51 @@ Translates 1-based line numbers into 0-based character offsets `{start, end}`.
 
 ## 6. Engine: `CodeAliveNarrationSynth`
 
-Located in `shared/narration-synth.js` and `extension/narration-synth.js`. Orchestrates neural and native text-to-speech engines.
+Located in `shared/narration-synth.js`. It runs in the extension host (Node) only; in a browser or webview it loads but reports that voice generation needs the VS Code extension.
 
-### `CodeAliveNarrationSynth.synthesizeNarration(scenes, options)`
-Synthesizes spoken audio for each scene, measures real duration, adjusts scene timings, and combines audio into a single 48kHz WAV buffer.
+### Engines
+
+| Engine id | What it does | Network |
+|---|---|---|
+| `system` (default) | macOS `say`, or `espeak-ng` / `espeak` elsewhere | None |
+| `online` | Microsoft neural voices through `uvx edge-tts` and `ffmpeg` | Sends caption text to Microsoft; `uvx` may download `edge-tts` |
+| `tone` | Wordless placeholder tone with speech-like timing, for tests or machines with no voice | None |
+
+The chosen engine is the only one used. If it is unavailable the call fails with an explanation; it never switches engines.
+
+### `CodeAliveNarrationSynth.synthesizeNarration(scenes, options)` → `Promise`
+Speaks each caption, measures the real duration, lengthens scenes that are too short for their speech, and combines everything into one 48 kHz mono WAV. Scenes with no caption contribute silence for their duration, so later scenes stay in sync.
 
 #### Parameters
-- `scenes` (`Array<{caption: string, duration?: number}>`): The scenes to synthesize.
-- `options.voice` (`string`): Target voice identifier.
-  - Male Neural: `'en-US-AndrewMultilingualNeural'`, `'en-US-ChristopherNeural'`.
-  - Female Neural: `'en-US-AvaMultilingualNeural'`, `'en-US-EmmaMultilingualNeural'`.
-  - Fallbacks: macOS `say` system voices, Linux `espeak`.
+- `scenes` (`Array<{caption: string, duration?: number}>`)
+- `options.engine` (`'system' | 'online' | 'tone'`, default `'system'`)
+- `options.voice` (`string`): letters, digits and hyphens only, otherwise the default is used. Examples: `en-US-AndrewMultilingualNeural`, `en-US-ChristopherNeural` (male), `en-US-AvaMultilingualNeural`, `en-US-EmmaMultilingualNeural` (female). The `system` engine maps these to a male or female system voice.
+- `options.signal` (`AbortSignal`): cancels generation and kills the running speech process.
+- `options.onProgress(event)`: `{phase: 'start', total, engine, warnings}` once, then `{phase: 'scene', index, total, cached, engine}` per scene.
+- `options.cache` (`false` to bypass). Scene audio is cached in memory by engine, voice, sample rate and caption, so editing one caption regenerates one scene.
+- `options.engines`: replace the engine registry (used by tests).
 
-#### Return Value
+#### Return value
 ```typescript
 {
-  ok: boolean;
-  wavBuffer?: Buffer | Uint8Array;
-  base64?: string;
-  scenes?: Array<{caption: string, duration: number, range: object}>;
-  error?: string;
+  ok: true;
+  wavBuffer: Buffer;
+  scenes: Array<{caption: string, duration: number}>;  // durations only ever grow
+  changes: Array<{index: number, from: number, to: number}>; // scenes that were lengthened
+  warnings: string[];   // captions likely too long for their scene, before generation
+  engine: string; voice: string;
+  cached: number; spoken: number; // scenes served from cache / scenes with a caption
+  totalSeconds: number;
+} | {
+  ok: false;
+  error: string;        // e.g. 'Voice engine "system" is unavailable: No espeak-ng on PATH.'
+  cancelled?: boolean;
+  engine?: string;
 }
 ```
+
+### `CodeAliveNarrationSynth.describeEngines()` → `Promise<Array<{id, label, available, detail}>>`
+Reports which engines can run on this machine. Backs the **CodeAlive: Check Voice Setup** command.
 
 ---
 
@@ -239,7 +262,8 @@ Communication between the VS Code Extension Host (`explain-panel.js`) and the We
 | `ready` | `{ type: 'ready' }` | Webview signals that DOM and scripts are fully initialized. |
 | `revealRange` | `{ type: 'revealRange', range: { start, end } }` | Requests the active editor to select and reveal a line range. |
 | `requestAIScript` | `{ type: 'requestAIScript', code: string, language: string }` | Requests VS Code LM API to generate script scenes. |
-| `synthesizeNarration` | `{ type: 'synthesizeNarration', scenes: Array, voice: string }` | Requests host to synthesize voice audio using local TTS engines. |
+| `synthesizeNarration` | `{ type: 'synthesizeNarration', scenes: Array, voice: string }` | Requests voice audio from the engine chosen by `codealive.narration.engine`. A newer request cancels an older one. |
+| `cancelNarration` | `{ type: 'cancelNarration' }` | Cancels the running voice generation. |
 | `saveExplanationVideo`| `{ type: 'saveExplanationVideo', base64: string, format: 'mp4'\|'webm' }` | Prompts native Save dialog to persist recorded video file. |
 | `saveSubtitles` | `{ type: 'saveSubtitles', content: string, format: 'srt'\|'vtt' }` | Prompts native Save dialog to persist subtitle file. |
 
@@ -249,5 +273,6 @@ Communication between the VS Code Extension Host (`explain-panel.js`) and the We
 |---|---|---|
 | `loadExplanation` | `{ type: 'loadExplanation', code: string, language: string, title?: string }` | Sends active editor selection/file into webview explainer. |
 | `aiScriptResult` | `{ type: 'aiScriptResult', ok: boolean, script?: object, error?: string }` | Returns generated pedagogical script scenes. |
-| `narrationGenerated`| `{ type: 'narrationGenerated', ok: boolean, base64: string, scenes: Array }` | Delivers synthesized WAV narration audio and updated timings. |
+| `narrationProgress` | `{ type: 'narrationProgress', phase: 'start'\|'scene', index?, total, cached?, engine, warnings? }` | Reports generation progress. |
+| `narrationGenerated`| `{ type: 'narrationGenerated', ok, base64?, scenes?, engine?, cached?, spoken?, changes?, warnings?, cancelled?, error? }` | Delivers the WAV narration with its proposed timings, or the reason it failed. |
 | `saveResult` | `{ type: 'saveResult', ok: boolean, canceled?: boolean, error?: string }` | Confirms file persistence status. |

@@ -1,3 +1,13 @@
+# Unreleased
+
+**Predictable voice and video generation.**
+
+- **Explicit voice engine:** `codealive.narration.engine` (`system`, `online` or `tone`) chooses the engine. If it is unavailable, generation stops with an explanation. It no longer falls back to a different engine, and no longer ends in a buzz. `codealive.narration.onlineVoice` is deprecated.
+- **Background generation:** voice generation no longer freezes VS Code. It shows progress, can be cancelled, and reuses cached audio for scenes whose caption, voice and engine are unchanged.
+- **Honest timing:** scene durations only ever grow to fit the speech, and the status line names each scene that changed.
+- **Fixes:** scenes with no caption no longer drop out of the narration, which had shifted every later scene; `espeak` output (22 kHz) is now resampled instead of playing too fast.
+- **New command:** **CodeAlive: Check Voice Setup** shows which engines work on this machine.
+
 # CodeAlive 1.0.4 beta
 
 **See what code does, what changed, and why it matters.**
