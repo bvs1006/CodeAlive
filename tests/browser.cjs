@@ -19,8 +19,8 @@ async function checkWorkflowNavigation(page,host=false){
   if(host){await page.locator('#workflow-review-pr').press('Enter');assert(await page.evaluate(()=>hostMessages.some(m=>m.type==='reviewPR')));assert(!await page.evaluate(()=>hostMessages.some(m=>m.type==='openStudio')));}
   await page.click('#edit-code');await page.fill('#source','function {');await page.click('#workflow-replay');
   assert.equal(await page.evaluate(()=>document.activeElement.id),'source');assert.match(await page.textContent('#status'),/Could not parse/);assert(await page.locator('#replay-panel').isHidden());
-  await page.click('#workflow-video');assert(await page.locator('#movie-work').isHidden());
-  await page.fill('#source',source);await page.click('#workflow-video');assert.equal(await page.evaluate(()=>document.activeElement.id),'movie-build');assert(await page.locator('#movie-record').isDisabled());
+  await page.click('#workflow-video');assert(await page.locator('#movie-work').isVisible(),'Video panel opens for unparseable source (raw-text AI scripts)');
+  await page.fill('#source',source);await page.click('#workflow-video');assert.equal(await page.evaluate(()=>document.activeElement.id),'movie-ai-build');assert(await page.locator('#movie-record').isDisabled());
   await page.click('#load-example');
 }
 function narrationWav(){const samples=96000,buffer=Buffer.alloc(44+samples*2);buffer.write('RIFF');buffer.writeUInt32LE(buffer.length-8,4);buffer.write('WAVEfmt ',8);buffer.writeUInt32LE(16,16);buffer.writeUInt16LE(1,20);buffer.writeUInt16LE(1,22);buffer.writeUInt32LE(48000,24);buffer.writeUInt32LE(96000,28);buffer.writeUInt16LE(2,32);buffer.writeUInt16LE(16,34);buffer.write('data',36);buffer.writeUInt32LE(samples*2,40);for(let i=0;i<samples;i++)buffer.writeInt16LE(Math.round(Math.sin(2*Math.PI*500*i/48000)*10000),44+i*2);return buffer;}
