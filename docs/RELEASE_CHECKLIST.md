@@ -18,7 +18,7 @@ manual rows track remaining desktop, physical-device and accessibility coverage.
 | Published asset | SHA-256 |
 |---|---|
 | codealive-1.0.4.vsix | `9f81e80273974c6173197662059c42737097eaddb10d584c4bbcd9e416d65c51` |
-| codealive-explainer-1.0.4.zip | `cfe63ccacebd03a1bd7ee8291f5c14d5e1334f292dd327f64998b656fe891c16` |
+| codealive-explainer-1.0.4.zip | Not listed here because this file is bundled inside the ZIP; see the [release page](https://github.com/bvs1006/CodeAlive/releases/tag/v1.0.4) |
 
 Online neural voices (`codealive.narration.onlineVoice`) were not exercised in automation because they send text to Microsoft. Human acceptance on developers' own desktops, physical audio devices, screen readers and private GitHub sign-in remains pending.
 
