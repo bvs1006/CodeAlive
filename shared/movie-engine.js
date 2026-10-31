@@ -23,6 +23,7 @@
   function toVTT(p){return 'WEBVTT\n\n'+p.scenes.map((s,i)=>`${i+1}\n${formatTimestamp(s.start,'.')} --> ${formatTimestamp(s.end,'.')}\n${s.caption}\n`).join('\n');}
   const MINT='#a4edcf',RED='#ff5a3c',INK='#e8eef5',MUTED='#9eafc3',BLUE='#38bdf8',PANEL='#14202e',DEEP='#0b1018';
   const text=(v,n)=>typeof v==='string'?v.trim().slice(0,n):'';
+  const SHELF_ITEMS=new Set(['milk','almond','eggs','bread','jar','bottle','box','box2','coffee','cheese','banana','apple','soldout']);
   function cleanVisual(v){
     if(!v||typeof v!=='object')return null;
     if(v.type==='diagram'){
@@ -33,6 +34,13 @@
     if(v.type==='meter'){
       const value=Number(v.value);if(!Number.isFinite(value)||value<0||value>20)return null;
       return {type:'meter',value,label:text(v.label,24),sub:text(v.sub,24),big:text(v.big,16),unit:text(v.unit,16),note:text(v.note,140)};
+    }
+    if(v.type==='shelf'){
+      const rows=Array.isArray(v.rows)?v.rows.slice(0,3).map(r=>Array.isArray(r)?r.map(k=>typeof k==='string'?k.trim().toLowerCase():'').filter(k=>SHELF_ITEMS.has(k)).slice(0,7):[]):[];
+      if(!rows.some(r=>r.length))return null;
+      const ph=v.phone&&typeof v.phone==='object'?v.phone:null,count=ph&&Number.isInteger(ph.count)&&ph.count>=0&&ph.count<=9999?ph.count:null;
+      const phone=ph?{title:text(ph.title,24),time:text(ph.time,8),count,countLabel:text(ph.countLabel,10),lines:Array.isArray(ph.lines)?ph.lines.slice(0,6).map(l=>text(String(l),32)).filter(Boolean):[]}:null;
+      return {type:'shelf',sign:text(v.sign,16),rows,figure:text(v.figure,10),callout:text(v.callout,16),phone};
     }
     if(v.type==='table'){
       const columns=Array.isArray(v.columns)?v.columns.slice(0,3).map(c=>text(c,12)):[];
@@ -112,6 +120,42 @@
     });
     if(v.note){ctx.font='24px monospace';ctx.fillStyle=MUTED;lines(ctx,'↳ '+v.note,w-pad*2).slice(0,2).forEach((l,i)=>ctx.fillText(l,tx,y+h-52+i*30));}
   }
+  function shelfItem(ctx,kind,x,base){
+    const box=(c,w,h,dx=0)=>{ctx.fillStyle=c;ctx.fillRect(x+dx,base-h,w,h);};
+    if(kind==='milk'||kind==='almond'){box('#f1efe6',34,56);box(kind==='milk'?'#2f6fdb':'#c58b4d',34,24,0);ctx.font='bold 9px sans-serif';ctx.fillStyle='#fff';ctx.fillText(kind==='milk'?'MILK':'ALMOND',x+(kind==='milk'?4:0),base-12);}
+    else if(kind==='eggs'){box('#d9c9a3',62,22);ctx.font='bold 9px sans-serif';ctx.fillStyle='#4a3b22';ctx.fillText('EGGS',x+18,base-8);}
+    else if(kind==='bread'){box('#c27a35',64,34);line(ctx,x+14,base-30,x+24,base-8,'#8a5220',3);line(ctx,x+34,base-30,x+44,base-8,'#8a5220',3);}
+    else if(kind==='jar'){box('#e04b4b',28,34);box('#f4f4f4',28,8,0);}
+    else if(kind==='bottle'){box('#7ec0f2',22,46);box('#7ec0f2',10,12,6);ctx.fillStyle='#7ec0f2';ctx.fillRect(x+6,base-58,10,12);}
+    else if(kind==='box'||kind==='box2'){box(kind==='box'?'#3b5bdb':'#e03131',44,62);box('#fff',30,8,7);}
+    else if(kind==='coffee'){box('#6b4a30',34,54);dot(ctx,x+17,base-28,8,'#d9b38c');}
+    else if(kind==='cheese'){box('#f0c53b',52,26);dot(ctx,x+14,base-14,4,'#c9a02a');}
+    else if(kind==='banana'){line(ctx,x,base-6,x+58,base-6,'#f0d33b',9);line(ctx,x+6,base-16,x+52,base-16,'#f0d33b',9);}
+    else if(kind==='apple'){dot(ctx,x+14,base-14,14,'#e03131');dot(ctx,x+40,base-14,14,'#e03131');}
+    else if(kind==='soldout'){box(RED,84,24);ctx.font='bold 12px sans-serif';ctx.fillStyle='#fff';ctx.fillText('SOLD OUT',x+10,base-8);}
+  }
+  function drawShelf(ctx,v,x,y,w,h,lt){
+    ctx.fillStyle=DEEP;ctx.fillRect(x+16,y+16,w-32,h-32);
+    if(v.sign){ctx.font='700 40px sans-serif';const sw=ctx.measureText(v.sign).width;frame(ctx,x+w/2-sw/2-24,y+26,sw+48,56,INK,3);ctx.fillStyle=INK;ctx.fillText(v.sign,x+w/2-sw/2,y+68);}
+    const top=y+92,rowH=96,step=(w-230)/7;let n=0;
+    v.rows.forEach((row,r)=>{
+      const base=top+rowH*(r+1)-12;ctx.fillStyle='#223044';ctx.fillRect(x+30,base,w-60,8);
+      row.forEach((kind,i)=>{const k=ease((lt-n*0.03)/0.2);n++;if(k<=0)return;if(ctx.globalAlpha!==undefined)ctx.globalAlpha=k;shelfItem(ctx,kind,x+(v.figure?150:70)+i*step,base);if(ctx.globalAlpha!==undefined)ctx.globalAlpha=1;});
+    });
+    if(v.figure&&lt>0.15){
+      const fx=x+88,fb=top+rowH*3-4;ctx.fillStyle='#8e9db3';ctx.fillRect(fx-22,fb-190,44,100);ctx.fillRect(fx-18,fb-92,16,92);ctx.fillRect(fx+4,fb-92,16,92);dot(ctx,fx,fb-216,24,'#f4f4f4');
+      frame(ctx,fx-40,fb-124,34,26,'#e8eef5',3);ctx.font='bold 18px sans-serif';const bw=ctx.measureText(v.figure).width+24;ctx.fillStyle='#f4f4f4';ctx.fillRect(fx-bw/2,fb-290,bw,30);ctx.fillStyle=DEEP;ctx.fillText(v.figure,fx-bw/2+12,fb-268);
+    }
+    if(v.callout&&lt>0.5){ctx.font='700 26px sans-serif';const cw=ctx.measureText(v.callout).width+28;ctx.fillStyle=RED;ctx.fillRect(x+w/2-cw/2,top+rowH*3+4,cw,40);ctx.fillStyle='#fff';ctx.fillText(v.callout,x+w/2-cw/2+14,top+rowH*3+34);}
+    const ph=v.phone;if(!ph)return;
+    const cw=360,ch=Math.min(190,y+h-24-(top+rowH*3+56)),cx=x+w-cw-40,cy=y+h-24-ch;
+    if(ch<110)return;
+    ctx.fillStyle=PANEL;ctx.fillRect(cx,cy,cw,ch);frame(ctx,cx,cy,cw,ch,RED,3);
+    if(ph.time&&!ph.lines.length){centered(ctx,ph.time,cx+cw/2,cy+ch/2+22,'700 64px sans-serif',INK);}
+    if(ph.title){ctx.font='bold 16px monospace';ctx.fillStyle=MUTED;ctx.fillText(ph.title,cx+18,cy+32);}
+    ph.lines.forEach((l,i)=>{const k=ease((lt-0.3-i*0.08)/0.2);if(k<=0)return;ctx.font='17px monospace';ctx.fillStyle=i===ph.lines.length-1?INK:MUTED;ctx.fillText(l,cx+18,cy+62+i*(ch-80)/Math.max(ph.lines.length,1));});
+    if(ph.count!==null){const c=Math.round(ph.count*ease((lt-0.2)/0.7));ctx.font='bold 22px monospace';ctx.fillStyle=RED;if(ph.countLabel)ctx.fillText(ph.countLabel,cx-150,cy+ch/2+8);dot(ctx,cx-30,cy+ch/2,30,RED);centered(ctx,String(c),cx-30,cy+ch/2+10,'700 28px sans-serif','#fff');}
+  }
   const KEYWORDS=new Set(['for','if','else','of','in','return','const','let','var','function','while','new','await','async','class','import','from','def','print']);
   function drawTyped(ctx,v,x,y,w,h,lt){
     ctx.fillStyle=PANEL;ctx.fillRect(x,y,w,h);
@@ -137,6 +181,7 @@
     ctx.fillStyle=PANEL;ctx.fillRect(x,y,w,h);
     if(v.type==='diagram')drawDiagram(ctx,v,x,y,w,h,lt);
     else if(v.type==='meter')drawMeter(ctx,v,x,y,w,h,lt);
+    else if(v.type==='shelf')drawShelf(ctx,v,x,y,w,h,lt);
     else if(v.type==='table')drawTable(ctx,v,x,y,w,h,lt);
     else if(v.type==='typed')drawTyped(ctx,v,x,y,w,h,lt);
   }

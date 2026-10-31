@@ -50,10 +50,11 @@ Unit checks cover scene boundaries, source ranges, captions/duration limits, 16:
 - **`diagram`**: a left box, a vertical hub and 1–4 labelled targets. Connectors draw in over the scene.
 - **`meter`**: a bar that fills to `value` (1 = full). Above 1 it turns red and shows `×N OVER LIMIT`.
 - **`table`**: up to 3 columns and 6 rows, e.g. `{"type":"table","columns":["MCP SERVER","TOOLS","TOKENS"],"rows":[["GitHub",35,"26K"],["Slack",11,"21K"],["Sentry",5,"3K"]],"highlight":2,"note":"Anthropic's example"}`. Rows fade in one by one, the first `highlight` rows stay bright and the rest dim, and `note` prints underneath.
+- **`shelf`**: a flat illustration of a shop shelf for analogies. `rows` is up to 3 shelves of up to 7 items from `milk, almond, eggs, bread, jar, bottle, box, box2, coffee, cheese, banana, apple, soldout` (unknown names are dropped). Optional `sign` ("GROCERY"), `figure` (a shopper with a basket and a name bubble), `callout` (a red tag such as "x 40 LABELS") and `phone`, a card with a `title`, up to 6 typed `lines`, an optional big `time` (used when there are no lines) and a `count` with a `countLabel` that counts up beside it.
 - **`typed`**: a code window that types itself out with a caret (up to 12 lines and 600 characters).
 - **`overlay`**: `handle` (top left), `badge` (dashed box, top right) and `tag` (section label), drawn on every frame.
 
-Strings are clamped (labels 8–24 characters, notes 140) and anything malformed is dropped, so a bad visual falls back to the normal source panel. These are text and shape scenes only: there is no illustration scene, and the line "startLine/endLine" is still required because captions and highlights use it.
+Strings are clamped (labels 8–24 characters, notes 140) and anything malformed is dropped, so a bad visual falls back to the normal source panel. These are flat vector scenes drawn in code, with one built-in shelf illustration; and the line "startLine/endLine" is still required because captions and highlights use it.
 
 ### Presenter webcam (9:16 only)
 
