@@ -59,3 +59,22 @@ Strings are clamped (labels 8–24 characters, notes 140) and anything malformed
 ### Presenter webcam (9:16 only)
 
 Tick **Presenter webcam, vertical video only** before Preview or Record. The browser asks for camera access when the clip starts, and the picture is cropped to a circle at the bottom left of the frame (clear of the caption card; the progress bar and clock move right to make room). Video only: the soundtrack is still your narration and music, not the camera's microphone. Nothing is uploaded, and the camera stops when the clip ends or is stopped. If access is denied, there is no camera, or the host (a VS Code webview) does not offer one, the clip does not start and the status line says so; untick the option to continue.
+
+## Optional: render offline with HyperFrames
+
+For a repeatable MP4 without real-time recording, export a script and render it with [HyperFrames](https://github.com/heygen-com/hyperframes) (Apache-2.0). This is a developer-side script, not part of the VSIX, and the product never runs HyperFrames itself.
+
+```
+node scripts/export-hyperframes.cjs --script script.json --source code.js --out my-video \
+     [--aspect 9:16|16:9] [--narration voice.wav] [--music] [--hide-source] [--no-captions] [--gsap gsap.min.js]
+cd my-video && npx hyperframes@0.8.223 render -o video.mp4
+```
+
+`--script` is the same JSON that **Paste AI JSON** accepts, and `--source` is the code it explains, so every limit above applies unchanged. `--narration` takes a WAV, MP3 or M4A of up to 15 MB; its scene timing must already fit, because the script does not re-time scenes. `--music` adds a quiet synthesized bed and needs ffmpeg. The output folder must be new or empty, and holds `index.html`, `movie-engine.js`, `plan.json`, `assets/` and a short README.
+
+The exported page draws each frame with the product's own canvas renderer (`shared/movie-engine.js`), so scenes, overlay, source highlights and captions match the in-product video. Rendering needs Node 22+, ffmpeg and Google Chrome, and was tested with HyperFrames 0.8.223. Differences to expect:
+
+- HyperFrames substitutes its own fonts, so monospace text is slightly different. Across the scene types and both aspect ratios, sampled frames compared at SSIM 0.95–0.98 against the in-product canvas.
+- The presenter webcam is not available, because it needs a live camera.
+- GSAP loads from a CDN during rendering unless you pass `--gsap`.
+- Rendering is not faster than real time: a 16-second clip took about 27 seconds on an Apple M1.
