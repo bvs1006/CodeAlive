@@ -4,7 +4,7 @@ const activeVoices=new Set();
 const motionPreference=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const palettes={ambient:['#7ef8c9','#529dff'],synth:['#ff77bb','#9c83ff'],bit:['#ffe182','#7ef8c9']};
 function message(text){$('message').textContent=text}
-function refresh(){analysis=CodeAlive.analyze($('code').value);$('stats').textContent=`${analysis.lines} lines · ${analysis.functions} melody events`;}
+function refresh(){analysis=CodeAlive.analyze($('code').value);$('stats').textContent=`${analysis.lines} lines, ${analysis.functions} melody events`;}
 function loadSample(index){sampleIndex=index;const s=CodeAlive.samples[index];$('code').value=s.code;$('language').value=s.language;refresh();renderSamples()}
 function renderSamples(){const box=$('samples');box.replaceChildren();CodeAlive.samples.forEach((s,i)=>{if(s.language!==$('language').value)return;const b=document.createElement('button');b.textContent=s.title;b.className=i===sampleIndex?'active':'';b.onclick=()=>{stop();loadSample(i)};box.append(b)})}
 function setStyle(s){style=s;document.querySelectorAll('[data-style]').forEach(b=>b.classList.toggle('selected',b.dataset.style===s))}
