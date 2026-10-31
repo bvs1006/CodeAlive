@@ -27,3 +27,34 @@ Up to 20 included scenes, 0.5–15 seconds each, 120 seconds total; captions up 
 `shared/movie-engine.js` validates the timeline, renders vertical and landscape frames, and generates formatted SRT/VTT subtitles; `shared/ai-script.js` handles line-to-byte range mapping, prompt generation, JSON validation, and local pedagogical heuristics; `movie-ui.js` owns scene editing, format selection, AI script actions, subtitle export, narration import, Web Audio mixing, clock-based playback and MediaRecorder. `extension/explain-panel.js` bridges `vscode.lm` chat requests to the webview. `extension/video-save.js` validates size, encoding/header and the user's chosen destination for videos and subtitles. CSP allows local blob media while keeping network connections blocked.
 
 Unit checks cover scene boundaries, source ranges, captions/duration limits, 16:9 landscape rendering, SRT/VTT formatting, AI prompt/JSON parsing, line mapping, heuristic fallback, source-panel hiding and Save validation/cancellation. Chromium tests import a known audio signal, mix optional music, record both browser and extension-webview pages, inspect audio/video tracks/duration/dimensions, and verify that both imported audio and music are present in the encoded samples. Screenshots and an encoded frame are CI artifacts. Real Linux VS Code activation/upgrade/commands remain a separate gate. Physical audio-device checks and Windows/macOS desktop recording remain manual work.
+
+## Scene visuals and overlay (9:16 only)
+
+**Load sample explainer** fills the panel with a four-scene example (diagram, table, meter, typed code, plus the overlay) so you can see every scene type at once and edit from there. **Paste AI JSON** accepts two optional extras, so a script can look like an animated explainer and not only a caption over source lines. 16:9 ignores them and keeps the source-panel layout.
+
+```json
+{
+  "title": "MCP and Code Mode",
+  "overlay": { "handle": "@yourhandle", "tag": "MCP TODAY", "badge": { "label": "THE FIX", "text": "???" } },
+  "scenes": [
+    { "caption": "The MCP server sits between the agent and every tool.", "startLine": 1, "endLine": 1, "duration": 5,
+      "visual": { "type": "diagram", "left": "AI", "leftNote": "AI AGENT", "hub": "MCP", "hubNote": "STANDARD PROTOCOL", "items": ["calendar", "database", "email"] } },
+    { "caption": "Every tool definition lands in the context window.", "startLine": 1, "endLine": 1, "duration": 5,
+      "visual": { "type": "meter", "value": 5.85, "label": "CONTEXT WINDOW", "sub": "200K TOKENS", "big": "1,170,000", "unit": "TOKENS", "note": "more than the entire context window" } },
+    { "caption": "Code Mode lets the AI write the loop itself.", "startLine": 1, "endLine": 1, "duration": 6,
+      "visual": { "type": "typed", "file": "trip.ts", "badge": "written by the AI", "code": "for (const item of list) {\n  grab(item)\n}" } }
+  ]
+}
+```
+
+- **`diagram`**: a left box, a vertical hub and 1–4 labelled targets. Connectors draw in over the scene.
+- **`meter`**: a bar that fills to `value` (1 = full). Above 1 it turns red and shows `×N OVER LIMIT`.
+- **`table`**: up to 3 columns and 6 rows, e.g. `{"type":"table","columns":["MCP SERVER","TOOLS","TOKENS"],"rows":[["GitHub",35,"26K"],["Slack",11,"21K"],["Sentry",5,"3K"]],"highlight":2,"note":"Anthropic's example"}`. Rows fade in one by one, the first `highlight` rows stay bright and the rest dim, and `note` prints underneath.
+- **`typed`**: a code window that types itself out with a caret (up to 12 lines and 600 characters).
+- **`overlay`**: `handle` (top left), `badge` (dashed box, top right) and `tag` (section label), drawn on every frame.
+
+Strings are clamped (labels 8–24 characters, notes 140) and anything malformed is dropped, so a bad visual falls back to the normal source panel. These are text and shape scenes only: there is no illustration scene, and the line "startLine/endLine" is still required because captions and highlights use it.
+
+### Presenter webcam (9:16 only)
+
+Tick **Presenter webcam, vertical video only** before Preview or Record. The browser asks for camera access when the clip starts, and the picture is cropped to a circle at the bottom right of the frame (clear of the caption card; the progress bar shortens to make room). Video only: the soundtrack is still your narration and music, not the camera's microphone. Nothing is uploaded, and the camera stops when the clip ends or is stopped. If access is denied, there is no camera, or the host (a VS Code webview) does not offer one, the clip does not start and the status line says so; untick the option to continue.

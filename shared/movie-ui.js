@@ -2,15 +2,15 @@
   'use strict';
   root.CodeAliveMovieUI={mount({host,getContext,getTrace,onRange}){
     const $=id=>document.getElementById(id),canvas=$('movie-canvas'),ctx=canvas.getContext('2d');
-    let context=null,source='',scenes=[],narration=null,narrationName='',generation=0,state=null,blob=null,url=null,mode='explanation',replayInput='',audioLoading=false;
+    let context=null,source='',scenes=[],narration=null,narrationName='',generation=0,state=null,blob=null,url=null,mode='explanation',replayInput='',audioLoading=false,overlay=null;
     const status=text=>{$('movie-status').textContent=text;};
     function clearOutput(){$('movie-scene-status').textContent='';blob=null;if(url)URL.revokeObjectURL(url);url=null;$('movie-download').hidden=true;$('movie-preview').removeAttribute('src');$('movie-preview').load();}
     function controls(busy){$('movie-stop').disabled=!busy;for(const el of $('movie-editor').querySelectorAll('input,textarea,select,button'))el.disabled=busy;$('movie-play').disabled=busy||audioLoading||!scenes.length;$('movie-record').disabled=busy||audioLoading||!scenes.length;$('movie-save').disabled=busy||!blob;if($('movie-export-subtitles'))$('movie-export-subtitles').disabled=busy||!scenes.length;}
-    function cleanup(s){cancelAnimationFrame(s.raf);clearTimeout(s.watchdog);for(const node of s.nodes)try{node.stop();}catch{}s.stream?.getTracks().forEach(t=>t.stop());s.dest.stream.getTracks().forEach(t=>t.stop());s.audio.close().catch(()=>{});if(state===s)state=null;controls(false);}
+    function cleanup(s){cancelAnimationFrame(s.raf);clearTimeout(s.watchdog);for(const node of s.nodes)try{node.stop();}catch{}s.stream?.getTracks().forEach(t=>t.stop());s.cam?.getTracks().forEach(t=>t.stop());if(s.camVideo)s.camVideo.srcObject=null;s.dest.stream.getTracks().forEach(t=>t.stop());s.audio.close().catch(()=>{});if(state===s)state=null;controls(false);}
     function stop(discard=false){if(typeof window!=='undefined'&&window.speechSynthesis)try{window.speechSynthesis.cancel();}catch{}const s=state;if(!s)return;s.discard=discard;s.early=!s.finished;cancelAnimationFrame(s.raf);clearTimeout(s.watchdog);for(const node of s.nodes)try{node.stop();}catch{}if(s.recorder&&s.recorder.state!=='inactive')s.recorder.stop();else{cleanup(s);status(discard?'Playback cleared.':'Preview stopped.');}}
-    function clear(){generation++;stop(true);clearOutput();context=null;scenes=[];source='';audioLoading=false;narration=null;narrationName='';$('movie-narration').value='';$('movie-audio-status').textContent='No narration loaded.';$('movie-scenes').replaceChildren();$('movie-length').textContent='';$('movie-position').textContent='Ready to preview';const landscape=$('movie-preset')?.value==='16:9';canvas.width=landscape?1920:1080;canvas.height=landscape?1080:1920;ctx.fillStyle='#0b1018';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#9eafc3';ctx.font='36px sans-serif';ctx.fillText('Build a script to preview a frame.',72,250);$('movie-work').hidden=true;controls(false);status('Explain a function first, then build a script.');}
+    function clear(){overlay=null;generation++;stop(true);clearOutput();context=null;scenes=[];source='';audioLoading=false;narration=null;narrationName='';$('movie-narration').value='';$('movie-audio-status').textContent='No narration loaded.';$('movie-scenes').replaceChildren();$('movie-length').textContent='';$('movie-position').textContent='Ready to preview';const landscape=$('movie-preset')?.value==='16:9';canvas.width=landscape?1920:1080;canvas.height=landscape?1080:1920;ctx.fillStyle='#0b1018';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#9eafc3';ctx.font='36px sans-serif';ctx.fillText('Build a script to preview a frame.',72,250);$('movie-work').hidden=true;controls(false);status('Explain a function first, then build a script.');}
     function setContext(){const next=getContext();if(!next)return clear();if(context&&next.code===context.code&&next.scopeId===context.scopeId&&next.language===context.language)return;clear();context=next;$('movie-work').hidden=false;status(context.model?'Choose explanation steps or a captured replay, then build a script.':'Generate AI scenes or paste a script to create a video.');}
-    function readPlan(){return CodeAliveMovie.plan(source,scenes,{title:$('movie-title').value,hideSource:$('movie-hide').checked,mode,aspectRatio:$('movie-preset')?.value||'9:16',showCaptions:$('movie-captions')?$('movie-captions').checked:true});}
+    function readPlan(){return CodeAliveMovie.plan(source,scenes,{title:$('movie-title').value,hideSource:$('movie-hide').checked,mode,aspectRatio:$('movie-preset')?.value||'9:16',overlay,webcam:$('movie-webcam')?$('movie-webcam').checked:false,showCaptions:$('movie-captions')?$('movie-captions').checked:true});}
     function update(){clearOutput();try{const p=readPlan(),landscape=p.aspectRatio==='16:9';if(canvas.width!==(landscape?1920:1080)||canvas.height!==(landscape?1080:1920)){canvas.width=landscape?1920:1080;canvas.height=landscape?1080:1920;}if($('movie-stage-note'))$('movie-stage-note').textContent=`${landscape?'Landscape 1920 × 1080':'Vertical 1080 × 1920'} · up to 20 scenes / 120 seconds. Recording runs in real time; keep this view visible.`;CodeAliveMovie.draw(ctx,p,0);$('movie-length').textContent=`${p.scenes.length} scenes · ${p.seconds.toFixed(1)} seconds${mode==='replay'?' · Captured input: '+replayInput:''}`;let elapsed=0;for(const [i,s]of scenes.entries()){const out=$('movie-scenes').children[i]?.querySelector('output');if(out)out.textContent=s.enabled?`${elapsed.toFixed(1)}–${(elapsed+Number(s.duration)).toFixed(1)}s`:'Excluded';if(s.enabled)elapsed+=Number(s.duration);}if(narration)audioNote(p);}catch(e){status(e.message);}controls(false);}
     function audioNote(p){$('movie-audio-status').textContent=`${narrationName} · ${narration.duration.toFixed(1)} seconds. ${narration.duration>p.seconds+0.15?'Audio is longer than the video. Fit timing or shorten the audio before recording.':narration.duration<p.seconds-0.15?'Narration ends before the video; remaining scenes will have no voice.':'Narration and video durations match.'}`;}
     function renderScenes(){const list=$('movie-scenes');list.replaceChildren();for(const [i,s]of scenes.entries()){
@@ -38,6 +38,9 @@
       const Audio=root.AudioContext||root.webkitAudioContext;if(!Audio)throw Error('Web Audio is unavailable in this browser.');
       if(record&&(!root.MediaRecorder||!canvas.captureStream))throw Error('Video recording is unavailable in this browser.');
       clearOutput();const audio=new Audio();s={audio,dest:audio.createMediaStreamDestination(),nodes:[],plan:p,token:generation,finished:false,discard:false};state=s;controls(true);await audio.resume();if(state!==s||s.discard)return;
+      if(p.webcam&&p.aspectRatio==='9:16'){if(!root.navigator?.mediaDevices?.getUserMedia)throw Error('The webcam is unavailable here. Turn off the presenter webcam, or use the browser studio.');
+        try{s.cam=await root.navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:720},height:{ideal:720}},audio:false});}catch{throw Error('Camera access was denied or no camera was found. Turn off the presenter webcam to continue.');}
+        if(state!==s||s.discard){s.cam.getTracks().forEach(t=>t.stop());return;}const v=document.createElement('video');v.muted=true;v.playsInline=true;v.srcObject=s.cam;await v.play();s.camVideo=v;}
       const master=audio.createGain();master.gain.value=0.85;master.connect(s.dest);master.connect(audio.destination);
       if(record){const types=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'],mimeType=types.find(t=>MediaRecorder.isTypeSupported(t));if(!mimeType)throw Error('No supported recording format. Try desktop Chromium.');
         s.stream=canvas.captureStream(30);for(const track of s.dest.stream.getAudioTracks())s.stream.addTrack(track.clone());const chunks=[];let bytes=0;s.recorder=new MediaRecorder(s.stream,{mimeType,videoBitsPerSecond:4000000});
@@ -73,7 +76,7 @@
         fifth.start(s.start+scene.start);fifth.stop(s.start+scene.end);
         s.nodes.push(fifth);
       }
-      let last=-1;function frame(){if(state!==s||s.discard)return;const elapsed=Math.max(0,audio.currentTime-s.start),scene=CodeAliveMovie.draw(ctx,p,elapsed);$('movie-position').textContent=`Scene ${scene.index+1}/${p.scenes.length} · ${Math.min(elapsed,p.seconds).toFixed(1)} / ${p.seconds.toFixed(1)}s`;
+      let last=-1;function frame(){if(state!==s||s.discard)return;const elapsed=Math.max(0,audio.currentTime-s.start),scene=CodeAliveMovie.draw(ctx,p,elapsed,{webcam:s.camVideo});$('movie-position').textContent=`Scene ${scene.index+1}/${p.scenes.length} · ${Math.min(elapsed,p.seconds).toFixed(1)} / ${p.seconds.toFixed(1)}s`;
         if(scene.index!==last){
           last=scene.index;$('movie-scene-status').textContent=`Scene ${scene.index+1} of ${p.scenes.length}. ${scene.caption}`;onRange(scene.range);
           if(!record && !narration && typeof window!=='undefined' && window.speechSynthesis){
@@ -127,7 +130,8 @@
     }
     function applyScript(res,notice){
       if(res.title)$('movie-title').value=res.title;
-      scenes=(res.scenes||[]).map(s=>({enabled:true,duration:s.duration||4,caption:s.caption||'',range:{...s.range}}));
+      overlay=res.overlay||null;
+      scenes=(res.scenes||[]).map(s=>({enabled:true,duration:s.duration||4,caption:s.caption||'',range:{...s.range},...(s.visual?{visual:s.visual}:{})}));
       renderScenes();
       status(notice||'AI script loaded. Review captions and scene durations.');
     }
@@ -188,6 +192,21 @@
         }else{
           status('Clipboard unavailable. Copy your code into your AI model for a script.');
         }
+      }catch(e){status(e.message);}
+    };
+const SAMPLE_EXPLAINER={title:'Why MCP needs Code Mode',overlay:{handle:'@yourhandle',tag:'MCP TODAY',badge:{label:'THE FIX',text:'???'}},scenes:[
+      {caption:'An MCP server sits between the agent and every tool it can call.',startLine:1,endLine:1,duration:5,visual:{type:'diagram',left:'AI',leftNote:'AI AGENT',hub:'MCP',hubNote:'STANDARD PROTOCOL',items:['calendar','database','email']}},
+      {caption:'But every tool definition is loaded into the context window up front.',startLine:1,endLine:1,duration:6,visual:{type:'table',columns:['MCP SERVER','TOOLS'],rows:[['GitHub','35'],['Slack','11'],['Sentry','5'],['Grafana','5'],['Splunk','2']],highlight:2,note:'Illustrative numbers. Replace with your own.'}},
+      {caption:'A large API can use more than the whole window before any work starts.',startLine:1,endLine:1,duration:6,visual:{type:'meter',value:5.85,label:'CONTEXT WINDOW',sub:'200K TOKENS',big:'1,170,000',unit:'TOKENS',note:'Illustrative numbers. Replace with your own.'}},
+      {caption:'Code Mode lets the AI write a short program instead.',startLine:1,endLine:1,duration:6,visual:{type:'typed',file:'trip.ts',badge:'written by the AI',code:'for (const item of list) {\n  if (soldOut(item))\n    item = swap(item)\n  grab(item)\n}\nreturn cart'}}]};
+    if($('movie-ai-sample'))$('movie-ai-sample').onclick=()=>{
+      try{
+        const current=getContext();
+        if(!current)throw Error('Explain a function first.');
+        source=current.code;mode='ai';
+        const res=root.CodeAliveAIScript?.parseScript(current.code,SAMPLE_EXPLAINER);
+        if(!res?.ok)throw Error(res?.error||'Could not load the sample.');
+        applyScript(res,'Sample explainer loaded. Replace the captions and numbers with your own, then tick Presenter webcam if you want your camera in the frame.');
       }catch(e){status(e.message);}
     };
     if($('movie-ai-paste'))$('movie-ai-paste').onclick=()=>{

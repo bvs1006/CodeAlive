@@ -161,9 +161,10 @@ ${code}
         const dur=Number(s.duration);
         const duration=(!Number.isFinite(dur)||dur<0.5||dur>15)?4.0:Math.round(dur*10)/10;
         const range=linesToRange(source,s.startLine,s.endLine);
-        return {enabled:true,caption,duration,range};
+        const visual=s.visual&&typeof s.visual==='object'?s.visual:undefined;
+        return visual?{enabled:true,caption,duration,range,visual}:{enabled:true,caption,duration,range};
       });
-      return {ok:true,title,scenes};
+      return data.overlay&&typeof data.overlay==='object'?{ok:true,title,scenes,overlay:data.overlay}:{ok:true,title,scenes};
     }catch(err){
       return {ok:false,error:err.message};
     }
