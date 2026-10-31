@@ -145,6 +145,16 @@ const wavSeconds=wav=>(wav.length-44)/(RATE*2);
     assert.equal(r.voice,'en-US-AndrewMultilingualNeural');
   }
 
+  // Hyphenated regional voice names such as the Indian English voices are passed through unchanged.
+  {
+    const seen=[];
+    for(const voice of ['en-IN-NeerjaNeural','en-IN-PrabhatNeural']){
+      const r=await run([{caption:'hello',duration:3}],stubEngine({speak:(t,{voice:v})=>{seen.push(v);return Buffer.alloc(9600);}}),{voice});
+      assert.equal(r.voice,voice);
+    }
+    assert.deepEqual(seen,['en-IN-NeerjaNeural','en-IN-PrabhatNeural']);
+  }
+
   // The built-in tone engine is deterministic and always available.
   {
     const options={engine:'tone',cache:false};
