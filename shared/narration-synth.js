@@ -165,7 +165,7 @@
       },
       async speak(text,{voice,sampleRate,signal,dir,index,status}){
         const cmd=status?.command||(await localCommand()).command,textFile=writeTextFile(dir,index,text),wavFile=path.join(dir,`scene_${index}.wav`);
-        const options={timeout:30000,signal},female=/ava|emma|jenny|female|aria/i.test(voice);
+        const options={timeout:30000,signal},female=/ava|emma|jenny|neerja|female|aria/i.test(voice);
         if(cmd==='say'){
           const base=['-r','165','--file-format=WAVE',`--data-format=LEI16@${sampleRate}`,'-o',wavFile,'-f',textFile];
           try{await runChecked('say','say',['-v',female?'Samantha':'Daniel',...base],options,wavFile);}

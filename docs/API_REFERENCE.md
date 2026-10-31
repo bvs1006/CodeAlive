@@ -221,7 +221,7 @@ Speaks each caption, measures the real duration, lengthens scenes that are too s
 #### Parameters
 - `scenes` (`Array<{caption: string, duration?: number}>`)
 - `options.engine` (`'system' | 'online' | 'tone'`, default `'system'`)
-- `options.voice` (`string`): letters, digits and hyphens only, otherwise the default is used. Examples: `en-US-AndrewMultilingualNeural`, `en-US-ChristopherNeural` (male), `en-US-AvaMultilingualNeural`, `en-US-EmmaMultilingualNeural` (female). The `system` engine maps these to a male or female system voice.
+- `options.voice` (`string`): letters, digits and hyphens only, otherwise the default is used. Examples: `en-US-AndrewMultilingualNeural`, `en-US-ChristopherNeural`, `en-IN-PrabhatNeural` (male), `en-US-AvaMultilingualNeural`, `en-US-EmmaMultilingualNeural`, `en-IN-NeerjaNeural` (female; the two `en-IN` voices are Indian English). The `system` engine maps these to a male or female system voice.
 - `options.signal` (`AbortSignal`): cancels generation and kills the running speech process.
 - `options.onProgress(event)`: `{phase: 'start', total, engine, warnings}` once, then `{phase: 'scene', index, total, cached, engine}` per scene.
 - `options.cache` (`false` to bypass). Scene audio is cached in memory by engine, voice, sample rate and caption, so editing one caption regenerates one scene.
