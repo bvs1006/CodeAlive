@@ -153,7 +153,7 @@
   }
   function drawWebcam(ctx,video){
     const vw=video&&video.videoWidth,vh=video&&video.videoHeight;if(!vw||!vh||!ctx.drawImage)return;
-    const cx=868,cy=1796,r=108,side=Math.min(vw,vh);
+    const cx=192,cy=1796,r=108,side=Math.min(vw,vh);
     ctx.fillStyle=DEEP;ctx.fillRect(cx-r-12,cy-r-12,r*2+24,r*2+24);
     ctx.save?.();ctx.beginPath?.();ctx.arc?.(cx,cy,r,0,Math.PI*2);ctx.clip?.();
     ctx.drawImage(video,(vw-side)/2,(vh-side)/2,side,side,cx-r,cy-r,r*2,r*2);ctx.restore?.();
@@ -213,8 +213,8 @@
       ctx.fillStyle='#38bdf8';ctx.font='bold 20px monospace';ctx.fillText('CC · SUBTITLE',96,1550);
       ctx.fillStyle='#ffffff';ctx.font='bold 30px sans-serif';const subLines=lines(ctx,scene.caption,888);subLines.slice(0,2).forEach((l,idx)=>ctx.fillText(l,96,1594+idx*38));
     }
-    ctx.fillStyle='#29374a';const barW=p.webcam?660:936;ctx.fillRect(72,1716,barW,6);ctx.fillStyle='#a4edcf';ctx.fillRect(72,1716,barW*t/p.seconds,6);ctx.font='26px monospace';ctx.fillText(`${t.toFixed(1)}s / ${p.seconds.toFixed(1)}s`,72,1774);
-    ctx.fillStyle='#9eafc3';ctx.font='24px sans-serif';ctx.fillText(p.mode+' · reviewed script',72,1850);return scene;
+    ctx.fillStyle='#29374a';const barX=p.webcam?340:72,barW=1008-barX;ctx.fillRect(barX,1716,barW,6);ctx.fillStyle='#a4edcf';ctx.fillRect(barX,1716,barW*t/p.seconds,6);ctx.font='26px monospace';ctx.fillText(`${t.toFixed(1)}s / ${p.seconds.toFixed(1)}s`,barX,1774);
+    ctx.fillStyle='#9eafc3';ctx.font='24px sans-serif';ctx.fillText(p.mode+' · reviewed script',p.webcam?340:72,1850);return scene;
   }
   return {plan,sceneAt,draw,lines,formatTimestamp,toSRT,toVTT};
 });

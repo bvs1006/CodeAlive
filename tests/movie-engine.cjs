@@ -21,7 +21,7 @@ const half=[];draw({...rich,fillText:t=>half.push(t)},plan(source,[{...visuals[2
 draw(ctx,pv,0.5);draw(ctx,plan(source,[{...scene,visual:visuals[0]}],{aspectRatio:'16:9'}),0.5);
 const drawn=[],camCtx={...rich,drawImage:(...a)=>drawn.push(a),save(){},restore(){},clip(){}},cam={videoWidth:640,videoHeight:480};
 const pc=plan(source,[scene],{webcam:true});assert.equal(pc.webcam,true);assert.equal(plan(source,[scene]).webcam,false);assert.equal(plan(source,[scene],{webcam:'yes'}).webcam,false);
-draw(camCtx,pc,0.5,{webcam:cam});assert.equal(drawn.length,1);assert.deepEqual(drawn[0].slice(1,5),[80,0,480,480]);assert.equal(drawn[0][7],216);
+draw(camCtx,pc,0.5,{webcam:cam});assert.equal(drawn.length,1);assert.deepEqual(drawn[0].slice(1,5),[80,0,480,480]);assert.equal(drawn[0][5],84);assert.equal(drawn[0][7],216);
 draw(camCtx,pc,0.5);draw(camCtx,pc,0.5,{webcam:{videoWidth:0,videoHeight:0}});draw(camCtx,plan(source,[scene],{webcam:true,aspectRatio:'16:9'}),0.5,{webcam:cam});draw(camCtx,plan(source,[scene]),0.5,{webcam:cam});assert.equal(drawn.length,1,'webcam draws only for a webcam plan, 9:16, with a ready video');
 const tbl={type:'table',columns:['MCP SERVER','TOOLS','TOKENS'],rows:[['GitHub',35,'26K'],['Slack','11','21K'],['Sentry',5],['Grafana',5],['Splunk',2],['Extra',1],['Dropped',1]],highlight:2,note:"Anthropic's example"};
 const pt=plan(source,[{...scene,visual:tbl,duration:3}]),tv=pt.scenes[0].visual;assert.equal(tv.rows.length,6);assert.deepEqual(tv.rows[0],['GitHub','35','26K']);assert.deepEqual(tv.rows[2],['Sentry','5','']);assert.equal(tv.highlight,2);
